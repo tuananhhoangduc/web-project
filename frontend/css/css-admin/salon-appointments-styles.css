@@ -1,0 +1,288 @@
+/* --- Style cho trang Quản lý Lịch hẹn Salon --- */
+
+/* Style cho nội dung chính của trang (để tạo khoảng trống cho header cố định) */
+.page-main {
+  padding-top: 100px; /* Khoảng trống để tránh header trên desktop (Điều chỉnh nếu cần) */
+  padding-bottom: 40px; /* Padding dưới */
+  background-color: #f8f8f8; /* Màu nền nhẹ cho trang */
+  color: #333; /* Màu chữ mặc định cho nội dung trang */
+}
+
+/* Style cho heading chính của trang */
+.page-main h1 {
+  text-align: center;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+}
+
+/* Container bao bọc danh sách và filter */
+.appointment-management-container {
+  background-color: #fff; /* Nền trắng */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 900px; /* Chiều rộng tối đa */
+  margin: 20px auto; /* Căn giữa */
+}
+
+/* Style cho thanh lọc/tìm kiếm (tùy chọn) */
+.filter-bar {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  /* Sử dụng flexbox hoặc grid để bố trí các bộ lọc */
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap; /* Cho phép xuống dòng trên mobile */
+}
+
+.filter-bar label {
+  font-weight: bold;
+  color: #555;
+}
+
+.filter-bar input[type="date"],
+.filter-bar select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.filter-bar .btn {
+  padding: 8px 15px;
+  font-size: 1em;
+}
+
+/* Style cho từng mục cuộc hẹn trong danh sách */
+.appointment-item {
+  background-color: #fff; /* Nền trắng cho mỗi mục (nếu container có nền khác) */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex; /* Dùng flexbox để chia details và actions */
+  justify-content: space-between; /* Đẩy details và actions ra hai đầu */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  flex-wrap: wrap; /* Cho phép xuống dòng trên mobile */
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Style cho phần chi tiết cuộc hẹn */
+.appointment-details {
+  flex: 1; /* Cho phép phần details giãn nở */
+  min-width: 250px; /* Chiều rộng tối thiểu */
+  margin-right: 15px; /* Khoảng cách với phần actions */
+}
+
+.appointment-details h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.3em;
+}
+
+.appointment-details p {
+  margin-bottom: 5px;
+  color: #555;
+  font-size: 0.95em;
+}
+
+.appointment-details p strong {
+  color: #333;
+}
+
+/* Style cho dòng Tổng tiền */
+.appointment-total {
+  font-weight: bold; /* In đậm */
+  color: #ff7f00; /* Màu cam */
+  margin-top: 10px; /* Khoảng cách trên */
+  padding-top: 8px; /* Padding trên */
+  border-top: 1px dashed #ccc; /* Đường kẻ đứt nét trên */
+}
+
+/* Style cho trạng thái cuộc hẹn */
+.appointment-status span {
+  font-weight: bold;
+  /* Màu sắc sẽ thay đổi tùy thuộc vào class cha (.pending, .confirmed, .cancelled) */
+}
+
+/* Màu sắc trạng thái */
+.appointment-item.pending .appointment-status span {
+  color: #f0ad4e; /* Màu vàng cam cho chờ xác nhận */
+}
+
+.appointment-item.confirmed .appointment-status span {
+  color: #5cb85c; /* Màu xanh lá cây cho đã xác nhận */
+}
+
+.appointment-item.cancelled .appointment-status span {
+  color: #d9534f; /* Màu đỏ cho đã hủy */
+}
+
+/* Style cho phần hành động (nút) */
+.appointment-actions {
+  display: flex; /* Dùng flexbox cho các nút */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  flex-wrap: wrap; /* Cho phép nút xuống dòng trên mobile */
+  justify-content: flex-end; /* Căn nút sang phải (trên desktop) */
+}
+
+.appointment-actions .btn {
+  padding: 8px 15px;
+  font-size: 0.9em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    opacity 0.3s ease;
+  display: inline-flex; /* Dùng flexbox để căn icon và text */
+  align-items: center;
+  gap: 5px; /* Khoảng cách giữa icon và text */
+}
+
+/* Style cho các loại nút hành động */
+.appointment-actions .confirm-btn {
+  background-color: #5cb85c; /* Màu xanh lá cây */
+  color: #fff;
+  border: none;
+}
+.appointment-actions .confirm-btn:hover {
+  background-color: #4cae4c;
+}
+
+.appointment-actions .reject-btn,
+.appointment-actions .cancel-btn {
+  background-color: #d9534f; /* Màu đỏ */
+  color: #fff;
+  border: none;
+}
+.appointment-actions .reject-btn:hover,
+.appointment-actions .cancel-btn:hover {
+  background-color: #c9302c;
+}
+
+.appointment-actions .completed-btn {
+  background-color: #0275d8; /* Màu xanh dương */
+  color: #fff;
+  border: none;
+}
+.appointment-actions .completed-btn:hover {
+  background-color: #025aa5;
+}
+
+.appointment-actions .secondary-btn {
+  background-color: transparent;
+  color: #0275d8; /* Màu xanh dương */
+  border: 1px solid #0275d8;
+}
+.appointment-actions .secondary-btn:hover {
+  background-color: #0275d8;
+  color: #fff;
+}
+
+/* Style cho thông báo không có lịch hẹn */
+.no-appointments {
+  text-align: center;
+  color: #777;
+  font-size: 1.1em;
+  padding: 20px;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+/* --- Responsive adjustments for Salon Appointments page --- */
+
+@media screen and (max-width: 768px) {
+  .page-main {
+    padding-top: 70px; /* Điều chỉnh padding top nếu header mobile nhỏ hơn */
+    padding-bottom: 30px;
+  }
+  .page-main h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  .appointment-management-container {
+    padding: 15px;
+    margin-top: 15px;
+  }
+  .filter-bar {
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  .filter-bar label,
+  .filter-bar input,
+  .filter-bar select,
+  .filter-bar .btn {
+    font-size: 0.95em;
+    padding: 6px 10px;
+  }
+
+  .appointment-item {
+    flex-direction: column; /* Xếp chi tiết và hành động theo cột trên mobile */
+    align-items: flex-start; /* Căn trái nội dung khi xếp cột */
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .appointment-details {
+    margin-right: 0;
+    margin-bottom: 15px; /* Khoảng cách dưới details khi xếp cột */
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+  }
+  .appointment-details h3 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+  }
+  .appointment-details p {
+    font-size: 0.9em;
+    margin-bottom: 4px;
+  }
+  /* Điều chỉnh style Tổng tiền trên mobile */
+  .appointment-total {
+    font-size: 1em;
+    margin-top: 8px;
+    padding-top: 6px;
+  }
+  .appointment-actions {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    justify-content: flex-start; /* Căn nút sang trái trên mobile */
+    gap: 8px; /* Giảm khoảng cách giữa các nút */
+  }
+  .appointment-actions .btn {
+    font-size: 0.85em;
+    padding: 6px 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .page-main h1 {
+    font-size: 1.8em;
+  }
+  .appointment-management-container {
+    padding: 10px;
+  }
+  .filter-bar {
+    gap: 8px;
+  }
+  .appointment-details h3 {
+    font-size: 1.1em;
+  }
+  .appointment-details p {
+    font-size: 0.85em;
+  }
+  /* Điều chỉnh style Tổng tiền trên màn hình rất nhỏ */
+  .appointment-total {
+    font-size: 0.9em;
+    margin-top: 6px;
+    padding-top: 5px;
+  }
+  .appointment-actions .btn {
+    font-size: 0.8em;
+    padding: 5px 10px;
+  }
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Đặt Hẹn - Barber Shop</title>
+    <link rel="stylesheet" href="/css/css-client/style.css">
+    <link rel="stylesheet" href="/css/css-client/history-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<header class="site-header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="/image/logo.png" alt="Barber Shop Logo">
+            </div>
+
+            <div class="hamburger-icon">
+                <i class="fas fa-bars"></i>
+                </div>
+
+            <div class="mobile-menu-overlay">
+                 <div class="mobile-menu-content">
+                     <div class="close-icon">
+                         <i class="fas fa-times"></i>
+                         </div>
+                     <nav class="mobile-nav">
+                         <ul>
+                             <li><a href="index.html">Trang chủ</a></li>
+                             <li><a href="about.html">Về chúng tôi</a></li>
+                             <li><a href="services.html">Dịch vụ</a></li>
+                              
+                         </ul>
+                     </nav>
+                     <div class="mobile-header-buttons">
+                         <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+                         <a href="login.html" class="btn primary-btn ">Đăng nhập</a> 
+                         <a href="register.html" class="btn primary-btn">Đăng ký</a>     
+                     </div>
+                 </div>
+            </div>
+
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="about.html">Về chúng tôi</a></li> 
+                    <li><a href="services.html">Dịch vụ</a></li> 
+                      
+            </nav>
+            <div class="header-buttons desktop-buttons">
+                <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+            </div>
+            <div class="header-buttons desktop-buttons">
+                 <div class="user-account">
+                <a href="login.html" class="user-icon-link logged-out-only"> 
+                    <i class="fas fa-user-circle"></i>
+                    <span>Đăng nhập</span>
+                </a>
+
+                <div class="account-dropdown logged-in-only"> 
+                    <a href="my-profile.html">Tài khoản của tôi</a>
+                    <a href="history.html">Lịch sử đặt lịch</a>
+                    <a href="/js/js-client/script.js" id="desktop-logout-link">Đăng xuất</a>
+                </div>
+        </div>
+    </header>
+
+<main class="page-main">
+    <div class="container">
+        <h1>Lịch Sử Đặt Hẹn</h1>
+        <p id="customer-name-display" class="customer-history-info"></p>
+
+        <div class="appointment-history-list">
+            <div class="appointment-history-item">
+                <div class="appointment-details-card">
+                    <p><strong>Salon:</strong> Chi nhánh Cầu Giấy, Hà Nội</p>
+                    <p><strong>Dịch Vụ:</strong> Cắt tóc (150.000 VNĐ)</p>
+                    <p><strong>Thợ Cắt:</strong> Thợ Lê Hiếu</p>
+                    <p><strong>Thời Gian:</strong> 2024-05-20, 10:30</p>
+                    <p><strong>Ghi Chú:</strong> Cắt tỉa layer</p>
+                    <p class="appointment-status-card status-completed">Trạng Thái: Đang chờ xử lý</p>
+                </div>
+                <form action="#">
+                    <button type="button" class="btn btn-cancel-appointment">Hủy Lịch</button>
+                </form>
+            </div>
+        </div>        
+
+    </div>
+</main>
+
+<footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
+    <p>Barber Shop. All rights reserved.</p>
+</footer>
+
+<script src="/js/js-client/script.js"></script>
+
+</body>
+</html>
+

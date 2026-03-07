@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Lịch hẹn - Barber Shop Admin</title>
+    <link rel="stylesheet" href="/css/css-admin/style.css">
+    <link rel="stylesheet" href="/css/css-admin/salon-appointments-styles.css">
+    <link rel="stylesheet" href="/css/css-admin/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+      <header class="site-header">
+        <div class="container header-container">
+             <div class="logo">
+                 <img src="/image/logo.png" alt="Barber Shop Logo">
+             </div>
+             <div class="hamburger-icon">
+                 <i class="fas fa-bars"></i>
+             </div>
+             <div class="mobile-menu-overlay">
+                  <div class="mobile-menu-content">
+                      <div class="close-icon">
+                          <i class="fas fa-times"></i>
+                      </div>
+                      <nav class="mobile-nav">
+                          <ul>
+                              <li><a href="admin-dashboard.html">Trang chủ</a></li>
+                              <li><a href="customer-management.html">Khách hàng</a></li>
+                              <li><a href="salon-appointments.html">Lịch hẹn</a></li> 
+                              <li><a href="branch-management.html">Chi nhánh</a></li> 
+                              <li><a href="service-management.html">Dịch vụ</a></li> 
+                              <li><a href="stylist-management.html">Stylist</a></li>
+
+
+                          </ul>
+                      </nav>
+                  </div>
+             </div>
+             <nav class="desktop-nav">
+                   <ul>
+                           <li><a href="admin-dashboard.html">Trang chủ</a></li>
+                              <li><a href="customer-management.html">Khách hàng</a></li>
+                              <li><a href="salon-appointments.html">Lịch hẹn</a></li> 
+                              <li><a href="branch-management.html">Chi nhánh</a></li> 
+                              <li><a href="service-management.html">Dịch vụ</a></li> 
+                              <li><a href="stylist-management.html">Stylist</a></li>
+
+                   </ul>
+             </nav>
+         </div>
+    </header>
+
+   <main class="page-main"> 
+        <div class="container">
+            <h1>Quản lý Lịch hẹn Salon</h1>
+
+            <div class="appointment-management-container">
+                <div class="filter-bar">
+                   <input type="date">, <select> trạng thái, nút tìm kiếm
+                   <label for="filter-date">Ngày:</label>
+                    <input type="date" id="filter-date">
+                    <label for="filter-status">Trạng thái:</label>
+                    <select id="filter-status">
+                        <option value="">Tất cả</option>
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="cancelled">Đã hủy</option>
+                    </select>
+                    <button class="btn">Lọc</button> 
+                </div>
+
+                <div class="appointment-list">
+                    
+                    <div class="appointment-item pending">
+                        <div class="appointment-details">
+                            <h3>Khách hàng: Nguyễn Văn A</h3>
+                            <p><strong>SĐT:</strong> 0912345678</p>
+                            <p><strong>Thời gian:</strong> 20/05/2025, 10:00</p>
+                            <p><strong>Dịch vụ:</strong> Cắt tóc + Cạo râu</p>
+                            <p><strong>Thợ cắt:</strong> Thợ B</p>
+                            <p><strong>Ghi chú:</strong> Khách hàng yêu cầu cắt ngắn 2 bên</p>
+                            <p class="appointment-total"><strong>Tổng tiền:</strong> <span>200.000 VNĐ</span></p>
+                            <p class="appointment-status">Trạng thái: <span>Chờ xác nhận</span></p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn confirm-btn"><i class="fas fa-check"></i> Xác nhận</button>
+                            <button class="btn reject-btn"><i class="fas fa-times"></i> Hủy</button>
+                           <button class="btn secondary-btn"><i class="fas fa-info-circle"></i> Chi tiết</button>
+                        </div>
+                    </div>
+
+                   
+                     <div class="appointment-item confirmed">
+                        <div class="appointment-details">
+                            <h3>Khách hàng: Trần Thị B</h3>
+                            <p><strong>SĐT:</strong> 0987654321</p>
+                            <p><strong>Thời gian:</strong> 20/05/2025, 11:30</p>
+                            <p><strong>Dịch vụ:</strong> Nhuộm tóc</p>
+                            <p><strong>Thợ cắt:</strong> Thợ A</p>
+                             <p><strong>Ghi chú:</strong> Không có</p>
+                             <p class="appointment-total"><strong>Tổng tiền:</strong> <span>500.000 VNĐ</span></p>
+                            <p class="appointment-status">Trạng thái: <span>Đã xác nhận</span></p>
+                        </div>
+                        <div class="appointment-actions">
+                             <button class="btn completed-btn"><i class="fas fa-check-double"></i> Hoàn thành</button>
+                             <button class="btn cancel-btn"><i class="fas fa-ban"></i> Hủy</button>
+                        </div>
+                    </div>
+
+                     <div class="appointment-item cancelled">
+                        <div class="appointment-details">
+                            <h3>Khách hàng: Lê Văn C</h3>
+                            <p><strong>SĐT:</strong> 0901122334</p>
+                            <p><strong>Thời gian:</strong> 19/05/2025, 15:00</p>
+                            <p><strong>Dịch vụ:</strong> Chăm sóc da mặt</p>
+                            <p><strong>Thợ cắt:</strong> Không chọn</p>
+                             <p><strong>Ghi chú:</strong> Khách gọi điện hủy</p>
+                             <p class="appointment-total"><strong>Tổng tiền:</strong> <span>200.000 VNĐ</span></p> 
+                            <p class="appointment-status">Trạng thái: <span>Đã hủy</span></p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn delete-btn"><i class="fas fa-trash"></i> Xóa</button>
+                        </div>
+                    </div>
+
+                   <div class="appointments"></div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
+         <p>Barber Shop. All rights reserved.</p>
+     </footer>
+
+    <script src="/js/js-client/script.js"></script>
+    <script src="/js/js-admin/salon-appointments-script.js"></script>
+</body>
+</html>
