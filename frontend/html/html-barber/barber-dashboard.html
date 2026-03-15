@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cổng thông tin Thợ Cắt Tóc - Barber Shop</title>
+    <link rel="stylesheet" href="/css/css-admin/style.css" />
+    <link rel="stylesheet" href="/css/css-barber/barber-dashboard-styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div
+        class="container header-container"
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <div class="logo">
+          <img
+            src="/image/logo.png"
+            alt="Barber Shop Logo"
+            style="height: 50px"
+          />
+        </div>
+        <div class="user-account">
+          <a
+            href="#"
+            class="user-icon-link"
+            style="color: white; text-decoration: none"
+          >
+            <i class="fas fa-user-tie"></i>
+            <span>Xin chào, Thợ Khoa Đăng</span>
+          </a>
+          <a
+            href="/html/html-client/index.html"
+            class="logout-btn"
+            style="margin-left: 20px; color: #ff4d4d; text-decoration: none"
+          >
+            <i class="fas fa-sign-out-alt"></i> Thoát
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="barber-container">
+      <div class="tab-menu">
+        <button class="tab-btn active" id="tab-appointments-btn">
+          <i class="fas fa-calendar-alt"></i> Lịch Cắt Của Tôi
+        </button>
+        <button class="tab-btn" id="tab-leave-btn">
+          <i class="fas fa-bed"></i> Xin Nghỉ Phép
+        </button>
+      </div>
+
+      <section id="appointments-section" class="tab-content active">
+        <h2>Lịch Hẹn Sắp Tới</h2>
+        <div class="table-responsive">
+          <table class="barber-table">
+            <thead>
+              <tr>
+                <th>Ngày</th>
+                <th>Giờ</th>
+                <th>Khách Hàng</th>
+                <th>Số Điện Thoại</th>
+                <th>Dịch Vụ</th>
+                <th>Ghi chú</th>
+                <th>Trạng Thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>20/05/2026</td>
+                <td>09:00</td>
+                <td>Nguyễn Văn A</td>
+                <td>0912345678</td>
+                <td>Cắt tóc + Cạo râu</td>
+                <td>Cắt layer ngắn</td>
+                <td><span class="status-badge pending">Chờ phục vụ</span></td>
+              </tr>
+              <tr>
+                <td>20/05/2026</td>
+                <td>10:00</td>
+                <td>Trần Thị B</td>
+                <td>0987654321</td>
+                <td>Nhuộm tóc</td>
+                <td>Nhuộm màu khói</td>
+                <td><span class="status-badge pending">Chờ phục vụ</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="leave-section" class="tab-content">
+        <h2>Đăng Ký Nghỉ Phép</h2>
+        <div class="leave-form-container">
+          <form id="leave-request-form" action="#">
+            <div class="form-group">
+              <label for="leave-date"
+                >Ngày xin nghỉ <span class="required">*</span>:</label
+              >
+              <input type="date" id="leave-date" name="leave_date" required />
+            </div>
+
+            <div class="form-group">
+              <label for="leave-type"
+                >Loại nghỉ phép <span class="required">*</span>:</label
+              >
+              <select id="leave-type" name="leave_type" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="Ốm đau">Ốm đau / Vấn đề sức khỏe</option>
+                <option value="Việc gia đình">Việc bận gia đình</option>
+                <option value="Khác">Lý do khác</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="leave-reason">Chi tiết lý do (Tùy chọn):</label>
+              <textarea
+                id="leave-reason"
+                name="leave_reason"
+                rows="4"
+                placeholder="Nhập lý do cụ thể để quản lý dễ duyệt..."
+              ></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Gửi Yêu Cầu</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="/js/js-barber/barber-dashboard-script.js"></script>
+  </body>
+</html>
