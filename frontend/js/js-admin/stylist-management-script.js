@@ -6,7 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const cancelFormBtn = document.getElementById("cancel-add-stylist-form-btn");
   const addStylistForm = document.getElementById("add-stylist-form"); // Tham chiếu đến form
-
+  let editingRow = null; // Biến để nhớ xem đang sửa dòng nào
+  const tableBody = document.querySelector(".stylist-list tbody");
+  const formTitle = document.querySelector(".add-stylist-block h2");
+  const submitBtn = document.querySelector("#add-stylist-form .primary-btn");
   // Kiểm tra xem các phần tử form có tồn tại trên trang không
   if (
     showFormBtn &&
@@ -24,6 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
       showFormBtn.style.display = "none"; // Ẩn nút "Thêm Stylist"
       console.log("Add stylist form shown.");
     }
+    // Hàm ẩn form
+    function hideAddStylistForm() {
+      addStylistFormContainer.classList.remove("visible");
+      showFormBtn.style.display = "inline-block";
+      addStylistForm.reset();
+
+      editingRow = null; // Reset lại trạng thái
+      if (formTitle) formTitle.textContent = "Thêm Stylist Mới"; // Trả lại tiêu đề cũ
+      if (submitBtn)
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Thêm Stylist'; // Trả lại nút cũ
+
+      console.log("Add stylist form hidden.");
+    }
 
     // Hàm ẩn form
     function hideAddStylistForm() {
@@ -40,62 +56,108 @@ document.addEventListener("DOMContentLoaded", function () {
     cancelFormBtn.addEventListener("click", hideAddStylistForm);
 
     // Tùy chọn: Lắng nghe sự kiện submit form
-    addStylistForm.addEventListener("submit", function (event) {
-      event.preventDefault(); // Ngăn chặn submit form mặc định
+    // --- BẮT ĐẦU ĐOẠN MỚI: LOGIC BẤM NÚT SỬA/XÓA TRÊN BẢNG ---
+    if (tableBody) {
+      tableBody.addEventListener("click", function (event) {
+        const target = event.target;
 
-      // --- Logic xử lý dữ liệu form tại đây ---
-      const stylistName = document.getElementById("stylist-name").value;
-      const stylistBranch = document.getElementById("stylist-branch").value;
-      const stylistPhone = document.getElementById("stylist-phone").value;
-      const stylistSpecialty =
-        document.getElementById("stylist-specialty").value;
-      // const stylistEmail = document.getElementById('stylist-email').value; // Nếu có
-      // const stylistPhoto = document.getElementById('stylist-photo').files[0]; // Lấy file ảnh
+        // Xử lý XÓA
+        if (target.closest(".delete-btn")) {
+          if (confirm("Bạn có chắc chắn muốn xóa Stylist này khỏi hệ thống?")) {
+            target.closest("tr").remove();
+          }
+        }
 
-      console.log("Form submitted:", {
-        name: stylistName,
-        branch: stylistBranch,
-        phone: stylistPhone,
-        specialty: stylistSpecialty,
-        // email: stylistEmail,
-        // photo: stylistPhoto ? stylistPhoto.name : 'No file'
+        // Xử lý SỬA
+        if (target.closest(".edit-btn")) {
+          editingRow = target.closest("tr");
+          const cells = editingRow.querySelectorAll("td");
+
+          // Lấy dữ liệu từ bảng lên Form
+          document.getElementById("stylist-name").value =
+            cells[1].textContent.trim();
+          document.getElementById("stylist-phone").value =
+            cells[3].textContent.trim() !== "Trống"
+              ? cells[3].textContent.trim()
+              : "";
+
+          // Lấy Trạng thái
+          const statusSpan = cells[4].querySelector(".status-badge");
+          if (statusSpan) {
+            document.getElementById("stylist-status").value =
+              statusSpan.textContent.trim();
+          }
+
+          // Lấy Chi nhánh
+          const branchText = cells[2].textContent.trim();
+          const branchSelect = document.getElementById("stylist-branch");
+          for (let i = 0; i < branchSelect.options.length; i++) {
+            if (branchSelect.options[i].text === branchText) {
+              branchSelect.selectedIndex = i;
+              break;
+            }
+          }
+
+          // Đổi giao diện Form sang chế độ Cập nhật
+          if (formTitle) formTitle.textContent = "Sửa Thông Tin Stylist";
+          if (submitBtn)
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Cập nhật';
+
+          showAddStylistForm();
+        }
       });
+    }
 
-      // --- Gửi dữ liệu đến backend (sử dụng fetch API) ---
-      // Sử dụng FormData nếu có file ảnh
-      // const formData = new FormData(addStylistForm);
-      // fetch('/api/stylists', {
-      //     method: 'POST',
-      //     // Nếu gửi FormData, không cần set Content-Type header, trình duyệt tự làm
-      //     // headers: {
-      //     //     'Authorization': 'Bearer ' + localStorage.getItem('userToken')
-      //     // },
-      //     body: formData // Gửi FormData
-      // })
-      // .then(response => {
-      //     if (!response.ok) {
-      //         throw new Error('Network response was not ok ' + response.statusText);
-      //     }
-      //     return response.json(); // Hoặc response.text()
-      // })
-      // .then(data => {
-      //     console.log('Stylist added successfully:', data);
-      //     // Tùy chọn: Cập nhật lại bảng danh sách stylist
-      //     // fetchStylists(); // Gọi hàm để tải lại danh sách stylist
-      //     hideAddStylistForm(); // Ẩn form sau khi lưu thành công
-      //     // Tùy chọn: Hiển thị thông báo thành công cho người dùng
-      // })
-      // .catch(error => {
-      //     console.error('Error adding stylist:', error);
-      //     // Tùy chọn: Hiển thị thông báo lỗi cho người dùng
-      // });
+    // --- BẮT ĐẦU ĐOẠN MỚI: LOGIC LƯU HOẶC CẬP NHẬT TRÊN FORM ---
+    addStylistForm.addEventListener("submit", function (event) {
+      event.preventDefault();
 
-      // --- Mô phỏng lưu thành công và ẩn form ---
-      // Nếu không dùng backend, chỉ ẩn form và reset
-      hideAddStylistForm();
-      // Tùy chọn: Cập nhật bảng giả định hoặc hiển thị thông báo
-      alert("Stylist đã được thêm (mô phỏng)."); // Sử dụng alert tạm thời
+      const stylistName = document.getElementById("stylist-name").value;
+      const branchSelect = document.getElementById("stylist-branch");
+      const stylistBranch =
+        branchSelect.options[branchSelect.selectedIndex].text;
+      const stylistPhone =
+        document.getElementById("stylist-phone").value || "Trống";
+      const stylistStatus = document.getElementById("stylist-status").value;
+
+      let statusClass = "status-active";
+      if (stylistStatus === "Nghỉ phép") statusClass = "status-leave";
+      if (stylistStatus === "Đã nghỉ") statusClass = "status-inactive";
+
+      if (editingRow) {
+        // CHẾ ĐỘ SỬA: Đè dữ liệu mới lên dòng cũ
+        editingRow.cells[1].textContent = stylistName;
+        editingRow.cells[2].textContent = stylistBranch;
+        editingRow.cells[3].textContent = stylistPhone;
+        editingRow.cells[4].innerHTML = `<span class="status-badge ${statusClass}">${stylistStatus}</span>`;
+
+        alert("Đã cập nhật thông tin Stylist thành công!");
+      } else {
+        // CHẾ ĐỘ THÊM MỚI: Tạo dòng mới tinh
+        const randomId =
+          "ST" +
+          Math.floor(Math.random() * 1000)
+            .toString()
+            .padStart(3, "0");
+        const newRow = document.createElement("tr");
+        newRow.innerHTML = `
+              <td>${randomId}</td>
+              <td>${stylistName}</td>
+              <td>${stylistBranch}</td>
+              <td>${stylistPhone}</td>
+              <td><span class="status-badge ${statusClass}">${stylistStatus}</span></td>
+              <td>
+                  <button type="button" class="btn edit-btn"><i class="fas fa-edit"></i> Sửa</button>
+                  <button type="button" class="btn delete-btn"><i class="fas fa-trash"></i> Xóa</button>
+              </td>
+          `;
+        if (tableBody) tableBody.appendChild(newRow);
+        alert("Đã thêm Stylist mới thành công!");
+      }
+
+      hideAddStylistForm(); // Ẩn form đi và tự động reset
     });
+    // --- KẾT THÚC ĐOẠN MỚI ---
   } else {
     console.log("Stylist management form elements not found on this page.");
   }
