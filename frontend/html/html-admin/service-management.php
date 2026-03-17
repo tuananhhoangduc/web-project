@@ -136,39 +136,53 @@
                   <th>Mã Dịch vụ</th>
                   <th>Tên Dịch vụ</th>
                   <th>Giá</th>
-                  <th>Thời lượng</th>
+                  <th>Thời lượng</th> 
+                  <th>Mô tả</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>DV001</td>
-                  <td>Cắt tóc Nam</td>
-                  <td>150,000 VNĐ</td>
-                  <td>30 phút</td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>DV002</td>
-                  <td>Cạo râu</td>
-                  <td>50,000 VNĐ</td>
-                  <td>15 phút</td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
+                  <?php
+                  require_once '../../../backend/db_connect.php';
+                  
+                  $sql = "SELECT * FROM services ORDER BY service_id DESC";
+                  $stmt = $conn->query($sql);
+                  $services = $stmt->fetchAll();
+
+                  if (count($services) > 0):
+                      foreach ($services as $s):
+                  ?>
+                      <tr>
+                          <td>DV<?php echo str_pad($s['service_id'], 3, '0', STR_PAD_LEFT); ?></td>
+                          <td><?php echo htmlspecialchars($s['service_name']); ?></td>
+                          <td><?php echo number_format($s['price'], 0, ',', '.'); ?> VNĐ</td>
+                          
+                          <td><?php echo htmlspecialchars($s['duration'] ?? '0'); ?> phút</td>
+                          
+                          <td><?php echo htmlspecialchars($s['description'] ?? ''); ?></td>
+                          
+                          <td>
+                              <button class="btn edit-btn" 
+                                  onclick="editService(this)"
+                                  data-id="<?php echo $s['service_id']; ?>"
+                                  data-name="<?php echo htmlspecialchars($s['service_name']); ?>"
+                                  data-price="<?php echo $s['price']; ?>"
+                                  data-duration="<?php echo htmlspecialchars($s['duration'] ?? ''); ?>"
+                                  data-desc="<?php echo htmlspecialchars($s['description'] ?? ''); ?>">
+                                  <i class="fas fa-edit"></i> Sửa
+                              </button>
+                              
+                              <button class="btn delete-btn" onclick="deleteService(<?php echo $s['service_id']; ?>)">
+                                  <i class="fas fa-trash"></i> Xóa
+                              </button>
+                          </td>
+                      </tr>
+                  <?php 
+                      endforeach; 
+                  else: 
+                      echo "<tr><td colspan='6' style='text-align:center;'>Chưa có dịch vụ nào.</td></tr>";
+                  endif; 
+                  ?>
               </tbody>
             </table>
             <div class="no-items"></div>
@@ -190,5 +204,38 @@
 
     <script src="../../js/js-client/script.js"></script>
     <script src="../../js/js-admin/service-management-script.js"></script>
+    <script>
+      // Hàm xử lý Xóa dịch vụ
+      function deleteService(id) {
+          if (confirm('Bạn có chắc chắn muốn xóa dịch vụ này không?')) {
+              window.location.href = '../../../backend/delete_service.php?id=' + id;
+          }
+      }
+
+      // Hàm xử lý Sửa dịch vụ (Bơm dữ liệu ngược lên Form giống hệt bên Chi nhánh)
+      function editService(button) {
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+    const price = button.getAttribute('data-price');
+    const duration = button.getAttribute('data-duration'); // Lấy thêm thời lượng
+    const desc = button.getAttribute('data-desc');
+
+    // Chèn vào các ô Input (Bạn nhớ kiểm tra xem id của các ô input trong form có đúng thế này không nhé)
+    document.getElementById('service-id').value = id; // Ô hidden
+    document.getElementById('service-name').value = name;
+    document.getElementById('service-price').value = price;
+    document.getElementById('service-duration').value = duration; // Ô thời lượng
+    document.getElementById('service-desc').value = desc; 
+
+    // Đổi Form sang Cập nhật
+    const form = document.getElementById('add-service-form');
+    form.action = '../../../backend/update_service.php';
+    
+    document.querySelector('.add-service-block h2').innerText = 'Cập nhật Dịch vụ'; 
+    document.getElementById('submit-btn').innerHTML = '<i class="fas fa-check"></i> Cập nhật ngay';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+      </script>
   </body>
 </html>
