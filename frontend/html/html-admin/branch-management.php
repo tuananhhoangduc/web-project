@@ -74,55 +74,34 @@
               class="add-branch-form-container"
             >
               <form id="add-branch-form" action="../../../backend/add_branch.php" method="POST">
-                <div class="form-group">
-                  <label for="branch-name">Tên Chi nhánh:</label>
-                  <input
-                    type="text"
-                    id="branch-name"
-                    name="branch_name"
-                    placeholder="Nhập tên chi nhánh"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="branch-address">Địa chỉ:</label>
-                  <input
-                    type="text"
-                    id="branch-address"
-                    name="branch_address"
-                    placeholder="Nhập địa chỉ chi nhánh"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="branch-phone">Số điện thoại:</label>
-                  <input
-                    type="tel"
-                    id="branch-phone"
-                    name="branch_phone"
-                    placeholder="Nhập SĐT chi nhánh"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="branch-email">Email:</label>
-                  <input
-                    type="email"
-                    id="branch-email"
-                    name="branch_email"
-                    placeholder="Nhập email chi nhánh"
-                  />
-                </div>
+                  <input type="hidden" id="branch-id" name="branch_id" value="">
 
-                <button type="submit" class="btn primary-btn">
-                  <i class="fas fa-save"></i> Lưu Chi nhánh
-                </button>
-                <button
-                  type="button"
-                  class="btn secondary-btn"
-                  id="cancel-add-branch-form-btn"
-                >
-                  <i class="fas fa-times"></i> Hủy
-                </button>
+                  <div class="form-group">
+                      <label for="branch-name">Tên Chi nhánh:</label>
+                      <input type="text" id="branch-name" name="branch_name" placeholder="Nhập tên chi nhánh" required />
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="branch-address">Địa chỉ:</label>
+                      <input type="text" id="branch-address" name="branch_address" placeholder="Nhập địa chỉ chi nhánh" required />
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="branch-phone">Số điện thoại:</label>
+                      <input type="tel" id="branch-phone" name="branch_phone" placeholder="Nhập SĐT chi nhánh" />
+                  </div>
+                  
+                  <div class="form-group">
+                      <label for="branch-email">Email:</label>
+                      <input type="email" id="branch-email" name="branch_email" placeholder="Nhập email chi nhánh" />
+                  </div>
+
+                  <button type="submit" id="submit-btn" class="btn primary-btn">
+                      <i class="fas fa-save"></i> Lưu Chi nhánh
+                  </button>
+                  <button type="button" class="btn secondary-btn" id="cancel-add-branch-form-btn">
+                      <i class="fas fa-times"></i> Hủy
+                  </button>
               </form>
             </div>
           </div>
@@ -159,7 +138,13 @@
                           <td><?php echo $b['phone']; ?></td>
                           <td><?php echo $b['email'] ?? 'Chưa cập nhật'; ?></td>
                           <td>
-                              <button class="btn edit-btn" onclick="editBranch(<?php echo $b['branch_id']; ?>)">
+                              <button class="btn edit-btn" 
+                                  onclick="editBranch(this)"
+                                  data-id="<?php echo $b['branch_id']; ?>"
+                                  data-name="<?php echo htmlspecialchars($b['branch_name']); ?>"
+                                  data-address="<?php echo htmlspecialchars($b['address']); ?>"
+                                  data-phone="<?php echo htmlspecialchars($b['phone']); ?>"
+                                  data-email="<?php echo htmlspecialchars($b['email']); ?>">
                                   <i class="fas fa-edit"></i> Sửa
                               </button>
                               <button class="btn delete-btn" onclick="deleteBranch(<?php echo $b['branch_id']; ?>)">
@@ -194,5 +179,43 @@
 
     <script src="../../js/js-client/script.js"></script>
     <script src="../../js/js-admin/branch-management-script.js"></script>
+    <script>
+    // Hàm xử lý khi bấm nút Xóa
+    function deleteBranch(id) {
+        // Hiển thị hộp thoại xác nhận
+        if (confirm('Bạn có chắc chắn muốn xóa chi nhánh này không? Dữ liệu không thể khôi phục!')) {
+            // Nếu chọn OK, sẽ gọi sang file PHP ở backend để xóa
+            window.location.href = '../../../backend/delete_branch.php?id=' + id;
+        }
+    }
+
+    // Hàm xử lý khi bấm nút Sửa
+    function editBranch(button) {
+    // 1. Lấy dữ liệu từ cái nút Sửa vừa bấm
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+    const address = button.getAttribute('data-address');
+    const phone = button.getAttribute('data-phone');
+    const email = button.getAttribute('data-email');
+
+    // 2. Bơm dữ liệu ngược lên các ô Input của Form
+    document.getElementById('branch-id').value = id;
+    document.getElementById('branch-name').value = name;
+    document.getElementById('branch-address').value = address;
+    document.getElementById('branch-phone').value = phone;
+    document.getElementById('branch-email').value = email;
+
+    // 3. Đổi Giao diện & Hành động của Form từ "Thêm" sang "Sửa"
+    const form = document.getElementById('add-branch-form');
+    form.action = '../../../backend/update_branch.php'; // Đổi đích đến sang file Cập nhật
+    
+    // Đổi chữ trên Form cho ngầu
+    document.querySelector('.container h2, h3').innerText = 'Cập nhật Chi nhánh'; 
+    document.getElementById('submit-btn').innerHTML = '<i class="fas fa-check"></i> Cập nhật ngay';
+
+    // 4. Tự động cuộn trang lên trên cùng để người dùng thấy Form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+    </script>
   </body>
 </html>

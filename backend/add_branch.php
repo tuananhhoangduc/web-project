@@ -1,7 +1,9 @@
 <?php
+session_start();
 require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Hứng dữ liệu từ các ô input của Form gửi sang
     $name    = $_POST['branch_name'];
     $address = $_POST['branch_address'];
     $phone   = $_POST['branch_phone'];
@@ -13,11 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([$name, $address, $phone, $email]);
 
         echo "<script>
-            alert('Thêm chi nhánh thành công!');
-            window.location.href = '../frontend/html/html-admin/branch-management.php';
-        </script>";
+                alert('Thêm chi nhánh mới thành công!'); 
+                window.location.href = '../frontend/html/html-admin/branch-management.php';
+              </script>";
     } catch(PDOException $e) {
-        die("Lỗi: " . $e->getMessage());
+        die("Lỗi hệ thống: " . $e->getMessage());
     }
 }
 ?>
