@@ -1,4 +1,19 @@
+<?php
+session_start();
 
+// Nếu chưa đăng nhập (không có thẻ chứng minh user_id)
+if (!isset($_SESSION['user_id'])) {
+    // Lưu lại cái địa chỉ trang này để sau khi đăng nhập xong nó quay lại đây luôn
+    $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
+    
+    // Đá người dùng sang trang đăng nhập
+    echo "<script>
+        alert('Vui lòng đăng nhập để sử dụng chức năng đặt lịch!');
+        window.location.href = 'login.html';
+    </script>";
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -28,14 +43,14 @@
                          </div>
                      <nav class="mobile-nav">
                          <ul>
-                             <li><a href="index.html">Trang chủ</a></li>
+                             <li><a href="index.php">Trang chủ</a></li>
                              <li><a href="about.html">Về chúng tôi</a></li>
                              <li><a href="services.html">Dịch vụ</a></li>
                               
                          </ul>
                      </nav>
                      <div class="mobile-header-buttons">
-                         <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+                         <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
                          <a href="login.html" class="btn primary-btn ">Đăng nhập</a> 
                          <a href="register.html" class="btn primary-btn">Đăng ký</a>     
                      </div>
@@ -44,32 +59,34 @@
 
             <nav class="desktop-nav">
                 <ul>
-                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="index.php">Trang chủ</a></li>
                     <li><a href="about.html">Về chúng tôi</a></li> 
                     <li><a href="services.html">Dịch vụ</a></li> 
                       
             </nav>
             <div class="header-buttons desktop-buttons">
-                <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+                <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
             </div>
             <div class="header-buttons desktop-buttons">
                  <div class="user-account">
-                <a href="login.html" class="user-icon-link logged-out-only"> 
-                    <i class="fas fa-user-circle"></i>
-                    <span>Đăng nhập</span>
-                </a>
-
-                 <a href="#" class="user-icon-link logged-in-only"> 
-                    <i class="fas fa-user-circle"></i>
-                    <span>Tài khoản của tôi</span>
-                    <i class="fas fa-chevron-down"></i> 
-                </a>
-                <div class="account-dropdown logged-in-only"> 
-                    <a href="my-profile.html">Tài khoản của tôi</a>
-                    <a href="history.html">Lịch sử đặt lịch</a>
-                    <a href="../../js/js-client/script.js" id="desktop-logout-link">Đăng xuất</a>
-                </div>
-        </div>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
+                        <i class="fas fa-user-circle"></i>
+                        <span>Xin chào, <?php echo $_SESSION['full_name']; ?></span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
+                    </a>
+                    <div class="account-dropdown"> 
+                        <a href="my-profile.php">Tài khoản của tôi</a>
+                        <a href="history.php">Lịch sử đặt lịch</a>
+                        <a href="../../../backend/logout.php" style="color: red !important;">Đăng xuất</a>
+                    </div>
+                <?php else: ?>
+                    <a href="login.html" class="user-icon-link"> 
+                        <i class="fas fa-user-circle"></i>
+                        <span>Đăng nhập / Đăng ký</span>
+                    </a>
+                <?php endif; ?>
+            </div>
     </header>
 
     <main class="page-main">
@@ -78,7 +95,7 @@
              <p>Vui lòng điền thông tin để đặt lịch hẹn của bạn.</p>
 
             <div class="appointment-form-container">
-                 <form id="appointment-form" action="#" method="POST"> 
+                 <form id="appointment-form" action="../../backend/booking_process.php" method="POST"> 
                      <input type="hidden" id="selected-salon-id" name="selected_salon_id">
                      <div id="display-selected-salon" style="margin-bottom: 15px; font-weight: bold; color: green;"></div>
                     <div class="form-group">

@@ -130,20 +130,20 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.removeItem("loggedInUser");
     localStorage.removeItem("userRole");
     updateHeaderLoginStatus();
-    window.location.href = "index.html";
+    window.location.href = "index.php";
   }
 
-  if (userAccount && accountDropdown) {
-    userAccount.addEventListener("click", function (event) {
-      const clickedUserLink = event.target.closest(
-        ".user-icon-link.logged-in-only",
-      );
-      if (clickedUserLink && isUserLoggedIn()) {
-        event.preventDefault();
-        userAccount.classList.toggle("active");
-      }
+  // --- Bật/tắt menu Dropdown cho PHP ---
+  const userIconLinkBtn = document.querySelector(
+    ".user-account .user-icon-link",
+  );
+  if (userIconLinkBtn && userAccount && accountDropdown) {
+    userIconLinkBtn.addEventListener("click", function (event) {
+      event.preventDefault(); // Chỉ chặn nhảy trang khi bấm vào nút "Xin chào..."
+      userAccount.classList.toggle("active");
     });
 
+    // Bấm ra ngoài thì tự động đóng menu
     document.addEventListener("click", function (event) {
       if (
         !event.target.closest(".user-account") &&
@@ -153,13 +153,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  // if (desktopLogoutLink)
+  //   desktopLogoutLink.addEventListener("click", handleLogout);
+  // if (mobileLogoutLink)
+  //   mobileLogoutLink.addEventListener("click", handleLogout);
 
-  if (desktopLogoutLink)
-    desktopLogoutLink.addEventListener("click", handleLogout);
-  if (mobileLogoutLink)
-    mobileLogoutLink.addEventListener("click", handleLogout);
-
-  updateHeaderLoginStatus();
+  // updateHeaderLoginStatus();
 
   // --- Logic cho Background Image Slider ---
   const slides = document.querySelectorAll(".hero-background .slide");
@@ -305,60 +304,5 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Appointment page logic initialized for frontend.");
   } else {
     console.log("Appointment page elements not found.");
-  }
-  // --- Logic cho Trang Đăng nhập (FRONTEND ONLY) ---
-  const loginForm = document.getElementById("login-form");
-
-  if (loginForm) {
-    loginForm.addEventListener("submit", function (event) {
-      event.preventDefault(); // Chặn hành vi gửi dữ liệu đi trang khác gây lỗi
-
-      // Lấy thông tin người dùng vừa nhập (Tùy chọn, để làm giao diện sinh động hơn)
-      const usernameInput = loginForm.querySelector(
-        'input[name="username"]',
-      ).value;
-
-      // Lưu trạng thái đăng nhập vào bộ nhớ trình duyệt (localStorage)
-      localStorage.setItem("isLoggedIn", "true");
-
-      // Giả lập lưu tên người dùng (Bạn có thể lấy tên tài khoản mà người dùng vừa gõ)
-      localStorage.setItem(
-        "loggedInUser",
-        JSON.stringify({ username: usernameInput || "Tuấn Anh" }),
-      );
-
-      // Giả lập quyền truy cập. Nếu tài khoản có chữ "admin" thì cho làm admin, còn lại là khách.
-      if (usernameInput.toLowerCase().includes("admin")) {
-        localStorage.setItem("userRole", "admin");
-      } else {
-        localStorage.setItem("userRole", "customer");
-      }
-
-      alert("Đăng nhập thành công!");
-      window.location.href = "index.html"; // Chuyển thẳng về trang chủ
-    });
-    console.log("Login form logic initialized for frontend.");
-  }
-  // --- Logic cho Trang Đăng ký (FRONTEND ONLY) ---
-  const registerForm = document.getElementById("register-form");
-
-  if (registerForm) {
-    registerForm.addEventListener("submit", function (event) {
-      event.preventDefault(); // Chặn hành vi gửi dữ liệu đi trang khác gây lỗi
-
-      // Lấy tên người dùng để thông báo cho sinh động
-      const fullname = document.getElementById("fullname").value;
-
-      // Bật thông báo thành công
-      alert(
-        "Đăng ký tài khoản thành công cho " +
-          fullname +
-          "! Vui lòng đăng nhập.",
-      );
-
-      // Chuyển hướng người dùng về trang đăng nhập
-      window.location.href = "login.html";
-    });
-    console.log("Register form logic initialized for frontend.");
   }
 });

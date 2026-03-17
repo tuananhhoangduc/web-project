@@ -27,7 +27,7 @@
             </div>
             <nav class="mobile-nav">
               <ul>
-                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="index.php">Trang chủ</a></li>
                 <li><a href="about.html">Về chúng tôi</a></li>
                 <li><a href="services.html">Dịch vụ</a></li>
 
@@ -38,7 +38,7 @@
         </div>
         <nav class="desktop-nav">
           <ul>
-            <li><a href="index.html">Trang chủ</a></li>
+            <li><a href="index.php">Trang chủ</a></li>
             <li><a href="about.html">Về chúng tôi</a></li>
             <li><a href="services.html">Dịch vụ</a></li>
           </ul>
@@ -48,13 +48,17 @@
 
     <div class="form-container">
       <div class="back-to-home">
-        <a href="index.html">
+        <a href="index.php">
           <i class="fas fa-arrow-left"></i>
         </a>
       </div>
       <h2>Tạo Tài khoản</h2>
       <p>Điền thông tin của bạn hoặc liên kết với tài khoản đã có</p>
-      <form id="register-form" action="#"></form>
+      <form
+        id="register-form"
+        action="../../../backend/register_process.php"
+        method="POST"
+      >
         <div class="form-group">
           <span class="icon"><i class="fas fa-user"></i></span>
           <input

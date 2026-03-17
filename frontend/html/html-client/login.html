@@ -25,7 +25,7 @@
                       </div>
                       <nav class="mobile-nav">
                           <ul>
-                              <li><a href="index.html">Trang chủ</a></li>
+                              <li><a href="index.php">Trang chủ</a></li>
                               <li><a href="about.html">Về chúng tôi</a></li> 
                               <li><a href="services.html">Dịch vụ</a></li> 
                                 
@@ -39,7 +39,7 @@
              </div>
              <nav class="desktop-nav">
                  <ul>
-                     <li><a href="index.html">Trang chủ</a></li>
+                     <li><a href="index.php">Trang chủ</a></li>
                      <li><a href="about.html">Về chúng tôi</a></li> 
                      <li><a href="services.html">Dịch vụ</a></li> 
                       
@@ -49,14 +49,14 @@
 
     <div class="form-container">
         <div class="back-to-home">
-            <a href="index.html">
+            <a href="index.php">
                 <i class="fas fa-arrow-left"></i>
                 </a>
         </div>
         <h2>Chào mừng</h2>
         <p>Đăng nhập để tiếp tục trải nghiệm cùng chúng tôi</p>
 
-        <form id="login-form" action="#">
+        <form id="login-form" action="../../../backend/login_process.php" method="POST"> 
             <div class="form-group">
                  <span class="icon"><i class="fas fa-envelope"></i></span>
                  <input type="text" name="username" placeholder="Email hoặc SĐT" required>

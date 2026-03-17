@@ -2,21 +2,34 @@
 require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $full_name = $_POST['full_name'];
-    $phone = $_POST['phone'];
-    $username = $_POST['username'];
-    // Mã hóa mật khẩu để bảo mật
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    // 1. Nhận dữ liệu từ form FE (register.html)
+    $full_name = trim($_POST['fullname']); 
+    $email = trim($_POST['email']); 
+    $phone = trim($_POST['phone']);
+    $password = $_POST['password'];
+
+    // 2. Mã hóa mật khẩu bảo mật
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     try {
-        $sql = "INSERT INTO users (full_name, phone, username, password, role) VALUES (?, ?, ?, ?, 'customer')";
+        // 3. Chuẩn bị câu lệnh SQL khớp 100% với CSDL mới
+        $sql = "INSERT INTO users (full_name, email, phone, password, role) VALUES (?, ?, ?, ?, 'customer')";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$full_name, $phone, $username, $password]);
         
-        echo "<script>alert('Đăng ký thành công!'); window.location.href='../frontend/html/login.html';</script>";
+        // 4. Thực thi lưu dữ liệu
+        $stmt->execute([$full_name, $email, $phone, $hashed_password]);
+        
+        // 5. Thông báo thành công và đẩy về trang đăng nhập
+        echo "<script>
+            alert('Đăng ký tài khoản thành công! Vui lòng đăng nhập.'); 
+            window.location.href='../frontend/html/html-client/login.html';
+        </script>";
     } catch(PDOException $e) {
-        // Nếu trùng số điện thoại hoặc username, CSDL sẽ báo lỗi thông qua UNIQUE KEY
-        echo "Lỗi: " . $e->getMessage();
+        // Bắt lỗi trùng Email hoặc SĐT (Do ta đã set UNIQUE trong DB)
+        echo "<script>
+            alert('Lỗi: Email hoặc Số điện thoại này đã được đăng ký!'); 
+            window.history.back();
+        </script>";
     }
 }
 ?>

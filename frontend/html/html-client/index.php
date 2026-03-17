@@ -1,4 +1,4 @@
-
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -31,14 +31,14 @@
                          </div>
                      <nav class="mobile-nav">
                          <ul>
-                             <li><a href="index.html">Trang chủ</a></li>
+                             <li><a href="index.php">Trang chủ</a></li>
                              <li><a href="about.html">Về chúng tôi</a></li>
                              <li><a href="services.html">Dịch vụ</a></li>
                               
                          </ul>
                      </nav>
                      <div class="mobile-header-buttons">
-                         <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+                         <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
                          <a href="login.html" class="btn primary-btn ">Đăng nhập</a> 
                          <a href="register.html" class="btn primary-btn">Đăng ký</a>     
                      </div>
@@ -47,29 +47,33 @@
 
             <nav class="desktop-nav">
                 <ul>
-                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="index.php">Trang chủ</a></li>
                     <li><a href="about.html">Về chúng tôi</a></li> 
                     <li><a href="services.html">Dịch vụ</a></li> 
                       
             </nav>
             <div class="header-buttons desktop-buttons">
-                <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a> 
+                <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
             </div>
             <div class="header-buttons desktop-buttons">
                  <div class="user-account">
-    <a href="login.html" class="user-icon-link">
-        <i class="fas fa-user-circle"></i> 
-        <span>Đăng nhập / Đăng ký</span>
-    </a>
-
-    <div class="account-dropdown" style="display: none;">
-        <ul>
-            <li><a href="my-profile.html">Tài khoản của tôi</a></li>
-            <li><a href="history.html">Lịch sử đặt lịch</a></li>
-            <li><a href="#" id="desktop-logout-link">Đăng xuất</a></li>
-        </ul>
-    </div>
-</div>
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
+                        <i class="fas fa-user-circle"></i>
+                        <span>Xin chào, <?php echo $_SESSION['full_name']; ?></span>
+                    </a>
+                    <div class="account-dropdown" style="display: block; position: absolute; background: #fff; padding: 10px; border-radius: 5px; margin-top: 10px;"> 
+                        <a href="my-profile.html" style="color: #333; display: block; padding: 5px 0;">Tài khoản của tôi</a>
+                        <a href="history.html" style="color: #333; display: block; padding: 5px 0;">Lịch sử đặt lịch</a>
+                        <a href="../../../backend/logout.php" style="color: red; display: block; padding: 5px 0;">Đăng xuất</a>
+                    </div>
+                <?php else: ?>
+                    <a href="login.html" class="user-icon-link"> 
+                        <i class="fas fa-user-circle"></i>
+                        <span>Đăng nhập / Đăng ký</span>
+                    </a>
+                <?php endif; ?>
+            </div>
         </div>
     </header>
 <main>
@@ -84,7 +88,7 @@
             <h1>Không Chỉ Là Cắt Tóc, Đó Là Một <br> Trải Nghiệm</h1>
             <p>Tiệm cắt tóc của chúng tôi là không gian được tạo ra dành riêng cho những người đàn ông đề cao chất lượng, thời gian và vẻ ngoài hoàn hảo.</p>
             <div class="hero-cta">
-                <a href="appointment.html" class="btn primary-btn">Đặt lịch ngay</a> 
+                <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a> 
         </div>
         <div class="slider-indicators">
             <span class="active"></span>
