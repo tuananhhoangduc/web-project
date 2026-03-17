@@ -95,109 +95,79 @@ if (!isset($_SESSION['user_id'])) {
              <p>Vui lòng điền thông tin để đặt lịch hẹn của bạn.</p>
 
             <div class="appointment-form-container">
-                 <form id="appointment-form" action="../../backend/booking_process.php" method="POST"> 
-                     <input type="hidden" id="selected-salon-id" name="selected_salon_id">
-                     <div id="display-selected-salon" style="margin-bottom: 15px; font-weight: bold; color: green;"></div>
-                    <div class="form-group">
-                        <label for="full-name">Họ và tên:</label>
-                        <input type="text" id="full-name" name="full_name" value="" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại:</label>
-                        <input type="tel" id="phone" name="phone" value="" required>
-                    </div>
+    <form id="appointment-form" action="../../../backend/booking_process.php" method="POST"> 
+        <input type="hidden" name="customer_id" value="<?php echo $_SESSION['user_id']; ?>">
 
-                    <div class="form-group">
-                        <label for="email">Email (Tùy chọn):</label>
-                        <input type="tel" id="email" name="email" value="">
-                    </div>
-                     
+        <div class="form-group">
+            <label>Họ và tên khách hàng:</label>
+            <input type="text" value="<?php echo $_SESSION['full_name']; ?>" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
+        </div>
 
-                     <div class="form-group">
-                         <label for="appointment-date">Ngày hẹn:</label>
-                         <input type="date" id="appointment-date" name="appointment_date" required>
-                     </div>
+        <div class="form-group">
+            <label for="appointment-date">Ngày hẹn <span style="color:red">*</span>:</label>
+            <input type="date" id="appointment-date" name="appointment_date" required min="<?php echo date('Y-m-d'); ?>">
+        </div>
 
-                    
-                     <div class="time-slot-section"> 
-                         <div class="form-group"> 
-                             <label for="selected-time">Chọn khung giờ dịch vụ <span class="required">*</span>:</label>
-                             <select name="appointment_time" required>
-                                 <option value="">Chọn giờ</option>
-                                 <option value="08:00">08:00</option>
-                                 <option value="08:30">08:30</option>
-                                 <option value="09:00">09:00</option>
-                                 <option value="09:30">09:30</option>
-                                 <option value="10:30">10:30</option>
-                                 <option value="11:00">11:00</option>
-                                 <option value="13:00">13:00</option>
-                                 <option value="13:30">13:30</option>
-                                 <option value="14:00">14:00</option>
-                                 <option value="14:30">14:30</option>
-                                 <option value="15:00">15:00</option>
-                                 <option value="15:30">15:30</option>
-                                 <option value="16:00">16:00</option>
-                                 <option value="16:30">16:30</option>
-                                 <option value="17:00">17:00</option>
-                                 <option value="17:30">17:30</option>
-                                 <option value="18:00">18:00</option>
-                                 <option value="18:30">18:30</option>
-                                 <option value="19:00">19:00</option>
-                                 <option value="19:30">19:30</option>
-                                </select>
-                                
-                             
-                         </div>
-                     </div>
-                     <div class="form-group">
-                         <label for="service">Chọn dịch vụ:</label>
-                         <select id="service" name="service" required>
-                             <option value="">-- Chọn dịch vụ --</option>
-                             <option value="Cắt tóc (150.000 VNĐ)" data-price="150000">Cắt tóc (150.000 VNĐ)</option>
-                             <option value="Cạo râu (100.000 VNĐ)" data-price="100000">Cạo râu (100.000 VNĐ)</option> 
-                             <option value="Chăm sóc da mặt (200.000 VNĐ)" data-price="200000">Chăm sóc da mặt (200.000 VNĐ)</option>
-                             <option value="Nhuộm tóc (500.000 VNĐ)" data-price="500000">Nhuộm tóc (500.000 VNĐ)</option> 
-                         </select>
-                     </div>
-                     <div class="form-group">
-                         <label for="branch">Chọn chi nhánh:</label>
-                         <select id="branch" name="branch" required>
-                             <option value="">-- Chọn chi nhánh --</option>
-                             option value="Chi nhánh Xuân Thủy, Quận Cầu Giấy">Chi nhánh Xuân Thủy, Quận Cầu Giấy</option>
-<option value="Chi nhánh Chùa Bộc, Quận Đống Đa">Chi nhánh Chùa Bộc, Quận Đống Đa</option> 
-<option value="Chi nhánh Phố Huế, Quận Hai Bà Trưng">Chi nhánh Phố Huế, Quận Hai Bà Trưng</option>
-<option value="Chi nhánh Trần Phú, Quận Hà Đông">Chi nhánh Trần Phú, Quận Hà Đông</option> 
-<option value="Chi nhánh Nguyễn Trãi, Quận Thanh Xuân">Chi nhánh Nguyễn Trãi, Quận Thanh Xuân</option> 
-<option value="Chi nhánh Lê Đức Thọ, Quận Nam Từ Liêm">Chi nhánh Lê Đức Thọ, Quận Nam Từ Liêm</option>
-                         </select>
-                     </div>
+        <div class="form-group"> 
+            <label for="appointment_time">Chọn khung giờ dịch vụ <span style="color:red">*</span>:</label>
+            <select name="appointment_time" id="appointment_time" required>
+                <option value="">-- Chọn giờ --</option>
+                <?php 
+                    $hours = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+                    foreach($hours as $h) { echo "<option value='$h:00'>$h</option>"; }
+                ?>
+            </select>
+        </div>
 
-                      <div class="form-group">
-                         <label for="barber">Chọn thợ (Tùy chọn):</label>
-                         <select id="barber" name="barber">
-                             <option value="">-- Không chọn thợ --</option>
-                             <option value="Lê Hiếu">Thợ Lê Hiếu</option>
-                             <option value="Khoa Đăng">Thợ Khoa Đăng</option>
-                             <option value="Ngọc Đăng">Thợ Ngọc Đăng</option>
-                             <option value="Tuấn Anh">Thợ Tuấn Anh</option>
-                             <option value="An Lê">Thợ An Lê</option>
-                         </select>
-                     </div>
+        <div class="form-group">
+            <label for="service">Chọn dịch vụ <span style="color:red">*</span>:</label>
+            <select id="service" name="service_id" required>
+                <option value="">-- Chọn dịch vụ --</option>
+                <option value="1" data-price="150000">Cắt tóc (150.000 VNĐ)</option>
+                <option value="2" data-price="100000">Cạo râu (100.000 VNĐ)</option> 
+                <option value="3" data-price="200000">Chăm sóc da mặt (200.000 VNĐ)</option>
+                <option value="4" data-price="500000">Nhuộm tóc (500.000 VNĐ)</option> 
+            </select>
+        </div>
 
-                      <div class="form-group">
-                         <label for="notes">Ghi chú thêm (Tùy chọn):</label>
-                         <textarea id="notes" name="notes" rows="4"></textarea>
-                     </div>
+        <div class="form-group">
+            <label for="branch">Chọn chi nhánh <span style="color:red">*</span>:</label>
+            <select id="branch" name="branch_id" required>
+                <option value="">-- Chọn chi nhánh --</option>
+                <option value="1">Chi nhánh Xuân Thủy, Quận Cầu Giấy</option>
+                <option value="2">Chi nhánh Chùa Bộc, Quận Đống Đa</option> 
+                <option value="3">Chi nhánh Phố Huế, Quận Hai Bà Trưng</option>
+                <option value="4">Chi nhánh Trần Phú, Quận Hà Đông</option> 
+                <option value="5">Chi nhánh Nguyễn Trãi, Quận Thanh Xuân</option> 
+                <option value="6">Chi nhánh Lê Đức Thọ, Quận Nam Từ Liêm</option>
+            </select>
+        </div>
 
-                    
-                     <div class="form-group total-amount-display"> 
-                         <label>Tổng tiền dự kiến:</label>
-                         <span id="estimated-total">0 VNĐ</span>
-                     </div>
-                     <button type="submit" class="btn primary-btn">Xác nhận đặt lịch</button>
-                 </form>
-            </div>
+        <div class="form-group">
+            <label for="barber">Chọn thợ (Tùy chọn):</label>
+            <select id="barber" name="stylist_id">
+                <option value="">-- Để Salon tự sắp xếp --</option>
+                <option value="1">Thợ Lê Hiếu</option>
+                <option value="2">Thợ Khoa Đăng</option>
+                <option value="3">Thợ Ngọc Đăng</option>
+                <option value="4">Thợ Tuấn Anh</option>
+                <option value="5">Thợ An Lê</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Ghi chú thêm (Tùy chọn):</label>
+            <textarea id="notes" name="notes" rows="3"></textarea>
+        </div>
+
+        <div class="form-group total-amount-display"> 
+            <label>Tổng tiền dự kiến:</label>
+            <span id="estimated-total" style="font-weight: bold; color: #ff7f00; font-size: 1.2rem;">0 VNĐ</span>
+        </div>
+
+        <button type="submit" class="btn primary-btn" style="width: 100%; height: 50px; font-weight: bold;">XÁC NHẬN ĐẶT LỊCH</button>
+    </form>
+</div>
             </div>
     </main>
 
@@ -225,6 +195,47 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
     <script src="../../js/js-client/script.js"></script>
+    <script>
+    // 1. Tự động tính tiền khi chọn dịch vụ
+    const serviceSelect = document.getElementById('service');
+    if (serviceSelect) {
+        serviceSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute('data-price') || 0;
+            document.getElementById('estimated-total').innerText = new Intl.NumberFormat('vi-VN').format(price) + ' VNĐ';
+        });
+    }
+
+    // 2. Tự động kiểm tra và khóa các khung giờ đã có người đặt
+    const dateInput = document.getElementById('appointment-date');
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            const date = this.value;
+            const timeSelect = document.getElementById('appointment_time');
+            
+            // Reset danh sách giờ
+            Array.from(timeSelect.options).forEach(opt => {
+                if(opt.value !== "") {
+                    opt.disabled = false;
+                    opt.text = opt.value.substring(0, 5); 
+                }
+            });
+
+            // Gọi AJAX kiểm tra giờ bận (Đường dẫn lùi 3 cấp giống action của form)
+            fetch(`../../../backend/check_slots.php?date=${date}`)
+                .then(res => res.json())
+                .then(takenSlots => {
+                    Array.from(timeSelect.options).forEach(opt => {
+                        if (takenSlots.includes(opt.value)) {
+                            opt.disabled = true;
+                            opt.text += " (Hết chỗ)";
+                        }
+                    });
+                })
+                .catch(err => console.error("Lỗi kiểm tra lịch:", err));
+        });
+    }
+    </script>
 <!-- Code injected by live-server -->
 <script>
 	// <![CDATA[  <-- For SVG support

@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Điều hướng theo quyền
             if ($user['role'] === 'admin') {
                 header("Location: ../frontend/html/html-admin/admin-dashboard.html");
-            } elseif ($user['role'] === 'barber') {
+            } elseif ($user['role'] === 'stylist') {
                 header("Location: ../frontend/html/html-barber/barber-dashboard.html"); 
             } else {
                 header("Location: ../frontend/html/html-client/index.php"); // Khách hàng

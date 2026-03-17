@@ -35,11 +35,11 @@
             <nav class="mobile-nav">
               <ul>
                 <li><a href="admin-dashboard.html">Trang chủ</a></li>
-                <li><a href="customer-management.html">Khách hàng</a></li>
-                <li><a href="salon-appointments.html">Lịch hẹn</a></li>
-                <li><a href="branch-management.html">Chi nhánh</a></li>
-                <li><a href="service-management.html">Dịch vụ</a></li>
-                <li><a href="stylist-management.html">Stylist</a></li>
+                <li><a href="customer-management.php">Khách hàng</a></li>
+                <li><a href="salon-appointments.php">Lịch hẹn</a></li>
+                <li><a href="branch-management.php">Chi nhánh</a></li>
+                <li><a href="service-management.php">Dịch vụ</a></li>
+                <li><a href="stylist-management.php">Stylist</a></li>
               </ul>
             </nav>
           </div>
@@ -47,11 +47,11 @@
         <nav class="desktop-nav">
           <ul>
             <li><a href="admin-dashboard.html">Trang chủ</a></li>
-            <li><a href="customer-management.html">Khách hàng</a></li>
-            <li><a href="salon-appointments.html">Lịch hẹn</a></li>
-            <li><a href="branch-management.html">Chi nhánh</a></li>
-            <li><a href="service-management.html">Dịch vụ</a></li>
-            <li><a href="stylist-management.html">Stylist</a></li>
+            <li><a href="customer-management.php">Khách hàng</a></li>
+            <li><a href="salon-appointments.php">Lịch hẹn</a></li>
+            <li><a href="branch-management.php">Chi nhánh</a></li>
+            <li><a href="service-management.php">Dịch vụ</a></li>
+            <li><a href="stylist-management.php">Stylist</a></li>
           </ul>
         </nav>
       </div>

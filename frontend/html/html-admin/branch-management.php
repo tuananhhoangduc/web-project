@@ -35,11 +35,11 @@
             <nav class="mobile-nav">
               <ul>
                 <li><a href="admin-dashboard.html">Trang chủ</a></li>
-                <li><a href="customer-management.html">Khách hàng</a></li>
-                <li><a href="salon-appointments.html">Lịch hẹn</a></li>
-                <li><a href="branch-management.html">Chi nhánh</a></li>
-                <li><a href="service-management.html">Dịch vụ</a></li>
-                <li><a href="stylist-management.html">Stylist</a></li>
+                <li><a href="customer-management.php">Khách hàng</a></li>
+                <li><a href="salon-appointments.php">Lịch hẹn</a></li>
+                <li><a href="branch-management.php">Chi nhánh</a></li>
+                <li><a href="service-management.php">Dịch vụ</a></li>
+                <li><a href="stylist-management.php">Stylist</a></li>
               </ul>
             </nav>
           </div>
@@ -47,11 +47,11 @@
         <nav class="desktop-nav">
           <ul>
             <li><a href="admin-dashboard.html">Trang chủ</a></li>
-            <li><a href="customer-management.html">Khách hàng</a></li>
-            <li><a href="salon-appointments.html">Lịch hẹn</a></li>
-            <li><a href="branch-management.html">Chi nhánh</a></li>
-            <li><a href="service-management.html">Dịch vụ</a></li>
-            <li><a href="stylist-management.html">Stylist</a></li>
+            <li><a href="customer-management.php">Khách hàng</a></li>
+            <li><a href="salon-appointments.php">Lịch hẹn</a></li>
+            <li><a href="branch-management.php">Chi nhánh</a></li>
+            <li><a href="service-management.php">Dịch vụ</a></li>
+            <li><a href="stylist-management.php">Stylist</a></li>
           </ul>
         </nav>
       </div>
@@ -73,7 +73,7 @@
               id="add-branch-form-container"
               class="add-branch-form-container"
             >
-              <form id="add-branch-form">
+              <form id="add-branch-form" action="../../../backend/add_branch.php" method="POST">
                 <div class="form-group">
                   <label for="branch-name">Tên Chi nhánh:</label>
                   <input
@@ -141,36 +141,38 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>CN001</td>
-                  <td>Salon A</td>
-                  <td>123 Đường ABC, Quận 1</td>
-                  <td>0281234567</td>
-                  <td>salona@example.com</td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>CN002</td>
-                  <td>Salon B</td>
-                  <td>456 Đường XYZ, Quận 3</td>
-                  <td>0289876543</td>
-                  <td>salonb@example.com</td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
+                  <?php
+                  require_once '../../../backend/db_connect.php';
+                  
+                  // 1. Lấy danh sách chi nhánh từ Database
+                  $sql = "SELECT * FROM branches ORDER BY branch_id ASC";
+                  $stmt = $conn->query($sql);
+                  $branches = $stmt->fetchAll();
+
+                  if (count($branches) > 0):
+                      foreach ($branches as $b):
+                  ?>
+                      <tr>
+                          <td>CN<?php echo str_pad($b['branch_id'], 3, '0', STR_PAD_LEFT); ?></td>
+                          <td><?php echo $b['branch_name']; ?></td>
+                          <td><?php echo $b['address']; ?></td>
+                          <td><?php echo $b['phone']; ?></td>
+                          <td><?php echo $b['email'] ?? 'Chưa cập nhật'; ?></td>
+                          <td>
+                              <button class="btn edit-btn" onclick="editBranch(<?php echo $b['branch_id']; ?>)">
+                                  <i class="fas fa-edit"></i> Sửa
+                              </button>
+                              <button class="btn delete-btn" onclick="deleteBranch(<?php echo $b['branch_id']; ?>)">
+                                  <i class="fas fa-trash"></i> Xóa
+                              </button>
+                          </td>
+                      </tr>
+                  <?php 
+                      endforeach; 
+                  else: 
+                      echo "<tr><td colspan='6' style='text-align:center;'>Chưa có chi nhánh nào.</td></tr>";
+                  endif; 
+                  ?>
               </tbody>
             </table>
             <div class="no-items"></div>
