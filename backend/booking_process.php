@@ -2,37 +2,46 @@
 session_start();
 require_once 'db_connect.php';
 
-// Kiểm tra bảo mật: Nếu chưa đăng nhập thì không cho lưu
+// Kiểm tra bảo mật
 if (!isset($_SESSION['user_id'])) {
     die("Bạn cần đăng nhập để thực hiện chức năng này.");
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 1. Nhận dữ liệu từ form (khớp với các name="..." trong HTML)
     $customer_id = $_SESSION['user_id'];
     $branch_id   = $_POST['branch_id'];
     $service_id  = $_POST['service_id'];
-    $stylist_id  = !empty($_POST['stylist_id']) ? $_POST['stylist_id'] : null; // Thợ có thể để trống
+    $stylist_id  = !empty($_POST['stylist_id']) ? $_POST['stylist_id'] : null;
     $date        = $_POST['appointment_date'];
     $time        = $_POST['appointment_time'];
-    $notes       = htmlspecialchars($_POST['notes']); // Tránh lỗi bảo mật XSS
+    $notes       = htmlspecialchars($_POST['notes']);
 
     try {
-        // 2. Câu lệnh SQL để lưu vào bảng appointments
-        $sql = "INSERT INTO appointments (customer_id, branch_id, service_id, stylist_id, appointment_date, appointment_time, notes, status) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')";
+        $conn->beginTransaction();
+
+        // 1. Lấy giá tiền chuẩn xác của dịch vụ từ Database
+        $stmt_price = $conn->prepare("SELECT price FROM services WHERE service_id = ?");
+        $stmt_price->execute([$service_id]);
+        $service = $stmt_price->fetch();
+        $total_price = $service ? $service['price'] : 0; // Tránh lỗi nếu không tìm thấy dịch vụ
+
+        // 2. Lưu vào bảng appointments (Đã bổ sung total_price)
+        $sql = "INSERT INTO appointments (customer_id, branch_id, service_id, stylist_id, appointment_date, appointment_time, notes, total_price, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')";
         
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$customer_id, $branch_id, $service_id, $stylist_id, $date, $time, $notes]);
+        $stmt->execute([$customer_id, $branch_id, $service_id, $stylist_id, $date, $time, $notes, $total_price]);
 
-        // 3. Thông báo thành công và đẩy về trang chủ (hoặc trang lịch sử)
+        $conn->commit();
+
+        // 3. Thông báo và chuyển hướng
         echo "<script>
             alert('Đặt lịch thành công! Chúng tôi sẽ sớm liên hệ xác nhận.');
             window.location.href = '../frontend/html/html-client/index.php';
         </script>";
         
     } catch(PDOException $e) {
-        // Nếu lỗi (ví dụ: trùng lịch do ai đó nhanh tay hơn)
+        $conn->rollBack();
         die("Lỗi hệ thống: " . $e->getMessage());
     }
 }

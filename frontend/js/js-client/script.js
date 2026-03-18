@@ -252,9 +252,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Đổ dữ liệu vào Modal
         document.getElementById("summary-full-name").textContent =
-          formData.get("full_name") || "";
-        document.getElementById("summary-phone").textContent =
-          formData.get("phone") || "";
+          document.getElementById("customer-name").value;
+
         document.getElementById("summary-salon").textContent = branchSelect
           ? branchSelect.options[branchSelect.selectedIndex].text
           : "Chưa chọn";
@@ -276,22 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 3. Xử lý khi ấn "Xác nhận" trong Popup
     confirmAppointmentBtn.addEventListener("click", function () {
-      // Tùy chọn: Lưu dữ liệu giả lập vào sessionStorage để hiển thị bên trang Lịch sử
-      const appointmentData = Object.fromEntries(new FormData(appointmentForm));
-      appointmentData.selected_salon_name =
-        branchSelect.options[branchSelect.selectedIndex].text;
-      appointmentData.selected_service_name =
-        serviceSelect.options[serviceSelect.selectedIndex].text;
-      appointmentData.selected_barber_name =
-        barberSelect.options[barberSelect.selectedIndex].text;
-      sessionStorage.setItem(
-        "currentAppointmentData",
-        JSON.stringify(appointmentData),
-      );
-
-      alert("Đặt lịch thành công!");
-      window.location.href = "history.html"; // Chuyển sang trang lịch sử (Relative path)
-      confirmationModalOverlay.classList.remove("visible");
+      appointmentForm.submit();
     });
 
     // 4. Xử lý khi ấn "Hủy bỏ" trong Popup

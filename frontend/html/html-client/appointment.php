@@ -95,13 +95,19 @@ if (!isset($_SESSION['user_id'])) {
              <p>Vui lòng điền thông tin để đặt lịch hẹn của bạn.</p>
 
             <div class="appointment-form-container">
+    <?php
+    // KẾT NỐI DATABASE VÀO ĐÂY ĐỂ LẤY DỮ LIỆU ĐỔ RA FORM
+    require_once '../../../backend/db_connect.php';
+    ?>
+
     <form id="appointment-form" action="../../../backend/booking_process.php" method="POST"> 
         <input type="hidden" name="customer_id" value="<?php echo $_SESSION['user_id']; ?>">
 
         <div class="form-group">
             <label>Họ và tên khách hàng:</label>
-            <input type="text" value="<?php echo $_SESSION['full_name']; ?>" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
+            <input type="text" id="customer-name" value="<?php echo htmlspecialchars($_SESSION['full_name']); ?>" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
         </div>
+        
 
         <div class="form-group">
             <label for="appointment-date">Ngày hẹn <span style="color:red">*</span>:</label>
@@ -123,10 +129,14 @@ if (!isset($_SESSION['user_id'])) {
             <label for="service">Chọn dịch vụ <span style="color:red">*</span>:</label>
             <select id="service" name="service_id" required>
                 <option value="">-- Chọn dịch vụ --</option>
-                <option value="1" data-price="150000">Cắt tóc (150.000 VNĐ)</option>
-                <option value="2" data-price="100000">Cạo râu (100.000 VNĐ)</option> 
-                <option value="3" data-price="200000">Chăm sóc da mặt (200.000 VNĐ)</option>
-                <option value="4" data-price="500000">Nhuộm tóc (500.000 VNĐ)</option> 
+                <?php
+                // Lấy danh sách dịch vụ từ DB
+                $stmt_srv = $conn->query("SELECT service_id, service_name, price FROM services ORDER BY service_id ASC");
+                while($srv = $stmt_srv->fetch()) {
+                    $price_format = number_format($srv['price'], 0, ',', '.');
+                    echo "<option value='{$srv['service_id']}' data-price='{$srv['price']}'>{$srv['service_name']} ({$price_format} VNĐ)</option>";
+                }
+                ?>
             </select>
         </div>
 
@@ -134,12 +144,13 @@ if (!isset($_SESSION['user_id'])) {
             <label for="branch">Chọn chi nhánh <span style="color:red">*</span>:</label>
             <select id="branch" name="branch_id" required>
                 <option value="">-- Chọn chi nhánh --</option>
-                <option value="1">Chi nhánh Xuân Thủy, Quận Cầu Giấy</option>
-                <option value="2">Chi nhánh Chùa Bộc, Quận Đống Đa</option> 
-                <option value="3">Chi nhánh Phố Huế, Quận Hai Bà Trưng</option>
-                <option value="4">Chi nhánh Trần Phú, Quận Hà Đông</option> 
-                <option value="5">Chi nhánh Nguyễn Trãi, Quận Thanh Xuân</option> 
-                <option value="6">Chi nhánh Lê Đức Thọ, Quận Nam Từ Liêm</option>
+                <?php
+                // Lấy danh sách chi nhánh từ DB
+                $stmt_br = $conn->query("SELECT branch_id, branch_name FROM branches ORDER BY branch_id ASC");
+                while($br = $stmt_br->fetch()) {
+                    echo "<option value='{$br['branch_id']}'>{$br['branch_name']}</option>";
+                }
+                ?>
             </select>
         </div>
 
@@ -147,11 +158,17 @@ if (!isset($_SESSION['user_id'])) {
             <label for="barber">Chọn thợ (Tùy chọn):</label>
             <select id="barber" name="stylist_id">
                 <option value="">-- Để Salon tự sắp xếp --</option>
-                <option value="1">Thợ Lê Hiếu</option>
-                <option value="2">Thợ Khoa Đăng</option>
-                <option value="3">Thợ Ngọc Đăng</option>
-                <option value="4">Thợ Tuấn Anh</option>
-                <option value="5">Thợ An Lê</option>
+                <?php
+                // Lấy danh sách Thợ cắt ĐANG LÀM VIỆC từ DB (Nối bảng users để lấy tên)
+                $sql_st = "SELECT s.stylist_id, u.full_name 
+                           FROM stylists s 
+                           JOIN users u ON s.user_id = u.user_id 
+                           WHERE s.status = 'Đang làm việc'";
+                $stmt_st = $conn->query($sql_st);
+                while($st = $stmt_st->fetch()) {
+                    echo "<option value='{$st['stylist_id']}'>Thợ {$st['full_name']}</option>";
+                }
+                ?>
             </select>
         </div>
 
@@ -180,7 +197,6 @@ if (!isset($_SESSION['user_id'])) {
             <h2>Xác Nhận Lịch Hẹn</h2>
             <div class="appointment-details-summary">
                 <p><strong>Họ và Tên:</strong> <span id="summary-full-name"></span></p>
-                <p><strong>Số Điện Thoại:</strong> <span id="summary-phone"></span></p>
                 <p><strong>Salon:</strong> <span id="summary-salon"></span></p>
                 <p><strong>Dịch Vụ:</strong> <span id="summary-service"></span></p>
                 <p><strong>Stylist:</strong> <span id="summary-barber"></span></p>

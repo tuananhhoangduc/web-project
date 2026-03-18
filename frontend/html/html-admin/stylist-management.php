@@ -73,62 +73,48 @@
               id="add-stylist-form-container"
               class="add-stylist-form-container"
             >
-              <form id="add-stylist-form">
-                <div class="form-group">
-                  <label for="stylist-name">Tên Stylist:</label>
-                  <input
-                    type="text"
-                    id="stylist-name"
-                    name="stylist_name"
-                    placeholder="Nhập tên stylist"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="stylist-branch">Chi nhánh:</label>
-                  <select id="stylist-branch" name="stylist_branch" required>
-                    <option value="">-- Chọn chi nhánh --</option>
-                    <option value="salon-1">Salon A</option>
-                    <option value="salon-2">Salon B</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="stylist-phone">Số điện thoại (Tùy chọn):</label>
-                  <input
-                    type="tel"
-                    id="stylist-phone"
-                    name="stylist_phone"
-                    placeholder="Nhập SĐT stylist"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="stylist-email">Email (Tùy chọn):</label>
-                  <input
-                    type="email"
-                    id="stylist-email"
-                    name="stylist_email"
-                    placeholder="Nhập email stylist"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="stylist-status">Trạng thái:</label>
-                  <select id="stylist-status" name="stylist_status" required>
-                    <option value="Đang làm việc">Đang làm việc</option>
-                    <option value="Nghỉ phép">Nghỉ phép</option>
-                    <option value="Đã nghỉ">Đã nghỉ</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn primary-btn">
-                  <i class="fas fa-save"></i> Lưu Stylist
-                </button>
-                <button
-                  type="button"
-                  class="btn secondary-btn"
-                  id="cancel-add-stylist-form-btn"
-                >
-                  <i class="fas fa-times"></i> Hủy
-                </button>
-              </form>
+              <form id="add-stylist-form" action="../../../backend/add_stylist.php" method="POST">
+    <input type="hidden" id="stylist-id" name="stylist_id" value="">
+
+    <div class="form-group">
+        <label for="stylist-name">Tên Thợ:</label>
+        <input type="text" id="stylist-name" name="stylist_name" placeholder="Nhập tên thợ" required />
+    </div>
+    
+    <div class="form-group">
+        <label for="stylist-phone">Số điện thoại:</label>
+        <input type="tel" id="stylist-phone" name="stylist_phone" placeholder="Nhập SĐT của thợ" required />
+    </div>
+
+    <div class="form-group">
+        <label for="stylist-branch">Thuộc Chi nhánh:</label>
+        <select id="stylist-branch" name="branch_id" required>
+            <option value="">-- Chọn Chi nhánh --</option>
+            <?php
+            require_once '../../../backend/db_connect.php';
+            $branches = $conn->query("SELECT branch_id, branch_name FROM branches")->fetchAll();
+            foreach ($branches as $br) {
+                echo "<option value='".$br['branch_id']."'>".$br['branch_name']."</option>";
+            }
+            ?>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="stylist-status">Trạng thái:</label>
+        <select id="stylist-status" name="stylist_status">
+            <option value="active">Đang làm việc</option>
+            <option value="inactive">Nghỉ phép</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn primary-btn" id="submit-btn">
+        <i class="fas fa-save"></i> Lưu Thợ Cắt
+    </button>
+    <button type="button" class="btn secondary-btn" id="cancel-add-stylist-form-btn">
+        <i class="fas fa-times"></i> Hủy
+    </button>
+</form>
             </div>
           </div>
 
@@ -145,44 +131,63 @@
                   <th>Hành động</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>ST001</td>
-                  <td>Thợ A</td>
-                  <td>Salon A</td>
-                  <td>0912345678</td>
-                  <td>
-                    <span class="status-badge status-active"
-                      >Đang làm việc</span
-                    >
-                  </td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ST002</td>
-                  <td>Thợ B</td>
-                  <td>Salon A</td>
-                  <td>0987654321</td>
-                  <td>
-                    <span class="status-badge status-leave">Nghỉ phép</span>
-                  </td>
-                  <td>
-                    <button class="btn edit-btn">
-                      <i class="fas fa-edit"></i> Sửa
-                    </button>
-                    <button class="btn delete-btn">
-                      <i class="fas fa-trash"></i> Xóa
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
+<tbody>
+    <?php
+    require_once '../../../backend/db_connect.php';
+
+    // Câu lệnh SQL mới: Nối 3 bảng để lấy đủ Tên, SĐT và Tên Chi nhánh
+    $sql = "SELECT s.stylist_id, s.branch_id, s.status, 
+                   u.full_name, u.phone, 
+                   b.branch_name 
+            FROM stylists s 
+            INNER JOIN users u ON s.user_id = u.user_id 
+            LEFT JOIN branches b ON s.branch_id = b.branch_id 
+            ORDER BY s.stylist_id DESC";
+    $stmt = $conn->query($sql);
+    $stylists = $stmt->fetchAll();
+
+    if (count($stylists) > 0):
+        foreach ($stylists as $st):
+    ?>
+        <tr>
+            <td>ST<?php echo str_pad($st['stylist_id'], 3, '0', STR_PAD_LEFT); ?></td>
+            
+            <td><?php echo htmlspecialchars($st['full_name']); ?></td>
+            
+            <td><?php echo htmlspecialchars($st['branch_name'] ?? 'Chưa phân bổ'); ?></td>
+            
+            <td><?php echo htmlspecialchars($st['phone']); ?></td>
+            
+            <td>
+                <span style="color: <?php echo ($st['status'] == 'Đang làm việc') ? 'green' : 'red'; ?>; font-weight: bold;">
+                    <?php echo htmlspecialchars($st['status']); ?>
+                </span>
+            </td>
+            
+            <td>
+                <button class="btn edit-btn" 
+                    onclick="editStylist(this)"
+                    data-id="<?php echo $st['stylist_id']; ?>"
+                    data-name="<?php echo htmlspecialchars($st['full_name']); ?>"
+                    data-phone="<?php echo htmlspecialchars($st['phone']); ?>"
+                    data-branch="<?php echo $st['branch_id']; ?>"
+                    data-status="<?php echo $st['status']; ?>"
+                    style="background-color: #FFC107; color: #000;">
+                    <i class="fas fa-edit"></i> Sửa
+                </button>
+                
+                <button class="btn delete-btn" onclick="deleteStylist(<?php echo $st['stylist_id']; ?>)">
+                    <i class="fas fa-trash"></i> Xóa
+                </button>
+            </td>
+        </tr>
+    <?php 
+        endforeach; 
+    else: 
+        echo "<tr><td colspan='6' style='text-align:center;'>Chưa có thợ cắt nào.</td></tr>";
+    endif; 
+    ?>
+</tbody>
             </table>
             <div class="no-items"></div>
           </div>

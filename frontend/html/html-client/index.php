@@ -63,8 +63,8 @@
                         <span>Xin chào, <?php echo $_SESSION['full_name']; ?></span>
                     </a>
                     <div class="account-dropdown" style="display: block; position: absolute; background: #fff; padding: 10px; border-radius: 5px; margin-top: 10px;"> 
-                        <a href="my-profile.html" style="color: #333; display: block; padding: 5px 0;">Tài khoản của tôi</a>
-                        <a href="history.html" style="color: #333; display: block; padding: 5px 0;">Lịch sử đặt lịch</a>
+                        <a href="my-profile.php" style="color: #333; display: block; padding: 5px 0;">Tài khoản của tôi</a>
+                        <a href="history.php" style="color: #333; display: block; padding: 5px 0;">Lịch sử đặt lịch</a>
                         <a href="../../../backend/logout.php" style="color: red; display: block; padding: 5px 0;">Đăng xuất</a>
                     </div>
                 <?php else: ?>
