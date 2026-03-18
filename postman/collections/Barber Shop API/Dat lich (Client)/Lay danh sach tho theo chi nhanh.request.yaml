@@ -1,0 +1,8 @@
+$kind: http-request
+name: Lấy danh sách thợ theo chi nhánh
+method: GET
+url: "{{base_url}}/api/get_stylists.php"
+examples: .resources/Lay danh sach tho theo chi nhanh.resources/examples
+order: 1000
+queryParams:
+  branch_id: "1"

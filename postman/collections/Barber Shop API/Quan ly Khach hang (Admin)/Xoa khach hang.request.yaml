@@ -1,0 +1,8 @@
+$kind: http-request
+name: 'Xóa khách hàng'
+method: GET
+url: '{{base_url}}/delete_customer.php'
+order: 2000
+queryParams:
+  - key: id
+    value: '1'

@@ -1,0 +1,8 @@
+$kind: http-request
+name: 'Xóa dịch vụ'
+method: GET
+url: '{{base_url}}/delete_service.php'
+order: 3000
+queryParams:
+  - key: id
+    value: '1'

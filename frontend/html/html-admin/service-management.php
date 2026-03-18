@@ -72,7 +72,8 @@
               id="add-service-form-container"
               class="add-service-form-container"
             >
-              <form id="add-service-form">
+              <form id="add-service-form" action="../../../backend/add_service.php" method="POST">
+                <input type="hidden" id="service-id" name="service_id" value="">
                 <div class="form-group">
                   <label for="service-name">Tên dịch vụ:</label>
                   <input

@@ -1,0 +1,15 @@
+$kind: http-request
+name: 'Đăng nhập'
+method: POST
+url: '{{base_url}}/login_process.php'
+order: 2000
+body:
+  type: formdata
+  content:
+    - key: username
+      type: text
+      value: ''
+      description: 'Email hoặc số điện thoại'
+    - key: password
+      type: text
+      value: ''

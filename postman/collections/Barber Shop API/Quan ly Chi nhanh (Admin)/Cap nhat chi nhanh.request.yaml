@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Cập nhật chi nhánh'
+method: POST
+url: '{{base_url}}/update_branch.php'
+order: 2000
+body:
+  type: formdata
+  content:
+    - key: branch_id
+      type: text
+      value: '1'
+    - key: branch_name
+      type: text
+      value: ''
+    - key: branch_address
+      type: text
+      value: ''
+    - key: branch_phone
+      type: text
+      value: ''
+    - key: branch_email
+      type: text
+      value: ''

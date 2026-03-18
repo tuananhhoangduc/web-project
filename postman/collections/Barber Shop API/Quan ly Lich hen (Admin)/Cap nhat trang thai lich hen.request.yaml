@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Cập nhật trạng thái lịch hẹn'
+method: POST
+url: '{{base_url}}/update_appointment_status.php'
+order: 1000
+body:
+  type: formdata
+  content:
+    - key: appointment_id
+      type: text
+      value: '1'
+    - key: status
+      type: text
+      value: confirmed

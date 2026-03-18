@@ -1,0 +1,8 @@
+$kind: http-request
+name: 'Hủy lịch hẹn'
+method: GET
+url: '{{base_url}}/cancel_appointment_client.php'
+order: 4000
+queryParams:
+  - key: id
+    value: '1'

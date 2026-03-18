@@ -1,0 +1,20 @@
+$kind: http-request
+name: 'Thêm chi nhánh'
+method: POST
+url: '{{base_url}}/add_branch.php'
+order: 1000
+body:
+  type: formdata
+  content:
+    - key: branch_name
+      type: text
+      value: ''
+    - key: branch_address
+      type: text
+      value: ''
+    - key: branch_phone
+      type: text
+      value: ''
+    - key: branch_email
+      type: text
+      value: ''

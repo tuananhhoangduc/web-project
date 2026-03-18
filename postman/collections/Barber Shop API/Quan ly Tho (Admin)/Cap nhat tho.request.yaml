@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Cập nhật thợ'
+method: POST
+url: '{{base_url}}/update_stylist.php'
+order: 2000
+body:
+  type: formdata
+  content:
+    - key: stylist_id
+      type: text
+      value: '1'
+    - key: stylist_name
+      type: text
+      value: ''
+    - key: stylist_phone
+      type: text
+      value: ''
+    - key: branch_id
+      type: text
+      value: '1'
+    - key: stylist_status
+      type: text
+      value: active

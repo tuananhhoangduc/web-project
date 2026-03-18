@@ -1,0 +1,23 @@
+$kind: http-request
+name: 'Cập nhật dịch vụ'
+method: POST
+url: '{{base_url}}/update_service.php'
+order: 2000
+body:
+  type: formdata
+  content:
+    - key: service_id
+      type: text
+      value: '1'
+    - key: service_name
+      type: text
+      value: ''
+    - key: service_price
+      type: text
+      value: '100000'
+    - key: service_duration
+      type: text
+      value: '30'
+    - key: service_description
+      type: text
+      value: ''

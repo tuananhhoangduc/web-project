@@ -1,0 +1,5 @@
+$kind: http-request
+name: 'Đăng xuất'
+method: GET
+url: '{{base_url}}/logout.php'
+order: 3000
