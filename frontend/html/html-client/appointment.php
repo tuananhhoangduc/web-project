@@ -34,19 +34,18 @@ if (!isset($_SESSION['user_id'])) {
 
             <div class="hamburger-icon">
                 <i class="fas fa-bars"></i>
-                </div>
+            </div>
 
             <div class="mobile-menu-overlay">
                  <div class="mobile-menu-content">
                      <div class="close-icon">
                          <i class="fas fa-times"></i>
-                         </div>
+                     </div>
                      <nav class="mobile-nav">
                          <ul>
                              <li><a href="index.php">Trang chủ</a></li>
-                             <li><a href="about.html">Về chúng tôi</a></li>
-                             <li><a href="services.html">Dịch vụ</a></li>
-                              
+                             <li><a href="about.php">Về chúng tôi</a></li>
+                             <li><a href="services.php">Dịch vụ</a></li>
                          </ul>
                      </nav>
                      <div class="mobile-header-buttons">
@@ -60,9 +59,9 @@ if (!isset($_SESSION['user_id'])) {
             <nav class="desktop-nav">
                 <ul>
                     <li><a href="index.php">Trang chủ</a></li>
-                    <li><a href="about.html">Về chúng tôi</a></li> 
-                    <li><a href="services.html">Dịch vụ</a></li> 
-                      
+                    <li><a href="about.php">Về chúng tôi</a></li> 
+                    <li><a href="services.php">Dịch vụ</a></li> 
+                </ul>
             </nav>
             <div class="header-buttons desktop-buttons">
                 <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
@@ -87,6 +86,7 @@ if (!isset($_SESSION['user_id'])) {
                     </a>
                 <?php endif; ?>
             </div>
+        </div>
     </header>
 
     <main class="page-main">
@@ -107,30 +107,12 @@ if (!isset($_SESSION['user_id'])) {
             <label>Họ và tên khách hàng:</label>
             <input type="text" id="customer-name" value="<?php echo htmlspecialchars($_SESSION['full_name']); ?>" readonly style="background-color: #f0f0f0; cursor: not-allowed;">
         </div>
-        
-
-        <div class="form-group">
-            <label for="appointment-date">Ngày hẹn <span style="color:red">*</span>:</label>
-            <input type="date" id="appointment-date" name="appointment_date" required min="<?php echo date('Y-m-d'); ?>">
-        </div>
-
-        <div class="form-group"> 
-            <label for="appointment_time">Chọn khung giờ dịch vụ <span style="color:red">*</span>:</label>
-            <select name="appointment_time" id="appointment_time" required>
-                <option value="">-- Chọn giờ --</option>
-                <?php 
-                    $hours = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
-                    foreach($hours as $h) { echo "<option value='$h:00'>$h</option>"; }
-                ?>
-            </select>
-        </div>
 
         <div class="form-group">
             <label for="service">Chọn dịch vụ <span style="color:red">*</span>:</label>
             <select id="service" name="service_id" required>
                 <option value="">-- Chọn dịch vụ --</option>
                 <?php
-                // Lấy danh sách dịch vụ từ DB
                 $stmt_srv = $conn->query("SELECT service_id, service_name, price FROM services ORDER BY service_id ASC");
                 while($srv = $stmt_srv->fetch()) {
                     $price_format = number_format($srv['price'], 0, ',', '.');
@@ -145,7 +127,6 @@ if (!isset($_SESSION['user_id'])) {
             <select id="branch" name="branch_id" required>
                 <option value="">-- Chọn chi nhánh --</option>
                 <?php
-                // Lấy danh sách chi nhánh từ DB
                 $stmt_br = $conn->query("SELECT branch_id, branch_name FROM branches ORDER BY branch_id ASC");
                 while($br = $stmt_br->fetch()) {
                     echo "<option value='{$br['branch_id']}'>{$br['branch_name']}</option>";
@@ -155,20 +136,20 @@ if (!isset($_SESSION['user_id'])) {
         </div>
 
         <div class="form-group">
-            <label for="barber">Chọn thợ (Tùy chọn):</label>
-            <select id="barber" name="stylist_id">
-                <option value="">-- Để Salon tự sắp xếp --</option>
-                <?php
-                // Lấy danh sách Thợ cắt ĐANG LÀM VIỆC từ DB (Nối bảng users để lấy tên)
-                $sql_st = "SELECT s.stylist_id, u.full_name 
-                           FROM stylists s 
-                           JOIN users u ON s.user_id = u.user_id 
-                           WHERE s.status = 'Đang làm việc'";
-                $stmt_st = $conn->query($sql_st);
-                while($st = $stmt_st->fetch()) {
-                    echo "<option value='{$st['stylist_id']}'>Thợ {$st['full_name']}</option>";
-                }
-                ?>
+            <label for="barber">Chọn thợ cắt <span style="color:red">*</span>:</label>
+            <select id="barber" name="stylist_id" required disabled>
+                <option value="">-- Vui lòng chọn chi nhánh trước --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="appointment-date">Ngày hẹn <span style="color:red">*</span>:</label>
+            <input type="date" id="appointment-date" name="appointment_date" required min="<?php echo date('Y-m-d'); ?>">
+        </div>
+
+        <div class="form-group"> 
+            <label for="appointment_time">Chọn khung giờ dịch vụ <span style="color:red">*</span>:</label>
+            <select name="appointment_time" id="appointment_time" required disabled>
+                <option value="">-- Vui lòng chọn thợ và ngày trước --</option>
             </select>
         </div>
 
@@ -210,86 +191,93 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </div>
     </div>
+    
     <script src="../../js/js-client/script.js"></script>
-    <script>
-    // 1. Tự động tính tiền khi chọn dịch vụ
-    const serviceSelect = document.getElementById('service');
-    if (serviceSelect) {
-        serviceSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const price = selectedOption.getAttribute('data-price') || 0;
-            document.getElementById('estimated-total').innerText = new Intl.NumberFormat('vi-VN').format(price) + ' VNĐ';
-        });
-    }
 
-    // 2. Tự động kiểm tra và khóa các khung giờ đã có người đặt
-    const dateInput = document.getElementById('appointment-date');
-    if (dateInput) {
-        dateInput.addEventListener('change', function() {
-            const date = this.value;
-            const timeSelect = document.getElementById('appointment_time');
-            
-            // Reset danh sách giờ
-            Array.from(timeSelect.options).forEach(opt => {
-                if(opt.value !== "") {
-                    opt.disabled = false;
-                    opt.text = opt.value.substring(0, 5); 
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // 1. Tính tiền
+        const serviceSelect = document.getElementById('service');
+        if (serviceSelect) {
+            serviceSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const price = selectedOption.getAttribute('data-price') || 0;
+                document.getElementById('estimated-total').innerText = new Intl.NumberFormat('vi-VN').format(price) + ' VNĐ';
+            });
+        }
+
+        // Khai báo các thẻ cần thao tác
+        const branchSelect = document.getElementById('branch');
+        const barberSelect = document.getElementById('barber');
+        const dateInput = document.getElementById('appointment-date');
+        const timeSelect = document.getElementById('appointment_time');
+        
+        // Mảng giờ chuẩn của tiệm
+        const defaultHours = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+
+        // 2. KHI CHỌN CHI NHÁNH -> TẢI THỢ
+        if(branchSelect) {
+            // Khi chọn Chi nhánh -> Tải danh sách thợ của chi nhánh đó
+            branchSelect.addEventListener('change', function() {
+                const branchId = this.value;
+                barberSelect.innerHTML = '<option value="">-- Đang tải thợ... --</option>';
+                barberSelect.disabled = true;
+
+                if (branchId) {
+                    // Gửi branch_id để lấy đúng thợ của chi nhánh đó
+                    fetch(`../../../backend/api/get_stylists.php?branch_id=${branchId}`)
+                        .then(res => res.json())
+                        .then(res => {
+                            barberSelect.innerHTML = '<option value="">-- Chọn Thợ --</option>';
+                            if (res.status === 'success' && res.data.length > 0) {
+                                res.data.forEach(stylist => {
+                                    barberSelect.innerHTML += `<option value="${stylist.stylist_id}">Thợ ${stylist.full_name}</option>`;
+                                });
+                                barberSelect.disabled = false;
+                            } else {
+                                barberSelect.innerHTML = '<option value="">Chi nhánh này hiện chưa có thợ</option>';
+                            }
+                        });
                 }
             });
+        }
 
-            // Gọi AJAX kiểm tra giờ bận (Đường dẫn lùi 3 cấp giống action của form)
-            fetch(`../../../backend/check_slots.php?date=${date}`)
-                .then(res => res.json())
-                .then(takenSlots => {
-                    Array.from(timeSelect.options).forEach(opt => {
-                        if (takenSlots.includes(opt.value)) {
-                            opt.disabled = true;
-                            opt.text += " (Hết chỗ)";
+        // 3. KHI CHỌN THỢ / NGÀY -> KIỂM TRA GIỜ TRỐNG
+        function checkAvailableSlots() {
+            const date = dateInput.value;
+            const stylistId = barberSelect.value;
+
+            if (date && stylistId) {
+                // Mở khóa Giờ
+                timeSelect.innerHTML = '<option value="">-- Chọn giờ --</option>';
+                timeSelect.disabled = false;
+
+                // Gọi API kiểm tra lịch
+                fetch(`../../../backend/api/check_slots.php?date=${date}&stylist_id=${stylistId}`)
+                    .then(res => res.json())
+                    .then(res => {
+                        let takenSlots = [];
+                        if (res.status === 'success') {
+                            takenSlots = res.taken_slots;
                         }
-                    });
-                })
-                .catch(err => console.error("Lỗi kiểm tra lịch:", err));
-        });
-    }
+                        
+                        // Đổ giờ ra, giờ nào nằm trong takenSlots thì bôi đỏ và khóa lại
+                        defaultHours.forEach(hour => {
+                            let isTaken = takenSlots.includes(hour);
+                            timeSelect.innerHTML += `<option value="${hour}:00" ${isTaken ? 'disabled style="color:red;"' : ''}>${hour} ${isTaken ? '(Hết chỗ)' : ''}</option>`;
+                        });
+                    })
+                    .catch(err => console.error("Lỗi tải giờ:", err));
+            } else {
+                timeSelect.disabled = true;
+                timeSelect.innerHTML = '<option value="">-- Vui lòng chọn thợ và ngày trước --</option>';
+            }
+        }
+
+        // Gắn sự kiện thay đổi
+        if(barberSelect) barberSelect.addEventListener('change', checkAvailableSlots);
+        if(dateInput) dateInput.addEventListener('change', checkAvailableSlots);
+    });
     </script>
-<!-- Code injected by live-server -->
-<script>
-	// <![CDATA[  <-- For SVG support
-	if ('WebSocket' in window) {
-		(function () {
-			function refreshCSS() {
-				var sheets = [].slice.call(document.getElementsByTagName("link"));
-				var head = document.getElementsByTagName("head")[0];
-				for (var i = 0; i < sheets.length; ++i) {
-					var elem = sheets[i];
-					var parent = elem.parentElement || head;
-					parent.removeChild(elem);
-					var rel = elem.rel;
-					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
-						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
-						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
-					}
-					parent.appendChild(elem);
-				}
-			}
-			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
-			var address = protocol + window.location.host + window.location.pathname + '/ws';
-			var socket = new WebSocket(address);
-			socket.onmessage = function (msg) {
-				if (msg.data == 'reload') window.location.reload();
-				else if (msg.data == 'refreshcss') refreshCSS();
-			};
-			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
-				console.log('Live reload enabled.');
-				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
-			}
-		})();
-	}
-	else {
-		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
-	}
-	// ]]>
-</script>
 </body>
 </html>
-

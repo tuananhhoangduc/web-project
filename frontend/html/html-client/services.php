@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+<?php session_start(); ?>
+<!doctype html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -6,68 +7,59 @@
     <title>Dịch vụ - Barber Shop</title>
     <link rel="stylesheet" href="../../css/css-client/style.css" />
     <link rel="stylesheet" href="../../css/css-client/services-style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
-  <body> 
-     <header class="site-header">
-        <div class="container header-container">
-            <div class="logo">
-                <img src="../../image/logo.png" alt="Barber Shop Logo">
-            </div>
-
-            <div class="hamburger-icon">
-                <i class="fas fa-bars"></i>
-                </div>
-
-            <div class="mobile-menu-overlay">
-                 <div class="mobile-menu-content">
-                     <div class="close-icon">
-                         <i class="fas fa-times"></i>
-                         </div>
-                     <nav class="mobile-nav">
-                         <ul>
-                             <li><a href="index.php">Trang chủ</a></li>
-                             <li><a href="about.html">Về chúng tôi</a></li>
-                             <li><a href="services.html">Dịch vụ</a></li>
-                              
-                         </ul>
-                     </nav>
-                     <div class="mobile-header-buttons">
-                         <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
-                         <a href="login.html" class="btn primary-btn ">Đăng nhập</a> 
-                         <a href="register.html" class="btn primary-btn">Đăng ký</a>     
-                     </div>
-                 </div>
-            </div>
-
-            <nav class="desktop-nav">
-                <ul>
-                    <li><a href="index.php">Trang chủ</a></li>
-                    <li><a href="about.html">Về chúng tôi</a></li> 
-                    <li><a href="services.html">Dịch vụ</a></li> 
-                      
-            </nav>
-            <div class="header-buttons desktop-buttons">
-                <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
-            </div>
-            <div class="header-buttons desktop-buttons">
-                 <div class="user-account">
-                <a href="login.html" class="user-icon-link logged-out-only"> 
-                    <i class="fas fa-user-circle"></i>
-                    <span>Đăng nhập</span>
-                </a>
-
-                 <a href="#" class="user-icon-link logged-in-only"> 
-                    <i class="fas fa-user-circle"></i>
-                    <span>Tài khoản của tôi</span>
-                    <i class="fas fa-chevron-down"></i> 
-                </a>
-                <div class="account-dropdown logged-in-only"> 
-                    <a href="my-profile.php">Tài khoản của tôi</a>
-                    <a href="history.php">Lịch sử đặt lịch</a>
-                    <a href="../../js/js-client/script.js" id="desktop-logout-link">Đăng xuất</a>
-                </div>
+  <body>
+    <header class="site-header">
+      <div class="container header-container">
+        <div class="logo">
+          <img src="../../image/logo.png" alt="Barber Shop Logo" />
         </div>
+        <nav class="desktop-nav">
+          <ul>
+            <li><a href="index.php">Trang chủ</a></li>
+            <li><a href="about.php">Về chúng tôi</a></li>
+            <li><a href="services.php">Dịch vụ</a></li>
+          </ul>
+        </nav>
+        <div class="header-buttons desktop-buttons">
+          <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
+        </div>
+        <div class="header-buttons desktop-buttons">
+          <div class="user-account">
+            <?php if(isset($_SESSION['user_id'])): ?>
+            <a href="#" class="user-icon-link" style="color: #ff7f00">
+              <i class="fas fa-user-circle"></i>
+              <span
+                >Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']);
+                ?></span
+              >
+              <i
+                class="fas fa-chevron-down"
+                style="font-size: 0.8rem; margin-left: 5px"
+              ></i>
+            </a>
+            <div class="account-dropdown">
+              <a href="my-profile.php">Tài khoản của tôi</a>
+              <a href="history.php">Lịch sử đặt lịch</a>
+              <a
+                href="../../../backend/logout.php"
+                style="color: red !important"
+                >Đăng xuất</a
+              >
+            </div>
+            <?php else: ?>
+            <a href="login.html" class="user-icon-link">
+              <i class="fas fa-user-circle"></i>
+              <span>Đăng nhập / Đăng ký</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
     </header>
 
     <main class="services-main">
@@ -77,9 +69,7 @@
           Những trải nghiệm đẳng cấp dành riêng cho quý ông
         </p>
 
-        <!-- Danh sách dịch vụ -->
         <section class="services-grid">
-          <!-- Dịch vụ 1 -->
           <div class="service-card">
             <div class="service-image">
               <img src="../../image/cat-toc.jpg" alt="Cắt tóc nam" />
@@ -97,7 +87,6 @@
             </div>
           </div>
 
-          <!-- Dịch vụ 2 -->
           <div class="service-card">
             <div class="service-image">
               <img src="../../image/cao-rau.jpg" alt="Cạo râu" />
@@ -114,7 +103,7 @@
               >
             </div>
           </div>
-          <!-- Dịch vụ 3 -->
+
           <div class="service-card">
             <div class="service-image">
               <img src="../../image/uon-toc.jpg" alt="Uốn tóc" />
@@ -129,7 +118,6 @@
             </div>
           </div>
 
-          <!-- Dịch vụ 4 -->
           <div class="service-card">
             <div class="service-image">
               <img src="../../image/nhuom-toc.png" alt="Nhuộm tóc" />
@@ -146,10 +134,10 @@
               >
             </div>
           </div>
-          <!-- Dịch vụ 5-->
+
           <div class="service-card">
             <div class="service-image">
-              <img src="../../image/cham-soc-da.jpg" alt="Nhuộm tóc" />
+              <img src="../../image/cham-soc-da.jpg" alt="Chăm sóc da" />
             </div>
             <div class="service-content">
               <h3>Chăm sóc da mặt</h3>
@@ -163,10 +151,10 @@
               >
             </div>
           </div>
-          <!-- Dịch vụ 6-->
+
           <div class="service-card">
             <div class="service-image">
-              <img src="../../image/massage-vai.jpg" alt="Nhuộm tóc" />
+              <img src="../../image/massage-vai.jpg" alt="Massage" />
             </div>
             <div class="service-content">
               <h3>Massage vai</h3>
@@ -182,11 +170,9 @@
           </div>
         </section>
 
-        <!-- Combo dịch vụ -->
         <section class="combos-section">
           <h2>Combo ưu đãi</h2>
           <div class="combo-grid">
-            <!-- Combo 1 -->
             <div class="combo-card">
               <h3>Combo Gentleman</h3>
               <ul>
@@ -198,7 +184,6 @@
                 800.000đ<span class="original-price">1.000.000đ</span>
               </p>
             </div>
-            <!-- Combo 2-->
             <div class="combo-card">
               <h3>Combo Luxury</h3>
               <ul>
@@ -215,10 +200,16 @@
       </div>
     </main>
 
-    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
-         <p> Barber Shop. All rights reserved.</p>
+    <footer
+      style="
+        background-color: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      "
+    >
+      <p>Barber Shop. All rights reserved.</p>
     </footer>
-
     <script src="../../js/js-client/script.js"></script>
   </body>
 </html>

@@ -32,8 +32,8 @@
                      <nav class="mobile-nav">
                          <ul>
                              <li><a href="index.php">Trang chủ</a></li>
-                             <li><a href="about.html">Về chúng tôi</a></li>
-                             <li><a href="services.html">Dịch vụ</a></li>
+                             <li><a href="about.php">Về chúng tôi</a></li>
+                             <li><a href="services.php">Dịch vụ</a></li>
                               
                          </ul>
                      </nav>
@@ -48,8 +48,8 @@
             <nav class="desktop-nav">
                 <ul>
                     <li><a href="index.php">Trang chủ</a></li>
-                    <li><a href="about.html">Về chúng tôi</a></li> 
-                    <li><a href="services.html">Dịch vụ</a></li> 
+                    <li><a href="about.php">Về chúng tôi</a></li> 
+                    <li><a href="services.php">Dịch vụ</a></li> 
                       
             </nav>
             <div class="header-buttons desktop-buttons">
@@ -175,7 +175,7 @@
         </section>
         
         <div class="subtitle">
-                <a href="services.html" class="btn primary-btn">Xem thêm </a> 
+                <a href="services.php" class="btn primary-btn">Xem thêm </a> 
         </div>
 </main>
     <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">

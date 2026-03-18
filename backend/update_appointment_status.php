@@ -10,7 +10,11 @@ if (isset($_GET['id']) && isset($_GET['status'])) {
         $sql = "UPDATE appointments SET status = ? WHERE appointment_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$new_status, $appointment_id]);
-
+        if ($new_status == 'cancelled') {
+            $sql_del_sch = "DELETE FROM stylist_schedules WHERE appointment_id = ?";
+            $stmt_del = $conn->prepare($sql_del_sch);
+            $stmt_del->execute([$appointment_id]);
+        }
         // Tạo câu thông báo bằng tiếng Việt
         if ($new_status == 'confirmed') {
             $message = 'Đã XÁC NHẬN lịch hẹn thành công!';

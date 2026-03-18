@@ -29,8 +29,8 @@ $user = $stmt->fetch();
             <nav class="desktop-nav">
                 <ul>
                     <li><a href="index.php">Trang chủ</a></li>
-                    <li><a href="about.html">Về chúng tôi</a></li> 
-                    <li><a href="services.html">Dịch vụ</a></li> 
+                    <li><a href="about.php">Về chúng tôi</a></li> 
+                    <li><a href="services.php">Dịch vụ</a></li> 
                 </ul>      
             </nav>
             <div class="header-buttons desktop-buttons">
