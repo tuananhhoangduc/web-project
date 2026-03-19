@@ -1,4 +1,3 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
   <head>
@@ -25,27 +24,8 @@
             <div class="header-buttons desktop-buttons">
                 <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
             </div>
-            <div class="header-buttons desktop-buttons">
-                 <div class="user-account">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
-                            <i class="fas fa-user-circle"></i>
-                            <span>Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
-                            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
-                        </a>
-                        <div class="account-dropdown"> 
-                            <a href="my-profile.php">Tài khoản của tôi</a>
-                            <a href="history.php">Lịch sử đặt lịch</a>
-                            <a href="../../../backend/logout.php" style="color: red !important;">Đăng xuất</a>
-                        </div>
-                    <?php else: ?>
-                        <a href="login.html" class="user-icon-link"> 
-                            <i class="fas fa-user-circle"></i>
-                            <span>Đăng nhập / Đăng ký</span>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
+            
+            <div class="header-buttons desktop-buttons" id="auth-menu-container"></div>
         </div>
     </header>
 
@@ -95,14 +75,47 @@
             </div>
           </div>
         </section>
-
       </div>
     </main>
 
    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
-         <p> Barber Shop. All rights reserved.</p>
+         <p>&copy; Barber Shop. All rights reserved.</p>
     </footer>
 
     <script src="../../js/js-client/script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const token = localStorage.getItem('token');
+            const fullName = localStorage.getItem('full_name');
+            const authContainer = document.getElementById('auth-menu-container');
+
+            if (token && fullName) {
+                authContainer.innerHTML = `
+                    <div class="user-account">
+                        <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
+                            <i class="fas fa-user-circle"></i>
+                            <span>Xin chào, ${fullName}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
+                        </a>
+                        <div class="account-dropdown"> 
+                            <a href="my-profile.php">Tài khoản của tôi</a>
+                            <a href="history.php">Lịch sử đặt lịch</a>
+                            <a href="#" onclick="logoutUser()" style="color: red !important;">Đăng xuất</a>
+                        </div>
+                    </div>`;
+            } else {
+                authContainer.innerHTML = `
+                    <a href="login.html" class="user-icon-link"> 
+                        <i class="fas fa-user-circle"></i>
+                        <span>Đăng nhập / Đăng ký</span>
+                    </a>`;
+            }
+        });
+
+        function logoutUser() {
+            localStorage.clear();
+            window.location.reload();
+        }
+    </script>
   </body>
 </html>

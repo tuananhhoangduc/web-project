@@ -1,17 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
-    exit();
-}
-require_once '../../../backend/db_connect.php';
-
-// LẤY THÔNG TIN CÁ NHÂN TỪ DATABASE
-$user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT full_name, phone, email, created_at FROM users WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$user = $stmt->fetch();
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -21,6 +7,13 @@ $user = $stmt->fetch();
     <link rel="stylesheet" href="../../css/css-client/style.css">
     <link rel="stylesheet" href="../../css/css-client/my-profile-styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        // Kiểm tra đăng nhập
+        if (!localStorage.getItem('token') || !localStorage.getItem('user_id')) {
+            alert('Vui lòng đăng nhập để xem thông tin!');
+            window.location.href = 'login.html';
+        }
+    </script>
 </head>
 <body> 
     <header class="site-header">
@@ -33,23 +26,8 @@ $user = $stmt->fetch();
                     <li><a href="services.php">Dịch vụ</a></li> 
                 </ul>      
             </nav>
-            <div class="header-buttons desktop-buttons">
-                <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a> 
-            </div>
-            <div class="header-buttons desktop-buttons">
-                <div class="user-account">
-                    <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
-                        <i class="fas fa-user-circle"></i>
-                        <span>Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']); ?></span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
-                    </a>
-                    <div class="account-dropdown"> 
-                        <a href="my-profile.php">Tài khoản của tôi</a>
-                        <a href="history.php">Lịch sử đặt lịch</a>
-                        <a href="../../../backend/logout.php" style="color: red !important;">Đăng xuất</a>
-                    </div>
+            <div class="header-buttons desktop-buttons" id="auth-menu-container">
                 </div>
-            </div>
         </div>
     </header>
 
@@ -60,23 +38,19 @@ $user = $stmt->fetch();
                 <form id="profile-form">
                     <div class="form-group">
                         <label>Tên Khách hàng:</label>
-                        <input type="text" readonly style="background-color: #f0f0f0;" 
-                               value="<?php echo htmlspecialchars($user['full_name']); ?>">
+                        <input type="text" id="profile-name" readonly style="background-color: #f0f0f0;">
                     </div>
                     <div class="form-group">
                         <label>Số điện thoại:</label>
-                        <input type="tel" readonly style="background-color: #f0f0f0;" 
-                               value="<?php echo htmlspecialchars($user['phone']); ?>">
+                        <input type="tel" id="profile-phone" readonly style="background-color: #f0f0f0;">
                     </div>
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" readonly style="background-color: #f0f0f0;" 
-                               value="<?php echo htmlspecialchars($user['email'] ?? 'Chưa cập nhật'); ?>"> 
+                        <input type="email" id="profile-email" readonly style="background-color: #f0f0f0;"> 
                     </div>
                     <div class="form-group">
                         <label>Ngày đăng ký:</label>
-                        <input type="text" readonly style="background-color: #f0f0f0;" 
-                               value="<?php echo date('d-m-Y H:i', strtotime($user['created_at'])); ?>">
+                        <input type="text" id="profile-date" readonly style="background-color: #f0f0f0;">
                     </div>
                 </form>
             </div>
@@ -84,8 +58,46 @@ $user = $stmt->fetch();
     </main>
 
     <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
-         <p> Barber Shop. All rights reserved.</p>
+         <p>&copy; Barber Shop. All rights reserved.</p>
     </footer>
-    <script src="../../js/js-client/script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fullName = localStorage.getItem('full_name');
+            const userId = localStorage.getItem('user_id');
+
+            // Hiển thị Menu User
+            document.getElementById('auth-menu-container').innerHTML = `
+                <div class="user-account">
+                    <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
+                        <i class="fas fa-user-circle"></i> <span>Xin chào, ${fullName}</span>
+                    </a>
+                    <div class="account-dropdown"> 
+                        <a href="my-profile.php">Tài khoản của tôi</a>
+                        <a href="history.php">Lịch sử đặt lịch</a>
+                        <a href="#" onclick="logoutUser()" style="color: red !important;">Đăng xuất</a>
+                    </div>
+                </div>`;
+
+            // GỌI API LẤY THÔNG TIN HỒ SƠ
+            fetch(`../../../backend/api/get_profile.php?user_id=${userId}`)
+            .then(res => res.json())
+            .then(result => {
+                if(result.status === 'success') {
+                    const user = result.data;
+                    document.getElementById('profile-name').value = user.full_name;
+                    document.getElementById('profile-phone').value = user.phone;
+                    document.getElementById('profile-email').value = user.email || 'Chưa cập nhật';
+                    document.getElementById('profile-date').value = user.created_at;
+                }
+            })
+            .catch(err => console.error("Lỗi API Profile:", err));
+        });
+
+        function logoutUser() {
+            localStorage.clear();
+            window.location.href = 'index.php';
+        }
+    </script>
 </body>
 </html>

@@ -1,19 +1,25 @@
 <?php
-session_start();
+header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
-if (!isset($_SESSION['user_id'])) {
-    die("Bạn cần đăng nhập.");
-}
+// Hứng dữ liệu JSON từ Body
+$data = json_decode(file_get_contents("php://input"), true);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $customer_id = $_SESSION['user_id'];
-    $branch_id   = $_POST['branch_id'];
-    $service_id  = $_POST['service_id'];
-    $stylist_id  = !empty($_POST['stylist_id']) ? $_POST['stylist_id'] : null;
-    $date        = $_POST['appointment_date'];
-    $time        = $_POST['appointment_time']; // Định dạng H:i:s
-    $notes       = htmlspecialchars($_POST['notes']);
+if ($data) {
+    // Lấy customer_id từ cục data gửi lên (Trong thực tế hệ thống lớn, id này sẽ được giải mã từ Token)
+    $customer_id = $data['customer_id'] ?? null; 
+    $branch_id   = $data['branch_id'] ?? null;
+    $service_id  = $data['service_id'] ?? null;
+    $stylist_id  = !empty($data['stylist_id']) ? $data['stylist_id'] : null;
+    $date        = $data['appointment_date'] ?? null;
+    $time        = $data['appointment_time'] ?? null; 
+    $notes       = htmlspecialchars($data['notes'] ?? '');
+
+    // Kiểm tra dữ liệu bắt buộc
+    if (!$customer_id || !$branch_id || !$service_id || !$date || !$time) {
+        echo json_encode(["status" => "error", "message" => "Thiếu thông tin đặt lịch bắt buộc!"]);
+        exit;
+    }
 
     try {
         $conn->beginTransaction();
@@ -23,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_srv->execute([$service_id]);
         $service = $stmt_srv->fetch();
         $total_price = $service['price'] ?? 0;
-        $duration = $service['duration'] ?? 30; // Mặc định 30 phút nếu không có
+        $duration = $service['duration'] ?? 30;
 
         // 2. Lưu vào bảng appointments
         $sql_app = "INSERT INTO appointments (customer_id, branch_id, service_id, stylist_id, appointment_date, appointment_time, notes, total_price, status) 
@@ -33,9 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $appointment_id = $conn->lastInsertId();
 
-        // 3. TỰ ĐỘNG CẬP NHẬT LỊCH THỢ (stylist_schedules)
+        // 3. Cập nhật lịch thợ (stylist_schedules)
         if ($stylist_id) {
-            // Tính giờ kết thúc = Giờ bắt đầu + thời lượng dịch vụ
             $end_time = date('H:i:s', strtotime($time . " + $duration minutes"));
             
             $sql_sch = "INSERT INTO stylist_schedules (stylist_id, appointment_id, work_date, start_time, end_time) 
@@ -45,10 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $conn->commit();
-        echo "<script>alert('Đặt lịch thành công!'); window.location.href = '../frontend/html/html-client/history.php';</script>";
+        echo json_encode([
+            "status" => "success", 
+            "message" => "Đặt lịch thành công!",
+            "appointment_id" => $appointment_id
+        ]);
     } catch(Exception $e) {
         $conn->rollBack();
-        die("Lỗi: " . $e->getMessage());
+        echo json_encode(["status" => "error", "message" => "Lỗi: " . $e->getMessage()]);
     }
+} else {
+    echo json_encode(["status" => "error", "message" => "Dữ liệu gửi lên không hợp lệ!"]);
 }
 ?>

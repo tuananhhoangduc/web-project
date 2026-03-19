@@ -1,13 +1,15 @@
 <?php
-session_start();
+header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name  = trim($_POST['customer_name']);
-    $phone = trim($_POST['customer_phone']);
-    $email = trim($_POST['customer_email']);
+$data = json_decode(file_get_contents("php://input"), true);
+
+if ($data) {
+    $name  = trim($data['customer_name'] ?? '');
+    $phone = trim($data['customer_phone'] ?? '');
+    $email = trim($data['customer_email'] ?? '');
     
-    // Tạo mật khẩu mặc định (ví dụ 123456) để khách có thể tự đăng nhập sau này
+    // Tạo mật khẩu mặc định
     $password = password_hash('123456', PASSWORD_DEFAULT);
 
     try {
@@ -15,9 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $phone, $email, $password]);
 
-        echo "<script>alert('Thêm khách hàng thành công!'); window.location.href = '../frontend/html/html-admin/customer-management.php';</script>";
+        echo json_encode(["status" => "success", "message" => "Thêm khách hàng thành công!"]);
     } catch(PDOException $e) {
-        die("Lỗi (Có thể số điện thoại/email đã tồn tại): " . $e->getMessage());
+        echo json_encode(["status" => "error", "message" => "Lỗi (Có thể số điện thoại/email đã tồn tại): " . $e->getMessage()]);
     }
+} else {
+    echo json_encode(["status" => "error", "message" => "Dữ liệu gửi lên không hợp lệ!"]);
 }
 ?>

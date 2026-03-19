@@ -6,7 +6,7 @@
     <title>Quản lý Lịch hẹn - Barber Shop Admin</title>
     <link rel="stylesheet" href="../../css/css-admin/style.css">
     <link rel="stylesheet" href="../../css/css-admin/salon-appointments-styles.css">
-    <link rel="stylesheet" href="../../css/css-admin/https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
       <header class="site-header">
@@ -30,21 +30,18 @@
                               <li><a href="branch-management.php">Chi nhánh</a></li> 
                               <li><a href="service-management.php">Dịch vụ</a></li> 
                               <li><a href="stylist-management.php">Stylist</a></li>
-
-
                           </ul>
                       </nav>
                   </div>
              </div>
              <nav class="desktop-nav">
                    <ul>
-                           <li><a href="admin-dashboard.html">Trang chủ</a></li>
-                              <li><a href="customer-management.php">Khách hàng</a></li>
-                              <li><a href="salon-appointments.php">Lịch hẹn</a></li> 
-                              <li><a href="branch-management.php">Chi nhánh</a></li> 
-                              <li><a href="service-management.php">Dịch vụ</a></li> 
-                              <li><a href="stylist-management.php">Stylist</a></li>
-
+                       <li><a href="admin-dashboard.html">Trang chủ</a></li>
+                       <li><a href="customer-management.php">Khách hàng</a></li>
+                       <li><a href="salon-appointments.php">Lịch hẹn</a></li> 
+                       <li><a href="branch-management.php">Chi nhánh</a></li> 
+                       <li><a href="service-management.php">Dịch vụ</a></li> 
+                       <li><a href="stylist-management.php">Stylist</a></li>
                    </ul>
              </nav>
          </div>
@@ -84,7 +81,6 @@
                     <?php
                     require_once '../../../backend/db_connect.php';
                     
-                    // Câu lệnh cơ bản có dùng WHERE 1=1 để nối điều kiện lọc
                     $sql = "SELECT a.*, u.full_name as cust_name, u.phone as cust_phone, 
                                    s.service_name, b.branch_name, st_u.full_name as stylist_name
                             FROM appointments a
@@ -164,8 +160,22 @@
 
                 <script>
                 function updateStatus(id, status) {
-                    if(confirm('Bạn có chắc chắn muốn thay đổi trạng thái lịch hẹn này?')) {
-                        window.location.href = '../../../backend/update_appointment_status.php?id=' + id + '&status=' + status;
+                    let msg = 'Bạn có chắc chắn muốn thay đổi trạng thái lịch hẹn này?';
+                    if (status === 'cancelled') {
+                        msg = 'Cảnh báo: Xác nhận HỦY lịch hẹn này và giải phóng giờ cho thợ?';
+                    }
+                    
+                    if(confirm(msg)) {
+                        fetch(`../../../backend/update_appointment_status.php?id=${id}&status=${status}`)
+                        .then(response => response.json())
+                        .then(result => {
+                            alert(result.message);
+                            if (result.status === 'success') location.reload();
+                        })
+                        .catch(error => {
+                            alert("Đã xảy ra lỗi khi kết nối tới Server.");
+                            console.error(error);
+                        });
                     }
                 }
                 </script>
