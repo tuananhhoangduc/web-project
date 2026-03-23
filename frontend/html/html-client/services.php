@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!doctype html>
 <html lang="vi">
   <head>
@@ -6,7 +7,10 @@
     <title>Dịch vụ - Barber Shop</title>
     <link rel="stylesheet" href="../../css/css-client/style.css" />
     <link rel="stylesheet" href="../../css/css-client/services-style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
     <header class="site-header">
@@ -24,69 +28,144 @@
         <div class="header-buttons desktop-buttons">
           <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
         </div>
-        
-        <div class="header-buttons desktop-buttons" id="auth-menu-container"></div>
+        <div class="header-buttons desktop-buttons">
+          <div class="user-account">
+            <?php if(isset($_SESSION['user_id'])): ?>
+            <a href="#" class="user-icon-link" style="color: #ff7f00">
+              <i class="fas fa-user-circle"></i>
+              <span
+                >Xin chào, <?php echo htmlspecialchars($_SESSION['full_name']);
+                ?></span
+              >
+              <i
+                class="fas fa-chevron-down"
+                style="font-size: 0.8rem; margin-left: 5px"
+              ></i>
+            </a>
+            <div class="account-dropdown">
+              <a href="my-profile.php">Tài khoản của tôi</a>
+              <a href="history.php">Lịch sử đặt lịch</a>
+              <a
+                href="../../../backend/logout.php"
+                style="color: red !important"
+                >Đăng xuất</a
+              >
+            </div>
+            <?php else: ?>
+            <a href="login.html" class="user-icon-link">
+              <i class="fas fa-user-circle"></i>
+              <span>Đăng nhập / Đăng ký</span>
+            </a>
+            <?php endif; ?>
+          </div>
+        </div>
       </div>
     </header>
 
     <main class="services-main">
       <div class="container">
         <h1>Dịch vụ của chúng tôi</h1>
-        <p class="subtitle">Những trải nghiệm đẳng cấp dành riêng cho quý ông</p>
+        <p class="subtitle">
+          Những trải nghiệm đẳng cấp dành riêng cho quý ông
+        </p>
 
         <section class="services-grid">
           <div class="service-card">
-            <div class="service-image"><img src="../../image/cat-toc.jpg" alt="Cắt tóc nam" /></div>
+            <div class="service-image">
+              <img src="../../image/cat-toc.jpg" alt="Cắt tóc nam" />
+            </div>
             <div class="service-content">
               <h3>Cắt tóc nam</h3>
               <p class="price">150.000đ - 300.000đ</p>
-              <p>Cắt tỉa theo phong cách hiện đại hoặc cổ điển, phù hợp với khuôn mặt và cá tính.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <p>
+                Cắt tỉa theo phong cách hiện đại hoặc cổ điển, phù hợp với khuôn
+                mặt và cá tính.
+              </p>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
+
           <div class="service-card">
-            <div class="service-image"><img src="../../image/cao-rau.jpg" alt="Cạo râu" /></div>
+            <div class="service-image">
+              <img src="../../image/cao-rau.jpg" alt="Cạo râu" />
+            </div>
             <div class="service-content">
               <h3>Cạo râu truyền thống</h3>
               <p class="price">200.000đ</p>
-              <p>Sử dụng dao cạo chuyên nghiệp kết hợp dưỡng ẩm da, mang lại cảm giác sảng khoái.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <p>
+                Sử dụng dao cạo chuyên nghiệp kết hợp dưỡng ẩm da, mang lại cảm
+                giác sảng khoái.
+              </p>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
+
           <div class="service-card">
-            <div class="service-image"><img src="../../image/uon-toc.jpg" alt="Uốn tóc" /></div>
+            <div class="service-image">
+              <img src="../../image/uon-toc.jpg" alt="Uốn tóc" />
+            </div>
             <div class="service-content">
               <h3>Uốn tóc nam</h3>
               <p class="price">400.000đ - 600.000đ</p>
               <p>Uốn phồng, uốn lạnh hoặc uốn Hàn Quốc với hóa chất an toàn.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
+
           <div class="service-card">
-            <div class="service-image"><img src="../../image/nhuom-toc.png" alt="Nhuộm tóc" /></div>
+            <div class="service-image">
+              <img src="../../image/nhuom-toc.png" alt="Nhuộm tóc" />
+            </div>
             <div class="service-content">
               <h3>Nhuộm tóc</h3>
               <p class="price">350.000đ - 800.000đ</p>
-              <p>Nhuộm màu tự nhiên hoặc phong cách, bảo vệ tóc bằng công nghệ Olaplex.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <p>
+                Nhuộm màu tự nhiên hoặc phong cách, bảo vệ tóc bằng công nghệ
+                Olaplex.
+              </p>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
+
           <div class="service-card">
-            <div class="service-image"><img src="../../image/cham-soc-da.jpg" alt="Chăm sóc da" /></div>
+            <div class="service-image">
+              <img src="../../image/cham-soc-da.jpg" alt="Chăm sóc da" />
+            </div>
             <div class="service-content">
               <h3>Chăm sóc da mặt</h3>
               <p class="price">500.000đ - 800.000đ</p>
-              <p>Làm sạch sâu, tẩy tế bào chết nhẹ, kết hợp liệu pháp cấp ẩm và massage, cho làn da sáng khỏe, mềm mịn.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <p>
+                Làm sạch sâu, tẩy tế bào chết nhẹ, kết hợp liệu pháp cấp ẩm và
+                massage, cho làn da sáng khỏe, mềm mịn.
+              </p>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
+
           <div class="service-card">
-            <div class="service-image"><img src="../../image/massage-vai.jpg" alt="Massage" /></div>
+            <div class="service-image">
+              <img src="../../image/massage-vai.jpg" alt="Massage" />
+            </div>
             <div class="service-content">
               <h3>Massage vai</h3>
               <p class="price">300.000đ - 500.000đ</p>
-              <p>Xoa bóp tập trung vào vùng cổ‑vai‑gáy, giúp giảm căng cơ, cải thiện tuần hoàn máu và mang lại cảm giác thư giãn tức thì.</p>
-              <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a>
+              <p>
+                Xoa bóp tập trung vào vùng cổ‑vai‑gáy, giúp giảm căng cơ, cải
+                thiện tuần hoàn máu và mang lại cảm giác thư giãn tức thì.
+              </p>
+              <a href="appointment.php" class="btn primary-btn"
+                >Đặt lịch ngay</a
+              >
             </div>
           </div>
         </section>
@@ -101,7 +180,9 @@
                 <li>Cạo râu + Chăm sóc da</li>
                 <li>Nhuộm tóc</li>
               </ul>
-              <p class="price">800.000đ<span class="original-price">1.000.000đ</span></p>
+              <p class="price">
+                800.000đ<span class="original-price">1.000.000đ</span>
+              </p>
             </div>
             <div class="combo-card">
               <h3>Combo Luxury</h3>
@@ -110,51 +191,25 @@
                 <li>Cạo râu + Đắp mặt nạ</li>
                 <li>Massage vai</li>
               </ul>
-              <p class="price">700.000đ <span class="original-price">900.000đ</span></p>
+              <p class="price">
+                700.000đ <span class="original-price">900.000đ</span>
+              </p>
             </div>
           </div>
         </section>
       </div>
     </main>
 
-    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
-      <p>&copy; Barber Shop. All rights reserved.</p>
+    <footer
+      style="
+        background-color: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      "
+    >
+      <p>Barber Shop. All rights reserved.</p>
     </footer>
-
     <script src="../../js/js-client/script.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const token = localStorage.getItem('token');
-            const fullName = localStorage.getItem('full_name');
-            const authContainer = document.getElementById('auth-menu-container');
-
-            if (token && fullName) {
-                authContainer.innerHTML = `
-                    <div class="user-account">
-                        <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
-                            <i class="fas fa-user-circle"></i>
-                            <span>Xin chào, ${fullName}</span>
-                            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 5px;"></i>
-                        </a>
-                        <div class="account-dropdown"> 
-                            <a href="my-profile.php">Tài khoản của tôi</a>
-                            <a href="history.php">Lịch sử đặt lịch</a>
-                            <a href="#" onclick="logoutUser()" style="color: red !important;">Đăng xuất</a>
-                        </div>
-                    </div>`;
-            } else {
-                authContainer.innerHTML = `
-                    <a href="login.html" class="user-icon-link"> 
-                        <i class="fas fa-user-circle"></i>
-                        <span>Đăng nhập / Đăng ký</span>
-                    </a>`;
-            }
-        });
-
-        function logoutUser() {
-            localStorage.clear();
-            window.location.reload();
-        }
-    </script>
   </body>
 </html>

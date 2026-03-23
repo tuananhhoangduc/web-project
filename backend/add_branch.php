@@ -1,28 +1,25 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+session_start();
 require_once 'db_connect.php';
 
-// Hứng dữ liệu JSON từ Body của Request
-$data = json_decode(file_get_contents("php://input"), true);
-
-if ($data) {
-    $name    = trim($data['branch_name'] ?? '');
-    $address = trim($data['branch_address'] ?? '');
-    $phone   = trim($data['branch_phone'] ?? '');
-    $email   = trim($data['branch_email'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Hứng dữ liệu từ các ô input của Form gửi sang
+    $name    = $_POST['branch_name'];
+    $address = $_POST['branch_address'];
+    $phone   = $_POST['branch_phone'];
+    $email   = $_POST['branch_email'];
 
     try {
         $sql = "INSERT INTO branches (branch_name, address, phone, email) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $address, $phone, $email]);
 
-        // Trả về JSON thành công
-        echo json_encode(["status" => "success", "message" => "Thêm chi nhánh mới thành công!"]);
+        echo "<script>
+                alert('Thêm chi nhánh mới thành công!'); 
+                window.location.href = '../frontend/html/html-admin/branch-management.php';
+              </script>";
     } catch(PDOException $e) {
-        // Trả về JSON báo lỗi
-        echo json_encode(["status" => "error", "message" => "Lỗi hệ thống: " . $e->getMessage()]);
+        die("Lỗi hệ thống: " . $e->getMessage());
     }
-} else {
-    echo json_encode(["status" => "error", "message" => "Dữ liệu gửi lên không hợp lệ!"]);
 }
 ?>

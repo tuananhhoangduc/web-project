@@ -5,9 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Chi nhánh - Barber Shop Admin</title>
     <link rel="stylesheet" href="../../css/css-admin/style.css" />
-    <link rel="stylesheet" href="../../css/css-admin/branch-management-styles.css" />
-    <link rel="stylesheet" href="../../css/css-admin/admin-dashboard-styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="../../css/css-admin/branch-management-styles.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css/css-admin/admin-dashboard-styles.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
     <header class="site-header">
@@ -60,8 +69,11 @@
               <i class="fas fa-plus-square"></i> Thêm Chi nhánh
             </button>
 
-            <div id="add-branch-form-container" class="add-branch-form-container">
-              <form id="add-branch-form">
+            <div
+              id="add-branch-form-container"
+              class="add-branch-form-container"
+            >
+              <form id="add-branch-form" action="../../../backend/add_branch.php" method="POST">
                   <input type="hidden" id="branch-id" name="branch_id" value="">
 
                   <div class="form-group">
@@ -111,6 +123,7 @@
                   <?php
                   require_once '../../../backend/db_connect.php';
                   
+                  // 1. Lấy danh sách chi nhánh từ Database
                   $sql = "SELECT * FROM branches ORDER BY branch_id ASC";
                   $stmt = $conn->query($sql);
                   $branches = $stmt->fetchAll();
@@ -120,10 +133,10 @@
                   ?>
                       <tr>
                           <td>CN<?php echo str_pad($b['branch_id'], 3, '0', STR_PAD_LEFT); ?></td>
-                          <td><?php echo htmlspecialchars($b['branch_name']); ?></td>
-                          <td><?php echo htmlspecialchars($b['address']); ?></td>
-                          <td><?php echo htmlspecialchars($b['phone']); ?></td>
-                          <td><?php echo htmlspecialchars($b['email'] ?? 'Chưa cập nhật'); ?></td>
+                          <td><?php echo $b['branch_name']; ?></td>
+                          <td><?php echo $b['address']; ?></td>
+                          <td><?php echo $b['phone']; ?></td>
+                          <td><?php echo $b['email'] ?? 'Chưa cập nhật'; ?></td>
                           <td>
                               <button class="btn edit-btn" 
                                   onclick="editBranch(this)"
@@ -153,70 +166,56 @@
       </div>
     </main>
 
-    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
+    <footer
+      style="
+        background-color: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      "
+    >
       <p>&copy; 2026 Barber Shop. All rights reserved.</p>
     </footer>
 
     <script src="../../js/js-client/script.js"></script>
     <script src="../../js/js-admin/branch-management-script.js"></script>
-    
     <script>
-    // 1. XỬ LÝ NÚT XÓA BẰNG API
+    // Hàm xử lý khi bấm nút Xóa
     function deleteBranch(id) {
+        // Hiển thị hộp thoại xác nhận
         if (confirm('Bạn có chắc chắn muốn xóa chi nhánh này không? Dữ liệu không thể khôi phục!')) {
-            fetch(`../../../backend/delete_branch.php?id=${id}`)
-            .then(response => response.json())
-            .then(result => {
-                alert(result.message);
-                if (result.status === 'success') location.reload();
-            })
-            .catch(error => console.error('Lỗi API:', error));
+            // Nếu chọn OK, sẽ gọi sang file PHP ở backend để xóa
+            window.location.href = '../../../backend/delete_branch.php?id=' + id;
         }
     }
 
-    // 2. BƠM DỮ LIỆU LÊN FORM SỬA (Giữ nguyên logic giao diện)
+    // Hàm xử lý khi bấm nút Sửa
     function editBranch(button) {
-        document.getElementById('branch-id').value = button.getAttribute('data-id');
-        document.getElementById('branch-name').value = button.getAttribute('data-name');
-        document.getElementById('branch-address').value = button.getAttribute('data-address');
-        document.getElementById('branch-phone').value = button.getAttribute('data-phone');
-        document.getElementById('branch-email').value = button.getAttribute('data-email');
+    // 1. Lấy dữ liệu từ cái nút Sửa vừa bấm
+    const id = button.getAttribute('data-id');
+    const name = button.getAttribute('data-name');
+    const address = button.getAttribute('data-address');
+    const phone = button.getAttribute('data-phone');
+    const email = button.getAttribute('data-email');
 
-        document.querySelector('.add-branch-block h2').innerText = 'Cập nhật Chi nhánh'; 
-        document.getElementById('submit-btn').innerHTML = '<i class="fas fa-check"></i> Cập nhật ngay';
+    // 2. Bơm dữ liệu ngược lên các ô Input của Form
+    document.getElementById('branch-id').value = id;
+    document.getElementById('branch-name').value = name;
+    document.getElementById('branch-address').value = address;
+    document.getElementById('branch-phone').value = phone;
+    document.getElementById('branch-email').value = email;
 
-        document.getElementById('add-branch-form-container').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // 3. Đổi Giao diện & Hành động của Form từ "Thêm" sang "Sửa"
+    const form = document.getElementById('add-branch-form');
+    form.action = '../../../backend/update_branch.php'; // Đổi đích đến sang file Cập nhật
+    
+    // Đổi chữ trên Form cho ngầu
+    document.querySelector('.container h2, h3').innerText = 'Cập nhật Chi nhánh'; 
+    document.getElementById('submit-btn').innerHTML = '<i class="fas fa-check"></i> Cập nhật ngay';
 
-    // 3. XỬ LÝ KHI BẤM NÚT "LƯU" HOẶC "CẬP NHẬT" (SUBMIT FORM)
-    document.getElementById('add-branch-form').addEventListener('submit', function(e) {
-        e.preventDefault(); // Chặn hành vi tải lại trang mặc định
-
-        const id = document.getElementById('branch-id').value;
-        const isUpdate = (id !== ''); 
-        const apiUrl = isUpdate ? '../../../backend/update_branch.php' : '../../../backend/add_branch.php';
-
-        const data = {
-            branch_id: id,
-            branch_name: document.getElementById('branch-name').value,
-            branch_address: document.getElementById('branch-address').value,
-            branch_phone: document.getElementById('branch-phone').value,
-            branch_email: document.getElementById('branch-email').value
-        };
-
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            alert(result.message);
-            if (result.status === 'success') location.reload();
-        })
-        .catch(error => console.error('Lỗi API:', error));
-    });
+    // 4. Tự động cuộn trang lên trên cùng để người dùng thấy Form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
     </script>
   </body>
 </html>

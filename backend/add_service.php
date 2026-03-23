@@ -1,25 +1,24 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+session_start();
 require_once 'db_connect.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
-
-if ($data) {
-    $name = trim($data['service_name'] ?? '');
-    $price = $data['service_price'] ?? 0;
-    $duration = $data['service_duration'] ?? 0;
-    $description = trim($data['service_description'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = trim($_POST['service_name']);
+    $price = $_POST['service_price'];
+    $duration = $_POST['service_duration'];
+    $description = trim($_POST['service_description']);
 
     try {
         $sql = "INSERT INTO services (service_name, price, duration, description) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $price, $duration, $description]);
 
-        echo json_encode(["status" => "success", "message" => "Thêm dịch vụ thành công!"]);
+        echo "<script>
+                alert('Thêm dịch vụ thành công!'); 
+                window.location.href = '../frontend/html/html-admin/service-management.php';
+              </script>";
     } catch(PDOException $e) {
-        echo json_encode(["status" => "error", "message" => "Lỗi hệ thống: " . $e->getMessage()]);
+        die("Lỗi hệ thống: " . $e->getMessage());
     }
-} else {
-    echo json_encode(["status" => "error", "message" => "Dữ liệu gửi lên không hợp lệ!"]);
 }
 ?>

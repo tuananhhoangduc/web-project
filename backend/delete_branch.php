@@ -1,23 +1,28 @@
 <?php
-// Khai báo trả về chuẩn JSON
-header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
     
     try {
+        // Lệnh SQL để xóa chi nhánh theo ID
         $sql = "DELETE FROM branches WHERE branch_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$id]);
 
-        // Trả về JSON thành công
-        echo json_encode(["status" => "success", "message" => "Đã xóa chi nhánh thành công!"]);
+        // Xóa xong thì báo thành công và quay lại trang quản lý
+        echo "<script>
+                alert('Đã xóa chi nhánh thành công!'); 
+                window.location.href = '../frontend/html/html-admin/branch-management.php';
+              </script>";
     } catch(PDOException $e) {
-        // Trả về JSON lỗi khóa ngoại
-        echo json_encode(["status" => "error", "message" => "Không thể xóa! Chi nhánh này đang có Thợ hoặc Lịch hẹn. Hãy xóa thợ/lịch hẹn trước."]);
+        // Nếu chi nhánh đang có Thợ hoặc Lịch hẹn thì không được xóa (tránh lỗi dữ liệu)
+        echo "<script>
+                alert('Không thể xóa! Chi nhánh này đang có Thợ hoặc Lịch hẹn. Hãy xóa thợ/lịch hẹn trước.'); 
+                window.location.href = '../frontend/html/html-admin/branch-management.php';
+              </script>";
     }
 } else {
-    echo json_encode(["status" => "error", "message" => "Lỗi: Không tìm thấy ID chi nhánh."]);
+    echo "Không tìm thấy ID chi nhánh.";
 }
 ?>

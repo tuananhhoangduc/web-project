@@ -1,28 +1,36 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+session_start();
 require_once 'db_connect.php';
 
-// Hứng dữ liệu JSON
-$data = json_decode(file_get_contents("php://input"), true);
+// Kiểm tra xem có phải dữ liệu được gửi từ Form POST sang không
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Hứng dữ liệu từ các ô input gửi sang
+    $id      = $_POST['branch_id']; // Cái ID ẩn mà ta đã gài vào Form
+    $name    = trim($_POST['branch_name']);
+    $address = trim($_POST['branch_address']);
+    $phone   = trim($_POST['branch_phone']);
+    $email   = trim($_POST['branch_email']);
 
-// Kiểm tra xem có gửi ID lên không
-if ($data && !empty($data['branch_id'])) {
-    $id      = $data['branch_id'];
-    $name    = trim($data['branch_name'] ?? '');
-    $address = trim($data['branch_address'] ?? '');
-    $phone   = trim($data['branch_phone'] ?? '');
-    $email   = trim($data['branch_email'] ?? '');
+    // Kiểm tra xem ID có tồn tại không để tránh lỗi
+    if (empty($id)) {
+        die("Lỗi: Không tìm thấy ID chi nhánh cần cập nhật!");
+    }
 
     try {
+        // Lệnh SQL UPDATE để ghi đè dữ liệu mới vào DB
         $sql = "UPDATE branches SET branch_name = ?, address = ?, phone = ?, email = ? WHERE branch_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $address, $phone, $email, $id]);
 
-        echo json_encode(["status" => "success", "message" => "Cập nhật chi nhánh thành công!"]);
+        // Cập nhật xong thì báo thành công và load lại trang quản lý
+        echo "<script>
+                alert('Cập nhật chi nhánh thành công!'); 
+                window.location.href = '../frontend/html/html-admin/branch-management.php';
+              </script>";
     } catch(PDOException $e) {
-        echo json_encode(["status" => "error", "message" => "Lỗi hệ thống: " . $e->getMessage()]);
+        die("Lỗi hệ thống: " . $e->getMessage());
     }
 } else {
-    echo json_encode(["status" => "error", "message" => "Lỗi: Không tìm thấy ID chi nhánh cần cập nhật!"]);
+    echo "Truy cập không hợp lệ!";
 }
 ?>

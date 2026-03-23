@@ -1,105 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập - Barber Shop</title>
-    <link rel="stylesheet" href="../../css/css-client/style.css" />
-    <link rel="stylesheet" href="../../css/css-client/form-styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-  </head>
-  <body>
+    <link rel="stylesheet" href="../../css/css-client/style.css"> 
+    <link rel="stylesheet" href="../../css/css-client/form-styles.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body> 
+ 
     <header class="site-header">
-      <div class="container header-container">
-        <div class="logo">
-          <img src="../../image/logo.png" alt="Barber Shop Logo" />
-        </div>
-        <nav class="desktop-nav">
-          <ul>
-            <li><a href="index.php">Trang chủ</a></li>
-            <li><a href="about.php">Về chúng tôi</a></li>
-            <li><a href="services.php">Dịch vụ</a></li>
-          </ul>
-        </nav>
-      </div>
+        <div class="container header-container">
+             <div class="logo">
+                 <img src="../../image/logo.png" alt="Barber Shop Logo">
+             </div>
+             <div class="hamburger-icon">
+                 <i class="fas fa-bars"></i>
+             </div>
+             <div class="mobile-menu-overlay">
+                  <div class="mobile-menu-content">
+                      <div class="close-icon">
+                          <i class="fas fa-times"></i>
+                      </div>
+                      <nav class="mobile-nav">
+                          <ul>
+                              <li><a href="index.php">Trang chủ</a></li>
+                              <li><a href="about.php">Về chúng tôi</a></li> 
+                              <li><a href="services.php">Dịch vụ</a></li> 
+                                
+                          </ul>
+                      </nav>
+                      <div class="mobile-header-buttons">
+                          <a href="login.html" class="btn primary-btn">Đăng nhập</a> 
+                          <a href="register.html" class="btn primary-btn">Đăng ký</a>
+                      </div>
+                  </div>
+             </div>
+             <nav class="desktop-nav">
+                 <ul>
+                     <li><a href="index.php">Trang chủ</a></li>
+                     <li><a href="about.php">Về chúng tôi</a></li> 
+                     <li><a href="services.php">Dịch vụ</a></li> 
+                      
+                 </ul>
+             </nav>
     </header>
 
     <div class="form-container">
-      <div class="back-to-home">
-        <a href="index.php"><i class="fas fa-arrow-left"></i></a>
-      </div>
-      <h2>Chào mừng</h2>
-      <p>Đăng nhập để tiếp tục trải nghiệm cùng chúng tôi</p>
-
-      <form id="login-form">
-        <div class="form-group">
-          <span class="icon"><i class="fas fa-envelope"></i></span>
-          <input
-            type="text"
-            name="username"
-            placeholder="Email hoặc SĐT"
-            required
-          />
+        <div class="back-to-home">
+            <a href="index.php">
+                <i class="fas fa-arrow-left"></i>
+                </a>
         </div>
-        <div class="form-group">
-          <span class="icon"><i class="fas fa-lock"></i></span>
-          <input
-            type="password"
-            name="password"
-            placeholder="Mật khẩu"
-            required
-          />
-        </div>
-        <button type="submit" class="btn-submit">Đăng nhập</button>
-      </form>
+        <h2>Chào mừng</h2>
+        <p>Đăng nhập để tiếp tục trải nghiệm cùng chúng tôi</p>
 
-      <div class="signup-link">
-        Bạn chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
-      </div>
+        <form id="login-form" action="../../../backend/login_process.php" method="POST"> 
+            <div class="form-group">
+                 <span class="icon"><i class="fas fa-envelope"></i></span>
+                 <input type="text" name="username" placeholder="Email hoặc SĐT" required>
+
+            </div>
+            <div class="form-group">
+                 <span class="icon"><i class="fas fa-lock"></i></span>
+                 <input type="password" name="password" placeholder="Mật khẩu" required>
+            </div>
+
+            <div class="forgot-password">
+                <a href="#">Quên mật khẩu</a>
+            </div>
+            <button type="submit" class="btn-submit">Đăng nhập</button>
+        </form>
+
+        <div class="divider">hoặc</div>
+
+        <div class="social-login">
+            <div class="social-icon">
+                <a href="#">
+                    <i class="fab fa-google"></i> 
+                </a>
+            </div>
+            <div class="social-icon">
+                <a href="#"> 
+                    <i class="fab fa-facebook-f"></i> 
+                </a>
+            </div>
+        </div>
+
+        <div class="signup-link">
+            Bạn chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+        </div>
     </div>
 
-    <script>
-      document
-        .getElementById("login-form")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const data = {
-            username: this.username.value,
-            password: this.password.value,
-          };
-
-          fetch("../../../backend/login_process.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          })
-            .then((res) => res.json())
-            .then((result) => {
-              if (result.status === "success") {
-                // LƯU CHỨNG MINH THƯ (TOKEN) VÀO TRÌNH DUYỆT
-                localStorage.setItem("token", result.token);
-                localStorage.setItem("user_id", result.user_id);
-                localStorage.setItem("full_name", result.full_name);
-                localStorage.setItem("role", result.role);
-
-                alert("Đăng nhập thành công!");
-
-                // CHUYỂN HƯỚNG THEO QUYỀN
-                if (result.role === "admin")
-                  window.location.href = "../html-admin/admin-dashboard.html";
-                else if (result.role === "stylist")
-                  window.location.href = "../html-barber/barber-dashboard.html";
-                else window.location.href = "index.php"; // Khách hàng
-              } else {
-                alert(result.message);
-              }
-            })
-            .catch((error) => console.error("Lỗi API:", error));
-        });
-    </script>
-  </body>
+    <script src="../../js/js-client/script.js"></script>
+    </body>
 </html>

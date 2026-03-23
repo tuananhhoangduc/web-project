@@ -1,25 +1,21 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+session_start();
 require_once 'db_connect.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
-
-if ($data && !empty($data['customer_id'])) {
-    $id    = $data['customer_id'];
-    $name  = trim($data['customer_name'] ?? '');
-    $phone = trim($data['customer_phone'] ?? '');
-    $email = trim($data['customer_email'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id    = $_POST['customer_id'];
+    $name  = trim($_POST['customer_name']);
+    $phone = trim($_POST['customer_phone']);
+    $email = trim($_POST['customer_email']);
 
     try {
         $sql = "UPDATE users SET full_name = ?, phone = ?, email = ? WHERE user_id = ? AND role = 'customer'";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$name, $phone, $email, $id]);
 
-        echo json_encode(["status" => "success", "message" => "Cập nhật thông tin khách hàng thành công!"]);
+        echo "<script>alert('Cập nhật thành công!'); window.location.href = '../frontend/html/html-admin/customer-management.php';</script>";
     } catch(PDOException $e) {
-        echo json_encode(["status" => "error", "message" => "Lỗi cập nhật: " . $e->getMessage()]);
+        die("Lỗi cập nhật: " . $e->getMessage());
     }
-} else {
-    echo json_encode(["status" => "error", "message" => "Thiếu dữ liệu cập nhật!"]);
 }
 ?>

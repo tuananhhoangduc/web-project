@@ -11,13 +11,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head> 
 <body>
+
     <header class="site-header">
         <div class="container header-container">
-            <div class="logo"><img src="../../image/logo.png" alt="Barber Shop Logo"></div>
-            <div class="hamburger-icon"><i class="fas fa-bars"></i></div>
+            <div class="logo">
+                <img src="../../image/logo.png" alt="Barber Shop Logo">
+            </div>
+
+            <div class="hamburger-icon">
+                <i class="fas fa-bars"></i>
+            </div>
+
             <div class="mobile-menu-overlay">
                  <div class="mobile-menu-content">
-                     <div class="close-icon"><i class="fas fa-times"></i></div>
+                     <div class="close-icon">
+                         <i class="fas fa-times"></i>
+                     </div>
                      <nav class="mobile-nav">
                          <ul>
                              <li><a href="index.php">Trang chủ</a></li>
@@ -25,7 +34,8 @@
                              <li><a href="services.php">Dịch vụ</a></li>
                          </ul>
                      </nav>
-                     <div class="mobile-header-buttons" id="mobile-auth-container"></div>
+                     <div class="mobile-header-buttons" id="mobile-auth-container">
+                         </div>
                  </div>
             </div>
 
@@ -55,84 +65,193 @@
             <div class="hero-overlay"></div>
             <div class="hero-content">
                 <h1>Không Chỉ Là Cắt Tóc, Đó Là Một <br> Trải Nghiệm</h1>
-                <p>Tiệm cắt tóc của chúng tôi là không gian được tạo ra dành riêng cho những người đàn ông đề cao chất lượng.</p>
-                <div class="hero-cta"><a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a></div>
+                <p>Tiệm cắt tóc của chúng tôi là không gian được tạo ra dành riêng cho những người đàn ông đề cao chất lượng, thời gian và vẻ ngoài hoàn hảo.</p>
+                <div class="hero-cta">
+                    <a href="appointment.php" class="btn primary-btn">Đặt lịch ngay</a> 
+                </div>
             </div>
-            <div class="slider-indicators"><span class="active"></span><span></span><span></span></div>
+            <div class="slider-indicators">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+            </div>
         </section>
     </main>
 
     <main class="page-main">
-      <div class="container">
-        <h1>Về chúng tôi</h1>
-        <section class="about-section">
-          <div class="about-content">
-            <h2>Câu chuyện của chúng tôi</h2>
-            <p>Từ năm 2000, Barber Shop đã tự hào mang đến những trải nghiệm cắt tóc và chăm sóc phái mạnh đẳng cấp...</p>
-            <p>Đội ngũ thợ cắt tóc của chúng tôi là những người thợ lành nghề, giàu kinh nghiệm...</p>
-          </div>
-          <div class="about-image"><img src="../../image/about-1.jpg" alt="Hình ảnh về Barber Shop" /></div>
-        </section>
-      </div>
+        <div class="container">
+            <h1>Về chúng tôi</h1>
+
+            <section class="about-section">
+                <div class="about-content">
+                    <h2>Câu chuyện của chúng tôi</h2>
+                    <p>
+                        Từ năm 2000, Barber Shop đã tự hào mang đến những trải
+                        nghiệm cắt tóc và chăm sóc phái mạnh đẳng cấp. Với hơn 20 năm kinh
+                        nghiệm trong nghề, chúng tôi không chỉ đơn thuần là một tiệm cắt
+                        tóc, mà là một không gian nơi quý ông có thể thư giãn, làm mới bản
+                        thân và tìm thấy phong cách phù hợp nhất.
+                    </p>
+                    <p>
+                        Đội ngũ thợ cắt tóc của chúng tôi là những người thợ lành nghề,
+                        giàu kinh nghiệm và luôn cập nhật những xu hướng tóc mới nhất.
+                        Chúng tôi tin rằng mỗi kiểu tóc là một tuyên ngôn về cá tính, và
+                        chúng tôi cam kết mang đến cho bạn diện mạo hoàn hảo, thể hiện
+                        phong thái tự tin và lịch lãm.
+                    </p>
+                </div>
+                <div class="about-image">
+                    <img src="../../image/about-1.jpg" alt="Hình ảnh về Barber Shop" />
+                </div>
+            </section>
+        </div>
     </main>
 
     <main class="services-main1">
-      <div class="container">
-        <h1>Dịch vụ của chúng tôi</h1>
-        <p class="subtitle">Những trải nghiệm đẳng cấp dành riêng cho quý ông</p>
-        <section class="services-grid">
-          <div class="service-card">
-            <div class="service-image"><img src="../../image/cat-toc.jpg" alt="Cắt tóc nam" /></div>
-            <div class="service-content"><h3>Cắt tóc nam</h3><p class="price">150.000đ - 300.000đ</p><p>Cắt tỉa theo phong cách hiện đại hoặc cổ điển...</p></div>
-          </div>
-          <div class="service-card">
-            <div class="service-image"><img src="../../image/cao-rau.jpg" alt="Cạo râu" /></div>
-            <div class="service-content"><h3>Cạo râu truyền thống</h3><p class="price">200.000đ</p><p>Sử dụng dao cạo chuyên nghiệp kết hợp dưỡng ẩm da...</p></div>
-          </div>
-          <div class="service-card">
-            <div class="service-image"><img src="../../image/uon-toc.jpg" alt="Uốn tóc" /></div>
-            <div class="service-content"><h3>Uốn tóc nam</h3><p class="price">400.000đ - 600.000đ</p><p>Uốn phồng, uốn lạnh hoặc uốn Hàn Quốc...</p></div>
-          </div>
-        </section>
-        <div class="subtitle"><a href="services.php" class="btn primary-btn">Xem thêm </a></div>
-      </div>
+        <div class="container">
+            <h1>Dịch vụ của chúng tôi</h1>
+            <p class="subtitle">
+                Những trải nghiệm đẳng cấp dành riêng cho quý ông
+            </p>
+
+            <section class="services-grid">
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="../../image/cat-toc.jpg" alt="Cắt tóc nam" />
+                    </div>
+                    <div class="service-content">
+                        <h3>Cắt tóc nam</h3>
+                        <p class="price">150.000đ - 300.000đ</p>
+                        <p>Cắt tỉa theo phong cách hiện đại hoặc cổ điển, phù hợp với khuôn mặt và cá tính.</p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="../../image/cao-rau.jpg" alt="Cạo râu" />
+                    </div>
+                    <div class="service-content">
+                        <h3>Cạo râu truyền thống</h3>
+                        <p class="price">200.000đ</p>
+                        <p>Sử dụng dao cạo chuyên nghiệp kết hợp dưỡng ẩm da, mang lại cảm giác sảng khoái.</p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="../../image/uon-toc.jpg" alt="Uốn tóc" />
+                    </div>
+                    <div class="service-content">
+                        <h3>Uốn tóc nam</h3>
+                        <p class="price">400.000đ - 600.000đ</p>
+                        <p>Uốn phồng, uốn lạnh hoặc uốn Hàn Quốc với hóa chất an toàn.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <div class="subtitle">
+                <a href="services.php" class="btn primary-btn">Xem thêm </a> 
+            </div>
+        </div>
     </main>
 
-    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;"><p>&copy; Barber Shop. All rights reserved.</p></footer>
+    <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;">
+         <p> Barber Shop. All rights reserved.</p>
+    </footer>
 
     <script src="../../js/js-client/script.js"></script> 
     
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const fullName = localStorage.getItem('full_name');
-            const authContainer = document.getElementById('auth-menu-container');
-            const mobileAuth = document.getElementById('mobile-auth-container');
-
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // ========================================================
+        // VẼ MENU "XIN CHÀO" CỰC KỲ ĐƠN GIẢN VÀ CHỐNG LỖI NHƯ BÊN APPOINTMENT
+        // ========================================================
+        const fullName = localStorage.getItem('full_name');
+        const authContainer = document.getElementById('auth-menu-container');
+        const mobileAuthContainer = document.getElementById('mobile-auth-container');
+        
+        if (authContainer) {
             if (fullName) {
-                // ĐÃ ĐĂNG NHẬP (Token exists)
+                // RENDER MENU DESKTOP KHI ĐÃ ĐĂNG NHẬP
                 authContainer.innerHTML = `
                     <div class="user-account" style="position: relative;">
-                        <a href="#" class="user-icon-link" style="color: #ff7f00;"> 
-                            <i class="fas fa-user-circle"></i> <span>Xin chào, ${fullName}</span>
-                        </a>
-                        <div class="account-dropdown" style="display: none;"> 
-                            <a href="my-profile.php">Tài khoản của tôi</a>
-                            <a href="history.php">Lịch sử đặt lịch</a>
-                            <a href="#" onclick="logoutUser()" style="color: red !important;">Đăng xuất</a>
+                        <div id="btn-toggle-menu" style="cursor: pointer; color: #ff7f00; display: flex; align-items: center; gap: 5px; font-weight: bold; font-size: 1rem;"> 
+                            <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
+                            <span>Xin chào, ${fullName}</span>
+                            <i class="fas fa-chevron-down" style="font-size: 0.8rem; margin-left: 2px;"></i>
                         </div>
-                    </div>`;
-                mobileAuth.innerHTML = `<a href="my-profile.php" class="btn primary-btn">Tài khoản</a><a href="#" onclick="logoutUser()" class="btn primary-btn" style="background:red;">Đăng xuất</a>`;
-            } else {
-                // CHƯA ĐĂNG NHẬP
-                authContainer.innerHTML = `<a href="login.html" class="user-icon-link"><i class="fas fa-user-circle"></i> <span>Đăng nhập / Đăng ký</span></a>`;
-                mobileAuth.innerHTML = `<a href="login.html" class="btn primary-btn">Đăng nhập</a><a href="register.html" class="btn primary-btn">Đăng ký</a>`;
-            }
-        });
+                        
+                        <div id="dropdown-box" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 180px; z-index: 9999; padding: 10px 0; margin-top: 15px;"> 
+                            <a href="my-profile.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Tài khoản của tôi</a>
+                            <a href="history.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Lịch sử đặt lịch</a>
+                            <a href="#" id="btn-logout" style="display: block; padding: 8px 20px; color: red; text-decoration: none; font-weight: bold;">Đăng xuất</a>
+                        </div>
+                    </div>
+                `;
 
-        function logoutUser() {
-            localStorage.clear();
-            window.location.reload();
+                // RENDER MENU MOBILE KHI ĐÃ ĐĂNG NHẬP
+                if (mobileAuthContainer) {
+                    mobileAuthContainer.innerHTML = `
+                        <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
+                        <a href="my-profile.php" class="btn primary-btn">Tài khoản</a> 
+                        <a href="#" id="mobile-btn-logout" class="btn primary-btn" style="background: red; border-color: red;">Đăng xuất</a>
+                    `;
+                }
+
+                // ================= LOGIC ĐÓNG MỞ MENU =================
+                const btnMenu = document.getElementById('btn-toggle-menu');
+                const dropBox = document.getElementById('dropdown-box');
+
+                btnMenu.onclick = function(e) {
+                    e.stopPropagation(); // Cực kỳ quan trọng: chặn click lan ra ngoài
+                    if (dropBox.style.display === 'none') {
+                        dropBox.style.display = 'block';
+                    } else {
+                        dropBox.style.display = 'none';
+                    }
+                };
+
+                // Bấm ra ngoài là tự động đóng
+                document.onclick = function(e) {
+                    if (!dropBox.contains(e.target)) {
+                        dropBox.style.display = 'none';
+                    }
+                };
+
+                // ĐĂNG XUẤT
+                const handleLogout = function(e) {
+                    e.preventDefault();
+                    localStorage.clear();
+                    window.location.reload(); // Xóa xong tự load lại trang luôn
+                };
+
+                document.getElementById('btn-logout').onclick = handleLogout;
+                if (document.getElementById('mobile-btn-logout')) {
+                    document.getElementById('mobile-btn-logout').onclick = handleLogout;
+                }
+
+            } else {
+                // KHI CHƯA ĐĂNG NHẬP
+                authContainer.innerHTML = `
+                    <div class="user-account">
+                        <a href="login.html" style="color: #ff7f00; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 5px;"> 
+                            <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i> 
+                            <span>Đăng nhập / Đăng ký</span>
+                        </a>
+                    </div>
+                `;
+
+                if (mobileAuthContainer) {
+                    mobileAuthContainer.innerHTML = `
+                        <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
+                        <a href="login.html" class="btn primary-btn">Đăng nhập</a> 
+                        <a href="register.html" class="btn primary-btn">Đăng ký</a> 
+                    `;
+                }
+            }
         }
+    });
     </script>
 </body>
 </html>

@@ -1,50 +1,49 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
+session_start();
 require_once 'db_connect.php';
 
-$data = json_decode(file_get_contents("php://input"), true);
-
-if ($data) {
-    $name   = trim($data['stylist_name'] ?? '');
-    $phone  = trim($data['stylist_phone'] ?? '');
-    $branch = empty($data['branch_id']) ? NULL : $data['branch_id'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name   = trim($_POST['stylist_name']);
+    $phone  = trim($_POST['stylist_phone']);
+    $branch = empty($_POST['branch_id']) ? NULL : $_POST['branch_id'];
     
-    // Đổi value sang chữ tiếng Việt khớp với Database
-    $status_input = $data['stylist_status'] ?? 'active';
+    // Đổi value từ Form sang chữ tiếng Việt khớp với Database
+    $status_input = $_POST['stylist_status'] ?? 'active';
     $status = ($status_input == 'active') ? 'Đang làm việc' : 'Nghỉ phép';
 
-    // Tạo mật khẩu mặc định
+    // Tạo mật khẩu mặc định (ví dụ: 123456)
     $password = password_hash('123456', PASSWORD_DEFAULT);
 
-    // FIX LỖI: Tạo một email ảo ngẫu nhiên theo thời gian thực để không bao giờ bị trùng
-    $fake_email = "stylist_" . time() . "_" . rand(100, 999) . "@barber.local";
-
     try {
-        // BẮT ĐẦU TRANSACTION
+        // 1. BẮT ĐẦU TRANSACTION (Khóa an toàn)
         $conn->beginTransaction();
 
-        // Đã bổ sung cột email và biến $fake_email vào câu lệnh INSERT
-        $sql1 = "INSERT INTO users (full_name, phone, email, password, role) VALUES (?, ?, ?, ?, 'stylist')";
+        // 2. Thêm dữ liệu vào bảng `users` (Cấp quyền role = 'stylist')
+        $sql1 = "INSERT INTO users (full_name, phone, password, role) VALUES (?, ?, ?, 'stylist')";
         $stmt1 = $conn->prepare($sql1);
-        $stmt1->execute([$name, $phone, $fake_email, $password]);
+        $stmt1->execute([$name, $phone, $password]);
         
+        // 3. Lấy cái ID của user vừa mới được tạo ra
         $user_id = $conn->lastInsertId();
 
-        // Thêm dữ liệu vào bảng stylists
+        // 4. Thêm tiếp dữ liệu vào bảng `stylists` (Dùng user_id vừa lấy được)
         $sql2 = "INSERT INTO stylists (user_id, branch_id, status) VALUES (?, ?, ?)";
         $stmt2 = $conn->prepare($sql2);
         $stmt2->execute([$user_id, $branch, $status]);
 
-        // CHỐT LƯU VÀO DATABASE
+        // 5. NẾU MỌI THỨ SUÔN SẺ -> CHỐT LƯU VÀO DATABASE
         $conn->commit();
 
-        echo json_encode(["status" => "success", "message" => "Thêm thợ cắt thành công!"]);
+        echo "<script>
+                alert('Thêm thợ cắt thành công!'); 
+                window.location.href = '../frontend/html/html-admin/stylist-management.php';
+              </script>";
     } catch(PDOException $e) {
-        // NẾU CÓ LỖI -> QUAY XE
+        // NẾU CÓ LỖI (Ví dụ trùng SĐT) -> QUAY XE, KHÔNG LƯU GÌ CẢ
         $conn->rollBack(); 
-        echo json_encode(["status" => "error", "message" => "Lỗi hệ thống: " . $e->getMessage()]);
+        die("Lỗi hệ thống: " . $e->getMessage());
     }
 } else {
-    echo json_encode(["status" => "error", "message" => "Truy cập không hợp lệ hoặc thiếu dữ liệu!"]);
+    echo "Truy cập không hợp lệ!";
 }
 ?>
