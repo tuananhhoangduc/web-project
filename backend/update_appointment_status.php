@@ -1,21 +1,29 @@
 <?php
-session_start();
+header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
-if (isset($_GET['id']) && isset($_GET['status'])) {
-    $appointment_id = (int)$_GET['id'];
-    $new_status = $_GET['status']; // Nhận 'confirmed', 'cancelled', hoặc 'completed'
+// Hỗ trợ nhận qua GET (URL), POST (FormData) hoặc JSON
+$input = $_GET; 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $json = json_decode(file_get_contents('php://input'), true);
+    $input = $json ? $json : $_POST;
+}
 
+$appointment_id = isset($input['id']) ? (int)$input['id'] : 0;
+$new_status = isset($input['status']) ? $input['status'] : '';
+
+if ($appointment_id && $new_status) {
     try {
         $sql = "UPDATE appointments SET status = ? WHERE appointment_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$new_status, $appointment_id]);
+        
         if ($new_status == 'cancelled') {
             $sql_del_sch = "DELETE FROM stylist_schedules WHERE appointment_id = ?";
             $stmt_del = $conn->prepare($sql_del_sch);
             $stmt_del->execute([$appointment_id]);
         }
-        // Tạo câu thông báo bằng tiếng Việt
+
         if ($new_status == 'confirmed') {
             $message = 'Đã XÁC NHẬN lịch hẹn thành công!';
         } elseif ($new_status == 'completed') {
@@ -24,17 +32,11 @@ if (isset($_GET['id']) && isset($_GET['status'])) {
             $message = 'Đã HỦY lịch hẹn!';
         }
 
-        echo "<script>
-                alert('$message'); 
-                window.location.href = '../frontend/html/html-admin/salon-appointments.php';
-              </script>";
+        echo json_encode(['status' => 'success', 'message' => $message]);
     } catch(PDOException $e) {
-        die("Lỗi hệ thống: " . $e->getMessage());
+        echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
     }
 } else {
-    echo "<script>
-            alert('Lỗi: Thiếu dữ liệu!'); 
-            window.location.href = '../frontend/html/html-admin/salon-appointments.php';
-          </script>";
+    echo json_encode(['status' => 'error', 'message' => 'Lỗi: Thiếu dữ liệu truyền vào!']);
 }
 ?>

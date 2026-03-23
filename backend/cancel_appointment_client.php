@@ -1,29 +1,24 @@
 <?php
-session_start();
+header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
-if (isset($_GET['id']) && isset($_SESSION['user_id'])) {
-    $appointment_id = $_GET['id'];
-    $customer_id = $_SESSION['user_id'];
+$id = $_GET['id'] ?? 0;
 
+if ($id) {
     try {
-        $conn->beginTransaction();
+        $sql = "UPDATE appointments SET status = 'cancelled' WHERE appointment_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute([$id]);
 
-        // 1. Cập nhật trạng thái lịch hẹn thành 'cancelled'
-        $sql_app = "UPDATE appointments SET status = 'cancelled' WHERE appointment_id = ? AND customer_id = ? AND status = 'pending'";
-        $stmt_app = $conn->prepare($sql_app);
-        $stmt_app->execute([$appointment_id, $customer_id]);
+        $sql_del_sch = "DELETE FROM stylist_schedules WHERE appointment_id = ?";
+        $stmt_del = $conn->prepare($sql_del_sch);
+        $stmt_del->execute([$id]);
 
-        // 2. XÓA bản ghi tương ứng trong lịch trình của thợ để giải phóng giờ
-        $sql_sch = "DELETE FROM stylist_schedules WHERE appointment_id = ?";
-        $stmt_sch = $conn->prepare($sql_sch);
-        $stmt_sch->execute([$appointment_id]);
-
-        $conn->commit();
-        echo "<script>alert('Bạn đã hủy lịch hẹn thành công!'); window.location.href = '../frontend/html/html-client/history.php';</script>";
-    } catch(Exception $e) {
-        $conn->rollBack();
-        die("Lỗi: " . $e->getMessage());
+        echo json_encode(['status' => 'success', 'message' => 'Đã hủy lịch hẹn thành công!']);
+    } catch(PDOException $e) {
+        echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
     }
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Thiếu mã lịch hẹn']);
 }
 ?>

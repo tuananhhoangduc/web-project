@@ -1,49 +1,37 @@
 <?php
-session_start();
+header('Content-Type: application/json; charset=utf-8');
 require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name   = trim($_POST['stylist_name']);
-    $phone  = trim($_POST['stylist_phone']);
-    $branch = empty($_POST['branch_id']) ? NULL : $_POST['branch_id'];
-    
-    // Đổi value từ Form sang chữ tiếng Việt khớp với Database
-    $status_input = $_POST['stylist_status'] ?? 'active';
-    $status = ($status_input == 'active') ? 'Đang làm việc' : 'Nghỉ phép';
+    $json = json_decode(file_get_contents('php://input'), true);
+    $data = $json ? $json : $_POST;
 
-    // Tạo mật khẩu mặc định (ví dụ: 123456)
-    $password = password_hash('123456', PASSWORD_DEFAULT);
+    $name   = trim($data['stylist_name'] ?? '');
+    $phone  = trim($data['stylist_phone'] ?? '');
+    $email  = trim($data['stylist_email'] ?? '');
+    $branch = empty($data['branch_id']) ? NULL : $data['branch_id'];
+    $status = 'Đang làm việc'; 
+    $password = password_hash('123456', PASSWORD_DEFAULT); // Mật khẩu mặc định 123456
 
     try {
-        // 1. BẮT ĐẦU TRANSACTION (Khóa an toàn)
         $conn->beginTransaction();
 
-        // 2. Thêm dữ liệu vào bảng `users` (Cấp quyền role = 'stylist')
-        $sql1 = "INSERT INTO users (full_name, phone, password, role) VALUES (?, ?, ?, 'stylist')";
-        $stmt1 = $conn->prepare($sql1);
-        $stmt1->execute([$name, $phone, $password]);
-        
-        // 3. Lấy cái ID của user vừa mới được tạo ra
+        // 1. Thêm vào bảng users trước
+        $sql_user = "INSERT INTO users (full_name, phone, email, password, role) VALUES (?, ?, ?, ?, 'stylist')";
+        $stmt_user = $conn->prepare($sql_user);
+        $stmt_user->execute([$name, $phone, $email, $password]);
         $user_id = $conn->lastInsertId();
 
-        // 4. Thêm tiếp dữ liệu vào bảng `stylists` (Dùng user_id vừa lấy được)
-        $sql2 = "INSERT INTO stylists (user_id, branch_id, status) VALUES (?, ?, ?)";
-        $stmt2 = $conn->prepare($sql2);
-        $stmt2->execute([$user_id, $branch, $status]);
+        // 2. Thêm vào bảng stylists
+        $sql_stylist = "INSERT INTO stylists (user_id, branch_id, status) VALUES (?, ?, ?)";
+        $stmt_stylist = $conn->prepare($sql_stylist);
+        $stmt_stylist->execute([$user_id, $branch, $status]);
 
-        // 5. NẾU MỌI THỨ SUÔN SẺ -> CHỐT LƯU VÀO DATABASE
         $conn->commit();
-
-        echo "<script>
-                alert('Thêm thợ cắt thành công!'); 
-                window.location.href = '../frontend/html/html-admin/stylist-management.php';
-              </script>";
-    } catch(PDOException $e) {
-        // NẾU CÓ LỖI (Ví dụ trùng SĐT) -> QUAY XE, KHÔNG LƯU GÌ CẢ
-        $conn->rollBack(); 
-        die("Lỗi hệ thống: " . $e->getMessage());
+        echo json_encode(['status' => 'success', 'message' => 'Thêm thợ cắt thành công!']);
+    } catch(Exception $e) {
+        $conn->rollBack();
+        echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
     }
-} else {
-    echo "Truy cập không hợp lệ!";
 }
 ?>

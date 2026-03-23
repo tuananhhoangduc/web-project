@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script>
-        // Kiểm tra đăng nhập
+        // Chặn người dùng nếu chưa đăng nhập
         if (!localStorage.getItem('user_id')) {
             alert('Vui lòng đăng nhập để sử dụng chức năng đặt lịch!');
             window.location.href = 'login.html';
@@ -106,79 +106,24 @@
 
     <footer style="background-color: #1a1a1a; color: #fff; text-align: center; padding: 20px;"><p>&copy; Barber Shop. All rights reserved.</p></footer>
     
+    <script src="../../js/js-client/script.js"></script>
+    
+    <script src="../../js/js-client/auth-menu.js"></script> 
+    
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        
-        // ========================================================
-        // 1. VIẾT LẠI TỪ ĐẦU MENU "XIN CHÀO" CỰC KỲ ĐƠN GIẢN
-        // ========================================================
-        const fullName = localStorage.getItem('full_name');
-        if (document.getElementById('customer-name')) {
-            document.getElementById('customer-name').value = fullName || 'Khách hàng';
-        }
+        // Tự động điền tên khách hàng
+        const customerInput = document.getElementById('customer-name');
+        if (customerInput) customerInput.value = localStorage.getItem('full_name') || 'Khách hàng';
 
-        const authContainer = document.getElementById('auth-menu-container');
-        
-        if (authContainer) {
-            if (fullName) {
-                // Tạo HTML cho menu
-                authContainer.innerHTML = `
-                    <div class="user-account" style="position: relative;">
-                        <div id="btn-toggle-menu" style="cursor: pointer; color: #ff7f00; display: flex; align-items: center; gap: 5px; font-weight: bold;"> 
-                            <i class="fas fa-user-circle" style="font-size: 1.2rem;"></i>
-                            <span>Xin chào, ${fullName}</span>
-                        </div>
-                        
-                        <div id="dropdown-box" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 180px; z-index: 9999; padding: 10px 0; margin-top: 15px;"> 
-                            <a href="my-profile.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Tài khoản của tôi</a>
-                            <a href="history.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Lịch sử đặt lịch</a>
-                            <a href="#" id="btn-logout" style="display: block; padding: 8px 20px; color: red; text-decoration: none; font-weight: bold;">Đăng xuất</a>
-                        </div>
-                    </div>
-                `;
-
-                // Logic tắt/mở menu được viết cực kì dứt khoát
-                const btnMenu = document.getElementById('btn-toggle-menu');
-                const dropBox = document.getElementById('dropdown-box');
-
-                btnMenu.onclick = function(e) {
-                    e.stopPropagation(); // Chặn mọi luồng click khác
-                    if (dropBox.style.display === 'none') {
-                        dropBox.style.display = 'block';
-                    } else {
-                        dropBox.style.display = 'none';
-                    }
-                };
-
-                // Bấm ra ngoài là đóng
-                document.onclick = function(e) {
-                    if (!dropBox.contains(e.target)) {
-                        dropBox.style.display = 'none';
-                    }
-                };
-
-                // Đăng xuất
-                document.getElementById('btn-logout').onclick = function(e) {
-                    e.preventDefault();
-                    localStorage.clear();
-                    window.location.href = 'index.php';
-                };
-
-            } else {
-                authContainer.innerHTML = `
-                    <div class="user-account">
-                        <a href="login.html" style="color: #ff7f00; text-decoration: none; font-weight: bold;"> 
-                            <i class="fas fa-user-circle"></i> <span>Đăng nhập / Đăng ký</span>
-                        </a>
-                    </div>
-                `;
-            }
-        }
-
-        // ========================================================
-        // 2. TÍNH TIỀN DỊCH VỤ
-        // ========================================================
+        // Các thành phần form
         const serviceSelect = document.getElementById('service');
+        const branchSelect = document.getElementById('branch');
+        const barberSelect = document.getElementById('barber');
+        const dateInput = document.getElementById('appointment-date');
+        const timeSelect = document.getElementById('appointment_time');
+        
+        // 1. Tính tiền dịch vụ
         if (serviceSelect) {
             serviceSelect.addEventListener('change', function() {
                 const price = this.options[this.selectedIndex].getAttribute('data-price') || 0;
@@ -186,81 +131,56 @@
             });
         }
 
-        // ========================================================
-        // 3. GỌI API LẤY THỢ VÀ GIỜ TRỐNG
-        // ========================================================
-        const branchSelect = document.getElementById('branch');
-        const barberSelect = document.getElementById('barber');
-        const dateInput = document.getElementById('appointment-date');
-        const timeSelect = document.getElementById('appointment_time');
-        const defaultHours = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
-
+        // 2. Tải Thợ theo Chi nhánh
         if(branchSelect) {
             branchSelect.addEventListener('change', function() {
-                const branchId = this.value;
                 barberSelect.innerHTML = '<option value="">-- Đang tải thợ... --</option>';
                 barberSelect.disabled = true;
-
-                if (branchId) {
-                    fetch(`../../../backend/api/get_stylists.php?branch_id=${branchId}`)
+                if (this.value) {
+                    fetch(`../../../backend/api/get_stylists.php?branch_id=${this.value}`)
                         .then(res => res.json())
                         .then(res => {
                             barberSelect.innerHTML = '<option value="">-- Chọn Thợ --</option>';
                             if (res.status === 'success' && res.data.length > 0) {
-                                res.data.forEach(stylist => {
-                                    barberSelect.innerHTML += `<option value="${stylist.stylist_id}">Thợ ${stylist.full_name}</option>`;
-                                });
+                                res.data.forEach(s => barberSelect.innerHTML += `<option value="${s.stylist_id}">Thợ ${s.full_name}</option>`);
                                 barberSelect.disabled = false;
                             } else {
                                 barberSelect.innerHTML = '<option value="">Chi nhánh này chưa có thợ</option>';
                             }
-                        })
-                        .catch(err => {
-                            console.error("Lỗi:", err);
-                            barberSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
-                        });
+                        }).catch(() => barberSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>');
                 }
             });
         }
 
-        function checkAvailableSlots() {
-            const date = dateInput.value;
-            const stylistId = barberSelect.value;
-
-            if (date && stylistId) {
+        // 3. Tải Giờ trống
+        const defaultHours = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30'];
+        
+        const checkAvailableSlots = () => {
+            if (dateInput.value && barberSelect.value) {
                 timeSelect.innerHTML = '<option value="">-- Đang kiểm tra giờ... --</option>';
                 timeSelect.disabled = false;
-
-                fetch(`../../../backend/api/check_slots.php?date=${date}&stylist_id=${stylistId}`)
+                fetch(`../../../backend/api/check_slots.php?date=${dateInput.value}&stylist_id=${barberSelect.value}`)
                     .then(res => res.json())
                     .then(res => {
                         timeSelect.innerHTML = '<option value="">-- Chọn giờ --</option>';
                         let takenSlots = res.status === 'success' ? res.taken_slots : [];
-                        
                         defaultHours.forEach(hour => {
                             let isTaken = takenSlots.includes(hour);
                             timeSelect.innerHTML += `<option value="${hour}:00" ${isTaken ? 'disabled style="color:red;"' : ''}>${hour} ${isTaken ? '(Hết chỗ)' : ''}</option>`;
                         });
-                    })
-                    .catch(err => {
-                        console.error("Lỗi:", err);
-                        timeSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>';
-                    });
+                    }).catch(() => timeSelect.innerHTML = '<option value="">-- Lỗi tải dữ liệu --</option>');
             } else {
                 timeSelect.disabled = true;
                 timeSelect.innerHTML = '<option value="">-- Vui lòng chọn thợ và ngày trước --</option>';
             }
-        }
+        };
 
         if(barberSelect) barberSelect.addEventListener('change', checkAvailableSlots);
         if(dateInput) dateInput.addEventListener('change', checkAvailableSlots);
 
-        // ========================================================
-        // 4. SUBMIT FORM QUA API
-        // ========================================================
+        // 4. Submit Đặt Lịch
         document.getElementById('appointment-form').addEventListener('submit', function(e) {
             e.preventDefault(); 
-            
             const data = {
                 customer_id: localStorage.getItem('user_id'),
                 branch_id: branchSelect.value,
@@ -279,14 +199,9 @@
             .then(res => res.json())
             .then(result => {
                 alert(result.message);
-                if (result.status === 'success') {
-                    window.location.href = 'history.php';
-                }
+                if (result.status === 'success') window.location.href = 'history.php';
             })
-            .catch(err => {
-                console.error("Lỗi:", err);
-                alert("Đã xảy ra lỗi kết nối Server!");
-            });
+            .catch(() => alert("Đã xảy ra lỗi kết nối Server!"));
         });
     });
     </script>

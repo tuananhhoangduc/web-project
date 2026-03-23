@@ -1,11 +1,8 @@
 <?php
-session_start(); // Gọi session ra
-
-// Xóa sạch mọi thông tin trong Session (xé "thẻ chứng minh")
+header('Content-Type: application/json; charset=utf-8');
+session_start();
 session_unset(); 
 session_destroy(); 
 
-// Đẩy người dùng về lại trang chủ
-header("Location: ../frontend/html/html-client/index.php");
-exit();
+echo json_encode(['status' => 'success', 'message' => 'Đã đăng xuất thành công']);
 ?>
