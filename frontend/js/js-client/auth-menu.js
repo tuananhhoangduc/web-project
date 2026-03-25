@@ -15,8 +15,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     
                     <div id="dropdown-box" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border-radius: 5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 180px; z-index: 999999; padding: 10px 0; margin-top: 15px;"> 
-                        <a href="my-profile.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Tài khoản của tôi</a>
-                        <a href="history.php" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Lịch sử đặt lịch</a>
+                        <a href="my-profile.html" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Tài khoản của tôi</a>
+                        <a href="history.html" style="display: block; padding: 8px 20px; color: #333; text-decoration: none; border-bottom: 1px solid #f4f4f4;">Lịch sử đặt lịch</a>
                         <a href="#" id="btn-logout" style="display: block; padding: 8px 20px; color: red; text-decoration: none; font-weight: bold;">Đăng xuất</a>
                     </div>
                 </div>
@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // ĐÃ ĐĂNG NHẬP: Giao diện Mobile
       if (mobileAuthContainer) {
         mobileAuthContainer.innerHTML = `
-                    <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
-                    <a href="my-profile.php" class="btn primary-btn">Tài khoản</a> 
+                    <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a>
+                    <a href="my-profile.html" class="btn primary-btn">Tài khoản</a> 
                     <a href="#" id="mobile-btn-logout" class="btn primary-btn" style="background: red; border-color: red;">Đăng xuất</a>
                 `;
       }
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const handleLogout = function (e) {
         e.preventDefault();
         localStorage.clear(); // Xóa sạch dữ liệu trong trình duyệt
-        window.location.href = "index.php"; // Đá về trang chủ
+        window.location.href = "index.html"; // Đá về trang chủ
       };
       document.getElementById("btn-logout").onclick = handleLogout;
       if (document.getElementById("mobile-btn-logout")) {
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // CHƯA ĐĂNG NHẬP: Giao diện Mobile
       if (mobileAuthContainer) {
         mobileAuthContainer.innerHTML = `
-                    <a href="appointment.php" class="btn primary-btn">Đặt lịch hẹn</a>
+                    <a href="appointment.html" class="btn primary-btn">Đặt lịch hẹn</a>
                     <a href="login.html" class="btn primary-btn">Đăng nhập</a> 
                     <a href="register.html" class="btn primary-btn">Đăng ký</a> 
                 `;

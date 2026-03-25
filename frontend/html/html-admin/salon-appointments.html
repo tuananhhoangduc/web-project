@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Lịch hẹn - Barber Shop Admin</title>
+    <link rel="stylesheet" href="../../css/css-admin/style.css" />
+    <link
+      rel="stylesheet"
+      href="../../css/css-admin/salon-appointments-styles.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-container">
+        <div class="logo">
+          <img src="../../image/logo.png" alt="Barber Shop Logo" />
+        </div>
+        <nav class="desktop-nav">
+          <ul>
+            <li><a href="admin-dashboard.html">Trang chủ</a></li>
+            <li><a href="customer-management.html">Khách hàng</a></li>
+            <li><a href="salon-appointments.html">Lịch hẹn</a></li>
+            <li><a href="branch-management.html">Chi nhánh</a></li>
+            <li><a href="service-management.html">Dịch vụ</a></li>
+            <li><a href="stylist-management.html">Stylist</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-main">
+      <div class="container">
+        <h1>Quản lý Lịch hẹn Salon</h1>
+        <div class="appointment-management-container">
+          <form
+            id="filter-form"
+            class="filter-bar"
+            style="
+              display: flex;
+              gap: 15px;
+              align-items: center;
+              margin-bottom: 25px;
+            "
+          >
+            <div>
+              <label style="font-weight: bold">Ngày:</label
+              ><input type="date" id="filter-date" style="padding: 5px" />
+            </div>
+            <div>
+              <label style="font-weight: bold">Trạng thái:</label>
+              <select id="filter-status" style="padding: 5px">
+                <option value="">Tất cả</option>
+                <option value="pending">Chờ xác nhận</option>
+                <option value="confirmed">Đã xác nhận</option>
+                <option value="completed">Đã hoàn thành</option>
+                <option value="cancelled">Đã hủy</option>
+              </select>
+            </div>
+            <button type="submit" class="btn primary-btn">
+              <i class="fas fa-filter"></i> Lọc
+            </button>
+            <button
+              type="button"
+              class="btn secondary-btn"
+              onclick="
+                document.getElementById('filter-form').reset();
+                loadAppointments();
+              "
+            >
+              Hủy lọc
+            </button>
+          </form>
+
+          <div class="appointment-list" id="appointment-list-container">
+            <div style="text-align: center">Đang tải dữ liệu...</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      style="
+        background-color: #1a1a1a;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+      "
+    >
+      <p>Barber Shop. All rights reserved.</p>
+    </footer>
+
+    <script src="../../js/js-client/script.js"></script>
+    <script src="../../js/js-admin/admin-auth.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        loadAppointments();
+        document
+          .getElementById("filter-form")
+          .addEventListener("submit", (e) => {
+            e.preventDefault();
+            loadAppointments(
+              document.getElementById("filter-date").value,
+              document.getElementById("filter-status").value,
+            );
+          });
+      });
+
+      function loadAppointments(date = "", status = "") {
+        fetch(
+          `../../../backend/api/get_appointments_admin.php?date=${date}&status=${status}`,
+        )
+          .then((res) => res.json())
+          .then((res) => {
+            const container = document.getElementById(
+              "appointment-list-container",
+            );
+            container.innerHTML = "";
+            if (res.status === "success" && res.data.length > 0) {
+              res.data.forEach((app) => {
+                // Dịch trạng thái
+                let stText = "Không xác định",
+                  stColor = "orange";
+                if (app.status === "pending") {
+                  stText = "Chờ xác nhận";
+                  stColor = "orange";
+                }
+                if (app.status === "confirmed") {
+                  stText = "Đã xác nhận";
+                  stColor = "green";
+                }
+                if (app.status === "completed") {
+                  stText = "Đã hoàn thành";
+                  stColor = "blue";
+                }
+                if (app.status === "cancelled") {
+                  stText = "Đã hủy";
+                  stColor = "red";
+                }
+
+                // Format ngày (từ YYYY-MM-DD sang DD/MM/YYYY)
+                let dateParts = app.appointment_date.split("-");
+                let formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+                let formattedTime = app.appointment_time.substring(0, 5);
+
+                // Xử lý nút bấm
+                let buttons = "";
+                if (app.status === "pending") {
+                  buttons = `
+                            <button class="btn confirm-btn" style="background-color: #4CAF50; color: white;" onclick="updateStatus(${app.appointment_id}, 'confirmed')">
+                                <i class="fas fa-check"></i> Xác nhận
+                            </button>
+                            <button class="btn reject-btn" style="background-color: #f44336; color: white;" onclick="updateStatus(${app.appointment_id}, 'cancelled')">
+                                <i class="fas fa-times"></i> Hủy
+                            </button>`;
+                } else if (app.status === "confirmed") {
+                  buttons = `
+                            <button class="btn" style="background-color: #2196F3; color: white;" onclick="updateStatus(${app.appointment_id}, 'completed')">
+                                <i class="fas fa-flag-checkered"></i> Hoàn thành
+                            </button>`;
+                }
+
+                // TRẢ LẠI NGUYÊN VẸN CẤU TRÚC HTML CŨ CỦA BẠN
+                container.innerHTML += `
+                    <div class="appointment-item ${app.status}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                        <div class="appointment-details">
+                            <h3 style="margin-top: 0; color: #333;">Khách hàng: ${app.cust_name}</h3>
+                            <p><strong>SĐT:</strong> ${app.cust_phone}</p>
+                            <p><strong>Thời gian:</strong> ${formattedDate}, ${formattedTime}</p>
+                            <p><strong>Dịch vụ:</strong> ${app.service_name}</p>
+                            <p><strong>Thợ cắt:</strong> ${app.stylist_name || "Không chọn"}</p>
+                            <p><strong>Ghi chú:</strong> ${app.notes || "Không có ghi chú"}</p>
+                            <p class="appointment-status">Trạng thái: 
+                                <span style="font-weight: bold; color: ${stColor};">${stText}</span>
+                            </p>
+                        </div>
+                        
+                        <div class="appointment-actions" style="margin-top: 10px;">
+                            ${buttons}
+                        </div>
+                    </div>`;
+              });
+            } else {
+              container.innerHTML =
+                "<div class='no-items' style='text-align: center; padding: 20px;'>Không tìm thấy lịch hẹn nào.</div>";
+            }
+          })
+          .catch((err) => {
+            container.innerHTML =
+              "<div style='text-align: center; color: red;'>Lỗi tải dữ liệu lịch hẹn!</div>";
+          });
+      }
+
+      function updateStatus(id, status) {
+        if (
+          confirm("Bạn có chắc chắn muốn thay đổi trạng thái lịch hẹn này?")
+        ) {
+          fetch(
+            `../../../backend/update_appointment_status.php?id=${id}&status=${status}`,
+          )
+            .then((res) => res.json())
+            .then((res) => {
+              alert(res.message);
+              loadAppointments(); // Tải lại danh sách ngay lập tức
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

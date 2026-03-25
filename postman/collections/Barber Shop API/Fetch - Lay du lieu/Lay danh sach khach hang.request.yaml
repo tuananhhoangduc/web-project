@@ -1,12 +1,12 @@
 $kind: http-request
-name: Lấy danh sách thợ theo chi nhánh
+name: 'Lấy danh sách khách hàng'
 method: GET
-url: '{{base_url}}/api/get_stylists.php'
-examples: '.resources/Lay danh sach tho theo chi nhanh.resources/examples'
-order: 1000
+url: '{{base_url}}/api/get_customers_admin.php'
+order: 4000
 queryParams:
-  - key: branch_id
-    value: '1'
+  - key: search
+    value: ''
+    disabled: true
 tests: |-
   // Test 1: Status HTTP phải là 200
   pm.test("Status code is 200", function () {
@@ -30,13 +30,13 @@ tests: |-
       pm.expect(json.data).to.be.an('array');
   });
 
-  // Test 5: Mỗi phần tử có stylist_id và full_name
-  pm.test("Each stylist has stylist_id and full_name", function () {
+  // Test 5: Mỗi khách hàng có các trường cơ bản
+  pm.test("Each customer has basic fields", function () {
       const json = pm.response.json();
       if (json.data.length > 0) {
-          json.data.forEach(function(stylist) {
-              pm.expect(stylist).to.have.property('stylist_id');
-              pm.expect(stylist).to.have.property('full_name');
+          json.data.forEach(function(customer) {
+              pm.expect(customer).to.have.property('user_id');
+              pm.expect(customer).to.have.property('full_name');
           });
       }
   });

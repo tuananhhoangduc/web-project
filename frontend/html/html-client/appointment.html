@@ -23,9 +23,9 @@
             <div class="logo"><img src="../../image/logo.png" alt="Barber Shop Logo"></div>
             <nav class="desktop-nav">
                 <ul>
-                    <li><a href="index.php">Trang chủ</a></li>
-                    <li><a href="about.php">Về chúng tôi</a></li>
-                    <li><a href="services.php">Dịch vụ</a></li>
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li><a href="about.html">Về chúng tôi</a></li>
+                    <li><a href="services.html">Dịch vụ</a></li>
                 </ul>
             </nav>
             
@@ -199,7 +199,7 @@
             .then(res => res.json())
             .then(result => {
                 alert(result.message);
-                if (result.status === 'success') window.location.href = 'history.php';
+                if (result.status === 'success') window.location.href = 'history.html';
             })
             .catch(() => alert("Đã xảy ra lỗi kết nối Server!"));
         });
