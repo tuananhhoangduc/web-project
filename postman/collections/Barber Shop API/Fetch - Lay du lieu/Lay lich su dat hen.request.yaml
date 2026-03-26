@@ -1,7 +1,7 @@
 $kind: http-request
 name: "Lấy lịch sử đặt hẹn"
 method: GET
-url: "{{base_url}}/api/get_history.html"
+url: "{{base_url}}/api/get_history.php"
 order: 5000
 queryParams:
   - key: user_id

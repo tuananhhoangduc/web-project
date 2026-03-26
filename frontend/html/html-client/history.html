@@ -70,7 +70,7 @@
         const userId = localStorage.getItem("user_id");
         const listContainer = document.getElementById("history-list-container");
 
-        fetch(`../../../backend/api/get_history.html?user_id=${userId}`)
+        fetch(`../../../backend/api/get_history.php?user_id=${userId}`)
           .then((res) => res.json())
           .then((res) => {
             if (res.status === "success" && res.data.length > 0) {
