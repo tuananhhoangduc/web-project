@@ -21,10 +21,7 @@
   <body>
     <header class="site-header">
       <div class="container header-container">
-        <div class="logo">
-          <img src="../../image/logo.png" alt="Barber Shop Logo" />
-        </div>
-        <div class="hamburger-icon"><i class="fas fa-bars"></i></div>
+        <div class="logo"><img src="../../image/logo.png" alt="Logo" /></div>
         <nav class="desktop-nav">
           <ul>
             <li><a href="admin-dashboard.html">Trang chủ</a></li>
@@ -42,194 +39,221 @@
       <div class="container">
         <h1>Quản lý Stylist</h1>
         <div class="stylist-management-container">
-          <div
-            class="leave-requests-block"
-            style="
-              margin-bottom: 40px;
-              background: #fffaf0;
-              padding: 20px;
-              border-radius: 8px;
-              border-left: 5px solid #ff7f00;
-            "
-          >
-            <h2 style="color: #ff7f00; margin-top: 0">
+          <div class="leave-requests-block">
+            <h2>
               <i class="fas fa-envelope-open-text"></i> Đơn Xin Nghỉ Phép (Chờ
               Duyệt)
             </h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Ngày nộp</th>
-                  <th>Tên Thợ</th>
-                  <th>Ngày xin nghỉ</th>
-                  <th>Loại nghỉ</th>
-                  <th>Lý do</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody id="leave-table-body">
-                <tr>
-                  <td colspan="6" style="text-align: center">
-                    Đang tải dữ liệu...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div style="overflow-x: auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ngày nộp</th>
+                    <th>Tên Thợ</th>
+                    <th>Ngày nghỉ</th>
+                    <th>Loại nghỉ</th>
+                    <th>Lý do</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="leave-table-body">
+                  <tr>
+                    <td colspan="6" style="text-align: center">
+                      Đang tải dữ liệu...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div class="add-stylist-block">
-            <h2 id="form-title">Thêm Stylist Mới</h2>
-            <button class="btn primary-btn" id="show-add-stylist-form-btn">
-              <i class="fas fa-user-plus"></i> Thêm Stylist
+          <div class="add-stylist-block" style="margin-top: 30px">
+            <h2 id="form-title">Quản lý Thợ Cắt</h2>
+            <button class="btn primary-btn" id="btn-show-form">
+              <i class="fas fa-plus"></i> Thêm Stylist Mới
             </button>
 
             <div
               id="add-stylist-form-container"
               class="add-stylist-form-container"
+              style="
+                display: none;
+                margin-top: 20px;
+                background: #f9f9f9;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #ddd;
+              "
             >
               <form id="add-stylist-form">
-                <input
-                  type="hidden"
-                  id="stylist-id"
-                  name="stylist_id"
-                  value=""
-                />
+                <input type="hidden" id="stylist-id" name="stylist_id" />
+
                 <div class="form-group">
-                  <label>Tên Thợ:</label
-                  ><input
-                    type="text"
-                    id="stylist-name"
-                    name="stylist_name"
-                    required
-                  />
+                  <label>Tên Thợ:</label>
+                  <input type="text" name="stylist_name" id="f-name" required />
                 </div>
+
                 <div class="form-group">
-                  <label>Số điện thoại:</label
-                  ><input
+                  <label>Số điện thoại:</label>
+                  <input
                     type="tel"
-                    id="stylist-phone"
                     name="stylist_phone"
+                    id="f-phone"
                     required
                   />
                 </div>
+
                 <div class="form-group">
-                  <label>Email:</label
-                  ><input
-                    type="email"
-                    id="stylist-email"
-                    name="stylist_email"
-                  />
+                  <label>Email:</label>
+                  <input type="email" name="stylist_email" id="f-email" />
                 </div>
+
                 <div class="form-group">
-                  <label>Thuộc Chi nhánh:</label>
-                  <select id="stylist-branch" name="branch_id" required>
-                    <option value="">-- Đang tải Chi nhánh --</option>
-                  </select>
+                  <label>Chi nhánh:</label>
+                  <select name="branch_id" id="f-branch" required></select>
                 </div>
+
                 <div class="form-group">
                   <label>Trạng thái:</label>
-                  <select id="stylist-status" name="stylist_status">
+                  <select name="stylist_status" id="f-status">
                     <option value="active">Đang làm việc</option>
-                    <option value="inactive">Nghỉ phép</option>
+                    <option value="inactive">Tạm nghỉ/Nghỉ việc</option>
                   </select>
                 </div>
-                <button type="submit" class="btn primary-btn" id="submit-btn">
-                  <i class="fas fa-save"></i> Lưu Thợ Cắt
-                </button>
-                <button
-                  type="button"
-                  class="btn secondary-btn"
-                  id="cancel-add-stylist-form-btn"
-                >
-                  <i class="fas fa-times"></i> Làm mới
-                </button>
+
+                <div style="display: flex; gap: 10px">
+                  <button type="submit" class="btn primary-btn" id="btn-submit">
+                    Lưu Dữ Liệu
+                  </button>
+                  <button
+                    type="button"
+                    class="btn secondary-btn"
+                    onclick="closeForm()"
+                  >
+                    Hủy / Đóng
+                  </button>
+                </div>
               </form>
             </div>
           </div>
 
-          <div class="stylist-list">
+          <div class="stylist-list" style="margin-top: 30px">
             <h2>Danh sách Stylist</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Mã Stylist</th>
-                  <th>Tên Stylist</th>
-                  <th>Chi nhánh</th>
-                  <th>Số điện thoại</th>
-                  <th>Trạng thái</th>
-                  <th>Hành động</th>
-                </tr>
-              </thead>
-              <tbody id="stylist-table-body">
-                <tr>
-                  <td colspan="6" style="text-align: center">
-                    Đang tải dữ liệu...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div style="overflow-x: auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mã</th>
+                    <th>Tên Stylist</th>
+                    <th>Số điện thoại</th>
+                    <th>Chi nhánh</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="stylist-table-body">
+                  <tr>
+                    <td colspan="6" style="text-align: center">Đang tải...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="pagination-container"></div>
           </div>
         </div>
       </div>
     </main>
 
-    <footer
-      style="
-        background-color: #1a1a1a;
-        color: #fff;
-        text-align: center;
-        padding: 20px;
-      "
-    >
-      <p>Barber Shop. All rights reserved.</p>
-    </footer>
-
-    <script src="../../js/js-client/script.js"></script>
     <script src="../../js/js-admin/admin-auth.js"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        loadBranches();
-        loadStylists();
+        loadStylists(1);
         loadLeaveRequests();
+        loadBranches();
 
-        document
-          .getElementById("add-stylist-form")
-          .addEventListener("submit", function (e) {
-            e.preventDefault();
-            const id = document.getElementById("stylist-id").value;
-            const endpoint = id
-              ? "../../../backend/update_stylist.php"
-              : "../../../backend/add_stylist.php";
+        // Mở form Thêm mới
+        document.getElementById("btn-show-form").onclick = () => {
+          document.getElementById("add-stylist-form-container").style.display =
+            "block";
+          document.getElementById("add-stylist-form").reset();
+          document.getElementById("stylist-id").value = "";
+          document.getElementById("form-title").innerText = "Quản lý Thợ Cắt";
+          document.getElementById("btn-submit").innerText = "Lưu Dữ Liệu";
+        };
 
-            fetch(endpoint, { method: "POST", body: new FormData(this) })
-              .then((res) => res.json())
-              .then((res) => {
-                alert(res.message);
-                if (res.status === "success") {
-                  this.reset();
-                  document.getElementById("stylist-id").value = "";
-                  document.getElementById("form-title").innerText =
-                    "Thêm Stylist Mới";
-                  document.getElementById("submit-btn").innerHTML =
-                    '<i class="fas fa-save"></i> Lưu Thợ Cắt';
-                  loadStylists();
-                }
-              });
-          });
-
-        document
-          .getElementById("cancel-add-stylist-form-btn")
-          .addEventListener("click", function () {
-            document.getElementById("add-stylist-form").reset();
-            document.getElementById("stylist-id").value = "";
-            document.getElementById("form-title").innerText =
-              "Thêm Stylist Mới";
-            document.getElementById("submit-btn").innerHTML =
-              '<i class="fas fa-save"></i> Lưu Thợ Cắt';
-          });
+        // Submit form
+        document.getElementById("add-stylist-form").onsubmit = function (e) {
+          e.preventDefault();
+          const id = document.getElementById("stylist-id").value;
+          const url = id
+            ? "../../../backend/update_stylist.php"
+            : "../../../backend/add_stylist.php";
+          fetch(url, { method: "POST", body: new FormData(this) })
+            .then((res) => res.json())
+            .then((res) => {
+              alert(res.message);
+              if (res.status === "success") {
+                closeForm();
+                loadStylists(1);
+              }
+            });
+        };
       });
 
+      // Load danh sách Stylist (đã tách SĐT)
+      function loadStylists(page = 1) {
+        fetch(`../../../backend/api/get_stylists_admin.php?page=${page}`)
+          .then((res) => res.json())
+          .then((res) => {
+            const tbody = document.getElementById("stylist-table-body");
+            tbody.innerHTML = "";
+            if (res.status === "success" && res.data.length > 0) {
+              res.data.forEach((st) => {
+                let badge =
+                  st.status === "Đang làm việc"
+                    ? "status-active"
+                    : st.status === "Nghỉ phép"
+                      ? "status-leave"
+                      : "status-inactive";
+                tbody.innerHTML += `
+                  <tr>
+                    <td>ST${String(st.stylist_id).padStart(3, "0")}</td>
+                    <td><strong>${st.full_name}</strong></td>
+                    <td>${st.phone}</td> <td>${st.branch_name || "---"}</td>
+                    <td><span class="status-badge ${badge}">${st.status}</span></td>
+                    <td>
+                      <button class="btn" style="background:#ffc107; color:#000; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;" onclick='editSt(${JSON.stringify(st)})'><i class="fas fa-edit"></i></button>
+                      <button class="btn" style="background:#dc3545; color:#fff; border:none; padding:5px 8px; border-radius:4px; cursor:pointer; margin-left:5px;" onclick="delSt(${st.stylist_id})"><i class="fas fa-trash"></i></button>
+                    </td>
+                  </tr>`;
+              });
+              renderPagination(res.total_pages, res.current_page);
+            } else {
+              tbody.innerHTML =
+                "<tr><td colspan='6' style='text-align:center;'>Không có dữ liệu.</td></tr>";
+              renderPagination(0, 1);
+            }
+          });
+      }
+
+      // Render Phân trang
+      function renderPagination(total, current) {
+        const con = document.getElementById("pagination-container");
+        con.innerHTML = "";
+        if (total <= 1) return;
+        for (let i = 1; i <= total; i++) {
+          const btn = document.createElement("button");
+          btn.innerText = i;
+          if (i === current) btn.className = "active";
+          btn.onclick = () => {
+            loadStylists(i);
+            window.scrollTo({ top: 300, behavior: "smooth" });
+          };
+          con.appendChild(btn);
+        }
+      }
+
+      // Load Đơn xin nghỉ
       function loadLeaveRequests() {
         fetch("../../../backend/api/get_leave_requests.php")
           .then((res) => res.json())
@@ -237,148 +261,81 @@
             const tbody = document.getElementById("leave-table-body");
             tbody.innerHTML = "";
             if (res.status === "success" && res.data.length > 0) {
-              res.data.forEach((req) => {
-                let ds = req.start_date.split("-");
-                let fStart = `${ds[2]}/${ds[1]}/${ds[0]}`;
-                let de = req.end_date.split("-");
-                let fEnd = `${de[2]}/${de[1]}/${de[0]}`;
-                let leaveRange =
-                  fStart === fEnd ? fStart : `Từ ${fStart} đến ${fEnd}`;
-                let cDate = req.created_at.split(" ")[0].split("-");
-                let fCreated = `${cDate[2]}/${cDate[1]}/${cDate[0]}`;
-
+              res.data.forEach((r) => {
+                let fDate = r.created_at
+                  .split(" ")[0]
+                  .split("-")
+                  .reverse()
+                  .join("/");
                 tbody.innerHTML += `
-                    <tr>
-                        <td>${fCreated}</td>
-                        <td style="font-weight:bold; color:#ff7f00;">${req.full_name}</td>
-                        <td>${leaveRange}</td>
-                        <td>${req.leave_type}</td>
-                        <td>${req.reason || "Không có"}</td>
-                        <td>
-                            <button class="btn" onclick="updateLeaveStatus(${req.request_id}, 'approved')" style="background-color: #28a745; color: white; padding: 5px 10px; margin-right: 5px;"><i class="fas fa-check"></i> Duyệt</button>
-                            <button class="btn" onclick="updateLeaveStatus(${req.request_id}, 'rejected')" style="background-color: #dc3545; color: white; padding: 5px 10px;"><i class="fas fa-times"></i> Từ chối</button>
-                        </td>
-                    </tr>`;
+                  <tr>
+                    <td>${fDate}</td>
+                    <td><strong>${r.full_name}</strong></td>
+                    <td>${r.start_date}</td>
+                    <td><span style="color:#ff7f00; font-weight:600;">${r.leave_type}</span></td>
+                    <td style="max-width: 200px; font-style: italic;">${r.reason || "---"}</td>
+                    <td>
+                      <button onclick="upLv(${r.request_id}, 'approved')" style="color:#28a745; border:none; background:none; cursor:pointer; font-size: 1.3rem;"><i class="fas fa-check-circle"></i></button>
+                      <button onclick="upLv(${r.request_id}, 'rejected')" style="color:#dc3545; border:none; background:none; cursor:pointer; font-size: 1.3rem; margin-left:10px;"><i class="fas fa-times-circle"></i></button>
+                    </td>
+                  </tr>`;
               });
             } else {
               tbody.innerHTML =
-                "<tr><td colspan='6' style='text-align:center;'>Không có đơn xin nghỉ nào cần duyệt.</td></tr>";
+                "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Không có đơn nào cần xử lý.</td></tr>";
             }
           });
       }
 
-      function updateLeaveStatus(id, status) {
-        let actionName = status === "approved" ? "DUYỆT" : "TỪ CHỐI";
-        if (
-          confirm(`Bạn có chắc chắn muốn ${actionName} đơn xin nghỉ này không?`)
-        ) {
-          fetch(
-            `../../../backend/update_leave_status.php?id=${id}&status=${status}`,
-          )
-            .then((res) => res.json())
-            .then((res) => {
-              alert(res.message);
-              if (res.status === "success") {
-                loadLeaveRequests();
-                loadStylists();
-              }
-            });
-        }
+      // Đổ dữ liệu vào form để Sửa
+      function editSt(st) {
+        document.getElementById("add-stylist-form-container").style.display =
+          "block";
+        document.getElementById("stylist-id").value = st.stylist_id;
+        document.getElementById("f-name").value = st.full_name;
+        document.getElementById("f-phone").value = st.phone;
+        document.getElementById("f-email").value = st.email || "";
+        document.getElementById("f-branch").value = st.branch_id;
+        document.getElementById("f-status").value =
+          st.status === "Đang làm việc" ? "active" : "inactive";
+        document.getElementById("btn-submit").innerText = "Cập nhật ngay";
+        window.scrollTo({ top: 300, behavior: "smooth" });
       }
 
-      function loadBranches() {
-        fetch("../../../backend/api/get_branches_admin.php")
+      function closeForm() {
+        document.getElementById("add-stylist-form-container").style.display =
+          "none";
+      }
+      function upLv(id, st) {
+        fetch(`../../../backend/update_leave_status.php?id=${id}&status=${st}`)
           .then((res) => res.json())
           .then((res) => {
-            const select = document.getElementById("stylist-branch");
-            select.innerHTML = '<option value="">-- Chọn Chi nhánh --</option>';
-            if (res.status === "success")
-              res.data.forEach(
-                (b) =>
-                  (select.innerHTML += `<option value="${b.branch_id}">${b.branch_name}</option>`),
-              );
+            alert(res.message);
+            loadLeaveRequests();
+            loadStylists(1);
           });
       }
-
-      function loadStylists() {
-        fetch("../../../backend/api/get_stylists_admin.php")
-          .then((res) => res.json())
-          .then((res) => {
-            const tbody = document.getElementById("stylist-table-body");
-            tbody.innerHTML = "";
-            if (res.status === "success" && res.data.length > 0) {
-              res.data.forEach((st) => {
-                let statusColor =
-                  st.status === "Đang làm việc" ? "green" : "red";
-                let statusVal =
-                  st.status === "Đang làm việc" ? "active" : "inactive";
-
-                // Mã hóa an toàn 100% để gắn vào data-attribute
-                let safeName = (st.full_name || "").replace(/"/g, "&quot;");
-                let safePhone = (st.phone || "").replace(/"/g, "&quot;");
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td>ST${String(st.stylist_id).padStart(3, "0")}</td>
-                        <td style="font-weight: bold;">${st.full_name}</td>
-                        <td>${st.branch_name || "Chưa phân bổ"}</td>
-                        <td>${st.phone}</td>
-                        <td><span style="color: ${statusColor}; font-weight: bold; background: #f0f0f0; padding: 5px 10px; border-radius: 4px;">${st.status}</span></td>
-                        <td>
-                            <button class="btn edit-btn" 
-                                data-id="${st.stylist_id}"
-                                data-name="${safeName}"
-                                data-phone="${safePhone}"
-                                data-branch="${st.branch_id || ""}"
-                                data-status="${statusVal}"
-                                onclick="editStylist(this)" 
-                                style="background-color: #FFC107; color: #000;">
-                                <i class="fas fa-edit"></i> Sửa
-                            </button>
-                            <button class="btn delete-btn" onclick="deleteStylist(${st.stylist_id})"><i class="fas fa-trash"></i> Xóa</button>
-                        </td>
-                    </tr>`;
-              });
-            } else {
-              tbody.innerHTML =
-                "<tr><td colspan='6' style='text-align:center;'>Chưa có thợ cắt nào.</td></tr>";
-            }
-          });
-      }
-
-      // Hàm gọi khi bấm nút Sửa (Bắt data từ attribute của chính nút đó)
-      function editStylist(btn) {
-        document.getElementById("stylist-id").value =
-          btn.getAttribute("data-id");
-        document.getElementById("stylist-name").value =
-          btn.getAttribute("data-name");
-        document.getElementById("stylist-phone").value =
-          btn.getAttribute("data-phone");
-        document.getElementById("stylist-branch").value =
-          btn.getAttribute("data-branch");
-        document.getElementById("stylist-status").value =
-          btn.getAttribute("data-status");
-
-        document.getElementById("form-title").innerText = "Cập nhật Thợ cắt";
-        document.getElementById("submit-btn").innerHTML =
-          '<i class="fas fa-check"></i> Cập nhật ngay';
-
-        const formContainer = document.getElementById(
-          "add-stylist-form-container",
-        );
-        formContainer.style.display = "block";
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function deleteStylist(id) {
-        if (confirm("Bạn có chắc chắn muốn xóa thợ cắt này không?")) {
+      function delSt(id) {
+        if (confirm("Xóa thợ này?")) {
           fetch(`../../../backend/delete_stylist.php?id=${id}`)
             .then((res) => res.json())
             .then((res) => {
               alert(res.message);
-              if (res.status === "success") loadStylists();
+              loadStylists(1);
             });
         }
+      }
+      function loadBranches() {
+        fetch("../../../backend/api/get_branches_admin.php")
+          .then((res) => res.json())
+          .then((res) => {
+            const s = document.getElementById("f-branch");
+            s.innerHTML = '<option value="">-- Chọn Chi nhánh --</option>';
+            res.data.forEach(
+              (b) =>
+                (s.innerHTML += `<option value="${b.branch_id}">${b.branch_name}</option>`),
+            );
+          });
       }
     </script>
   </body>

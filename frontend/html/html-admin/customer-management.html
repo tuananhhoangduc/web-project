@@ -59,10 +59,7 @@
               <button
                 type="button"
                 class="btn secondary-btn"
-                onclick="
-                  document.getElementById('search-input').value = '';
-                  loadCustomers();
-                "
+                onclick="resetSearch()"
               >
                 Hủy lọc
               </button>
@@ -115,10 +112,7 @@
                 <button
                   type="button"
                   class="btn secondary-btn"
-                  onclick="
-                    document.getElementById('add-customer-form').reset();
-                    document.getElementById('customer-id').value = '';
-                  "
+                  onclick="resetForm()"
                 >
                   <i class="fas fa-times"></i> Làm mới
                 </button>
@@ -145,22 +139,39 @@
                 </tr>
               </tbody>
             </table>
+            <div
+              id="pagination-container"
+              style="text-align: center; margin-top: 20px"
+            ></div>
           </div>
         </div>
       </div>
     </main>
 
     <script>
+      let currentSearch = "";
+
       document.addEventListener("DOMContentLoaded", () => {
         loadCustomers();
 
+        // Xử lý tìm kiếm khi bấm nút hoặc Enter
         document
           .getElementById("search-form")
           .addEventListener("submit", function (e) {
             e.preventDefault();
-            loadCustomers(document.getElementById("search-input").value);
+            currentSearch = document.getElementById("search-input").value;
+            loadCustomers(1); // Tìm kiếm luôn quay về trang 1
           });
 
+        // Xử lý tìm kiếm Real-time (vừa gõ vừa lọc)
+        document
+          .getElementById("search-input")
+          .addEventListener("input", function (e) {
+            currentSearch = e.target.value;
+            loadCustomers(1);
+          });
+
+        // Xử lý Form Thêm/Sửa
         document
           .getElementById("add-customer-form")
           .addEventListener("submit", function (e) {
@@ -175,17 +186,17 @@
               .then((res) => {
                 alert(res.message);
                 if (res.status === "success") {
-                  this.reset();
-                  document.getElementById("customer-id").value = "";
+                  resetForm();
                   loadCustomers();
                 }
               });
           });
       });
 
-      function loadCustomers(search = "") {
+      // Hàm load dữ liệu kết hợp Phân trang Backend
+      function loadCustomers(page = 1) {
         fetch(
-          `../../../backend/api/get_customers_admin.php?search=${encodeURIComponent(search)}`,
+          `../../../backend/api/get_customers_admin.php?page=${page}&search=${encodeURIComponent(currentSearch)}`,
         )
           .then((res) => res.json())
           .then((res) => {
@@ -206,11 +217,45 @@
                         </td>
                     </tr>`;
               });
+              // Vẽ nút phân trang
+              renderPagination(res.total_pages, res.current_page);
             } else {
               tbody.innerHTML =
                 "<tr><td colspan='6' style='text-align:center;'>Không tìm thấy khách hàng.</td></tr>";
+              renderPagination(0, 1);
             }
           });
+      }
+
+      // Hàm vẽ nút bấm phân trang [1] [2] [3]
+      function renderPagination(totalPages, currentPage) {
+        const container = document.getElementById("pagination-container");
+        container.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.innerText = i;
+          btn.style.cssText = `margin: 0 5px; padding: 6px 12px; cursor: pointer; border: 1px solid #28a745; border-radius: 4px; transition: 0.3s;`;
+
+          if (i === currentPage) {
+            btn.style.backgroundColor = "#28a745";
+            btn.style.color = "white";
+          } else {
+            btn.style.backgroundColor = "white";
+            btn.style.color = "#28a745";
+          }
+
+          btn.onclick = () => {
+            loadCustomers(i);
+            window.scrollTo({
+              top: document.querySelector(".customer-list").offsetTop - 100,
+              behavior: "smooth",
+            });
+          };
+          container.appendChild(btn);
+        }
       }
 
       function editCustomer(id, name, phone, email) {
@@ -233,6 +278,20 @@
               if (res.status === "success") loadCustomers();
             });
         }
+      }
+
+      function resetForm() {
+        document.getElementById("add-customer-form").reset();
+        document.getElementById("customer-id").value = "";
+        document.getElementById("form-title").innerText = "Thêm Khách hàng Mới";
+        document.getElementById("submit-btn").innerHTML =
+          '<i class="fas fa-save"></i> Lưu Khách hàng';
+      }
+
+      function resetSearch() {
+        document.getElementById("search-input").value = "";
+        currentSearch = "";
+        loadCustomers(1);
       }
     </script>
     <script src="../../js/js-admin/admin-auth.js"></script>

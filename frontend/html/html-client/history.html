@@ -109,6 +109,7 @@
                             </div>
                         `;
 
+                // Chỉ hiển thị nút Hủy nếu lịch đang chờ xác nhận hoặc đã xác nhận (tuỳ logic của bạn, ở đây giữ nguyên pending)
                 if (app.status === "pending") {
                   html += `
                             <div style="margin-top: 10px;">
@@ -131,9 +132,23 @@
           });
       });
 
+      // Đã sửa lại hàm cancelAppointment dùng fetch API để chạy ngầm
       function cancelAppointment(id) {
         if (confirm("Bạn có chắc chắn muốn hủy lịch hẹn này?")) {
-          window.location.href = `../../../backend/cancel_appointment_client.php?id=${id}`;
+          fetch(`../../../backend/cancel_appointment_client.php?id=${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message); // Hiển thị thông báo (Đã hủy thành công)
+              if (data.status === "success") {
+                window.location.reload(); // Tự động load lại trang để cập nhật trạng thái
+              }
+            })
+            .catch((error) => {
+              console.error("Lỗi khi hủy lịch:", error);
+              alert(
+                "Có lỗi xảy ra khi kết nối đến máy chủ. Vui lòng thử lại sau.",
+              );
+            });
         }
       }
     </script>

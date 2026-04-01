@@ -156,7 +156,22 @@
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         loadServices();
+        document
+          .getElementById("show-add-service-form-btn")
+          .addEventListener("click", function () {
+            // Hiển thị form lên
+            document.getElementById(
+              "add-service-form-container",
+            ).style.display = "block";
 
+            // Làm sạch form phòng trường hợp trước đó vừa bấm Sửa
+            document.getElementById("add-service-form").reset();
+            document.getElementById("service-id").value = "";
+            document.getElementById("form-title").innerText =
+              "Thêm Dịch vụ Mới";
+            document.getElementById("submit-btn").innerHTML =
+              '<i class="fas fa-save"></i> Lưu Dịch vụ';
+          });
         // Xử lý Form Thêm/Sửa
         document
           .getElementById("add-service-form")
