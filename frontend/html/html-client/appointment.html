@@ -10,9 +10,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
-
     <script>
-      // Chặn người dùng nếu chưa đăng nhập
       if (!localStorage.getItem("user_id")) {
         alert("Vui lòng đăng nhập để sử dụng chức năng đặt lịch!");
         window.location.href = "login.html";
@@ -76,6 +74,27 @@
               <label for="barber"
                 >Chọn thợ cắt <span style="color: red">*</span>:</label
               >
+
+              <div style="margin-bottom: 10px">
+                <label
+                  style="
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                    color: #ff7f00;
+                    font-weight: bold;
+                  "
+                >
+                  <input
+                    type="checkbox"
+                    id="vip-only-checkbox"
+                    style="width: 18px; height: 18px; accent-color: #ff7f00"
+                  />
+                  Thợ VIP
+                </label>
+              </div>
+
               <select id="barber" required disabled>
                 <option value="">-- Vui lòng chọn chi nhánh trước --</option>
               </select>
@@ -139,28 +158,26 @@
     <script src="../../js/js-client/auth-menu.js"></script>
 
     <script>
+      let allStylists = [];
+
       document.addEventListener("DOMContentLoaded", function () {
-        // 0. Thiết lập ngày nhỏ nhất là hôm nay (thay thế cho code PHP cũ)
         const today = new Date().toISOString().split("T")[0];
         document.getElementById("appointment-date").setAttribute("min", today);
 
-        // Tự động điền tên khách hàng
         const customerInput = document.getElementById("customer-name");
         if (customerInput)
           customerInput.value =
             localStorage.getItem("full_name") || "Khách hàng";
 
-        // Các thành phần form
         const serviceSelect = document.getElementById("service");
         const branchSelect = document.getElementById("branch");
         const barberSelect = document.getElementById("barber");
         const dateInput = document.getElementById("appointment-date");
         const timeSelect = document.getElementById("appointment_time");
+        const vipCheckbox = document.getElementById("vip-only-checkbox");
 
-        // --- GỌI API ĐỂ LOAD DỮ LIỆU BAN ĐẦU ---
-
-        // Load Danh sách Dịch vụ
-        fetch("../../../backend/api/get_services_admin.php") // Đảm bảo đúng link API của bạn
+        // Load Dịch vụ
+        fetch("../../../backend/api/get_services_admin.php")
           .then((res) => res.json())
           .then((res) => {
             serviceSelect.innerHTML =
@@ -171,15 +188,10 @@
                 serviceSelect.innerHTML += `<option value="${srv.service_id}" data-price="${srv.price}">${srv.service_name} (${priceFmt} VNĐ)</option>`;
               });
             }
-          })
-          .catch(
-            () =>
-              (serviceSelect.innerHTML =
-                '<option value="">Lỗi tải dịch vụ</option>'),
-          );
+          });
 
-        // Load Danh sách Chi nhánh
-        fetch("../../../backend/api/get_branches_admin.php") // Đảm bảo đúng link API của bạn
+        // Load Chi nhánh
+        fetch("../../../backend/api/get_branches_admin.php")
           .then((res) => res.json())
           .then((res) => {
             branchSelect.innerHTML =
@@ -189,19 +201,10 @@
                 branchSelect.innerHTML += `<option value="${br.branch_id}">${br.branch_name}</option>`;
               });
             }
-          })
-          .catch(
-            () =>
-              (branchSelect.innerHTML =
-                '<option value="">Lỗi tải chi nhánh</option>'),
-          );
+          });
 
-        // --- CÁC SỰ KIỆN LẮNG NGHE (GIỮ NGUYÊN NHƯ CŨ) ---
-
-        // 1. Tính tiền dịch vụ
         if (serviceSelect) {
           serviceSelect.addEventListener("change", function () {
-            // Kiểm tra nếu chọn option rỗng thì gán giá = 0
             const price =
               this.options[this.selectedIndex]?.getAttribute("data-price") || 0;
             document.getElementById("estimated-total").innerText =
@@ -209,7 +212,7 @@
           });
         }
 
-        // 2. Tải Thợ theo Chi nhánh
+        // Tải Thợ theo Chi nhánh và Gán vào Biến Toàn cục
         if (branchSelect) {
           branchSelect.addEventListener("change", function () {
             barberSelect.innerHTML =
@@ -221,29 +224,49 @@
               )
                 .then((res) => res.json())
                 .then((res) => {
-                  barberSelect.innerHTML =
-                    '<option value="">-- Chọn Thợ --</option>';
                   if (res.status === "success" && res.data.length > 0) {
-                    res.data.forEach(
-                      (s) =>
-                        (barberSelect.innerHTML += `<option value="${s.stylist_id}">Thợ ${s.full_name}</option>`),
-                    );
-                    barberSelect.disabled = false;
+                    allStylists = res.data; // Lưu lại dữ liệu thợ
+                    renderStylistsDropdown();
                   } else {
+                    allStylists = [];
                     barberSelect.innerHTML =
                       '<option value="">Chi nhánh này chưa có thợ</option>';
                   }
-                })
-                .catch(
-                  () =>
-                    (barberSelect.innerHTML =
-                      '<option value="">-- Lỗi tải dữ liệu --</option>'),
-                );
+                });
+            } else {
+              allStylists = [];
+              renderStylistsDropdown();
             }
           });
         }
 
-        // 3. Tải Giờ trống
+        // HÀM VẼ DANH SÁCH THỢ (CÓ LỌC VIP)
+        function renderStylistsDropdown() {
+          const isVipOnly = vipCheckbox.checked;
+          barberSelect.innerHTML = '<option value="">-- Chọn Thợ --</option>';
+
+          let filteredStylists = isVipOnly
+            ? allStylists.filter((st) => st.is_vip)
+            : allStylists;
+
+          if (filteredStylists.length > 0) {
+            filteredStylists.forEach((st) => {
+              let vipText = st.is_vip ? " (Thợ VIP)" : "";
+              barberSelect.innerHTML += `<option value="${st.stylist_id}">Thợ ${st.full_name}${vipText}</option>`;
+            });
+            barberSelect.disabled = false;
+          } else {
+            barberSelect.innerHTML =
+              '<option value="">Không có thợ phù hợp</option>';
+            barberSelect.disabled = true;
+          }
+          checkAvailableSlots(); // Reset lại khung giờ
+        }
+
+        // Bắt sự kiện khi tích/bỏ tích ô VIP
+        vipCheckbox.addEventListener("change", renderStylistsDropdown);
+
+        // Tải Giờ trống
         const defaultHours = [
           "08:00",
           "08:30",
@@ -267,7 +290,6 @@
           "19:00",
           "19:30",
         ];
-
         const checkAvailableSlots = () => {
           if (dateInput.value && barberSelect.value) {
             timeSelect.innerHTML =
@@ -286,12 +308,7 @@
                   let isTaken = takenSlots.includes(hour);
                   timeSelect.innerHTML += `<option value="${hour}:00" ${isTaken ? 'disabled style="color:red;"' : ""}>${hour} ${isTaken ? "(Hết chỗ)" : ""}</option>`;
                 });
-              })
-              .catch(
-                () =>
-                  (timeSelect.innerHTML =
-                    '<option value="">-- Lỗi tải dữ liệu --</option>'),
-              );
+              });
           } else {
             timeSelect.disabled = true;
             timeSelect.innerHTML =
@@ -304,7 +321,7 @@
         if (dateInput)
           dateInput.addEventListener("change", checkAvailableSlots);
 
-        // 4. Submit Đặt Lịch
+        // Submit Đặt Lịch
         document
           .getElementById("appointment-form")
           .addEventListener("submit", function (e) {
@@ -329,8 +346,7 @@
                 alert(result.message);
                 if (result.status === "success")
                   window.location.href = "history.html";
-              })
-              .catch(() => alert("Đã xảy ra lỗi kết nối Server!"));
+              });
           });
       });
     </script>
