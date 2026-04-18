@@ -12,8 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     try {
-        // Tìm tài khoản theo Email hoặc SĐT 
-        $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role FROM users WHERE email = ? OR phone = ?");
+        // Tìm tài khoản theo Email hoặc SĐT (Bỏ điều kiện role để Admin cũng vào được)
+        $stmt = $conn->prepare("SELECT user_id, full_name, password, role FROM users WHERE email = ? OR phone = ?");
         $stmt->execute([$username, $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -22,11 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             // KIỂM TRA MẬT KHẨU (PHÂN BIỆT HOA THƯỜNG TUYỆT ĐỐI)
             if (password_verify($password, $user['password'])) {
-                $isValid = true; 
+                $isValid = true; // Nếu dùng chuẩn Hash hiện đại
             } elseif ($user['password'] === $password) {
-                $isValid = true; 
+                $isValid = true; // Nếu dùng văn bản thô cũ
             } elseif ($user['password'] === md5($password)) {
-                $isValid = true; 
+                $isValid = true; // Nếu dùng chuẩn MD5 cũ
             }
 
             if ($isValid) {
@@ -35,9 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'data' => [
                         'user_id' => $user['user_id'],
                         'full_name' => $user['full_name'],
-                        'email' => $user['email'],
-                        'role' => $user['role'],
-                        'auth_method' => 'password'
+                        'role' => $user['role'] // Gửi kèm quyền để JS phân luồng
                     ]
                 ]);
             } else {

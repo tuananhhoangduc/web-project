@@ -57,13 +57,6 @@
   cursor: not-allowed; /* Con trỏ không cho phép nhập */
 }
 
-.form-group input:disabled {
-  background-color: #f2f2f2;
-  color: #777;
-  cursor: not-allowed;
-  opacity: 1;
-}
-
 /* Style cho container nút hành động */
 .profile-actions {
   margin-top: 20px;
@@ -108,33 +101,6 @@
   background-color: #635a50; /* Màu đậm hơn khi hover */
 }
 
-/* Style cho nút hủy */
-.btn-cancel {
-  background-color: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1em;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 10px;
-}
-
-.btn-cancel:hover {
-  background-color: #5a6268;
-}
-
-.google-email-note {
-  margin: 8px 0 0;
-  font-size: 0.85em;
-  color: #b36b00;
-  line-height: 1.4;
-}
-
 /* Class để ẩn phần tử */
 .hidden {
   display: none !important; /* Sử dụng !important để đảm bảo ghi đè */
@@ -165,8 +131,7 @@
     font-size: 0.95em;
   }
   .btn-edit,
-  .btn-update,
-  .btn-cancel {
+  .btn-update {
     padding: 8px 15px;
     font-size: 0.9em;
     gap: 6px;
@@ -193,8 +158,7 @@
     font-size: 0.85em;
   }
   .btn-edit,
-  .btn-update,
-  .btn-cancel {
+  .btn-update {
     padding: 6px 12px;
     font-size: 0.85em;
     gap: 5px;

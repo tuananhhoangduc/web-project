@@ -11,6 +11,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <script>
+      // BẢO VỆ TRANG BẰNG JS API
       if (!localStorage.getItem("user_id")) {
         window.location.href = "login.html";
       }
@@ -85,28 +86,6 @@
                 value="Đang tải..."
               />
             </div>
-            <div class="profile-actions">
-              <button type="button" id="edit-profile-btn" class="btn-edit">
-                <i class="fas fa-pen"></i>
-                Chỉnh sửa
-              </button>
-              <button
-                type="submit"
-                id="save-profile-btn"
-                class="btn-update hidden"
-              >
-                <i class="fas fa-save"></i>
-                Lưu thay đổi
-              </button>
-              <button
-                type="button"
-                id="cancel-profile-btn"
-                class="btn-cancel hidden"
-              >
-                <i class="fas fa-times"></i>
-                Hủy
-              </button>
-            </div>
           </form>
         </div>
       </div>
@@ -128,171 +107,21 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const userId = localStorage.getItem("user_id");
-        const profileForm = document.getElementById("profile-form");
-        const editBtn = document.getElementById("edit-profile-btn");
-        const saveBtn = document.getElementById("save-profile-btn");
-        const cancelBtn = document.getElementById("cancel-profile-btn");
-        const nameInput = document.getElementById("profile-name");
-        const phoneInput = document.getElementById("profile-phone");
-        const emailInput = document.getElementById("profile-email");
-        const dateInput = document.getElementById("profile-date");
-        const authMethod = (localStorage.getItem("auth_method") || "password")
-          .toLowerCase()
-          .trim();
-        const isGoogleAccount = authMethod === "google";
-        const cachedFullName = localStorage.getItem("full_name") || "";
-        const cachedEmail = localStorage.getItem("user_email") || "";
-
-        if (isGoogleAccount) {
-          emailInput.readOnly = true;
-          emailInput.disabled = true;
-          emailInput.title = "Tài khoản Google không thể đổi email từ đây";
-        }
-
-        let originalProfile = {
-          full_name: "",
-          phone: "",
-          email: "",
-          created_at: "",
-        };
-
-        function loadProfile() {
-          return fetch(`../../../backend/api/get_profile.php?user_id=${userId}`)
-            .then((res) => res.json())
-            .then((res) => {
-              if (res.status === "success") {
-                fillProfile(res.data);
-              } else {
-                fillProfile({
-                  full_name: cachedFullName,
-                  email: cachedEmail,
-                  phone: "",
-                  created_at: "",
-                });
-              }
-            });
-        }
-
-        function setEditMode(isEditing) {
-          [nameInput, phoneInput, emailInput].forEach((input) => {
-            if (isGoogleAccount && input === emailInput) {
-              input.readOnly = true;
-              input.disabled = true;
-              input.style.backgroundColor = "#f0f0f0";
-              input.style.cursor = "not-allowed";
-              return;
-            }
-
-            input.readOnly = !isEditing;
-            input.style.backgroundColor = isEditing ? "#fff" : "#f0f0f0";
-            input.style.cursor = isEditing ? "text" : "not-allowed";
-          });
-
-          if (isEditing) {
-            phoneInput.value = originalProfile.phone || "";
-            emailInput.value = originalProfile.email || cachedEmail || "";
-          } else {
-            phoneInput.value = originalProfile.phone || "Chưa cập nhật";
-            emailInput.value = originalProfile.email || "Chưa cập nhật";
-          }
-
-          editBtn.classList.toggle("hidden", isEditing);
-          saveBtn.classList.toggle("hidden", !isEditing);
-          cancelBtn.classList.toggle("hidden", !isEditing);
-          dateInput.readOnly = true;
-        }
-
-        function fillProfile(data) {
-          originalProfile = {
-            full_name: data.full_name || cachedFullName || "",
-            phone: data.phone || "",
-            email: data.email || cachedEmail || "",
-            created_at: data.created_at || "",
-          };
-
-          nameInput.value = originalProfile.full_name || "Chưa cập nhật";
-          phoneInput.value = originalProfile.phone || "Chưa cập nhật";
-          emailInput.value = originalProfile.email || "Chưa cập nhật";
-          dateInput.value = originalProfile.created_at || "Chưa cập nhật";
-
-          if (isGoogleAccount) {
-            const noteId = "google-email-note";
-            let noteElement = document.getElementById(noteId);
-            if (!noteElement) {
-              noteElement = document.createElement("p");
-              noteElement.id = noteId;
-              noteElement.className = "google-email-note";
-              emailInput.parentElement.appendChild(noteElement);
-            }
-            noteElement.textContent =
-              "Email được đồng bộ từ tài khoản Google và không thể chỉnh sửa.";
-          }
-        }
-
         // GỌI API LẤY THÔNG TIN
-        loadProfile().catch((err) => console.error("Lỗi tải profile:", err));
-
-        editBtn.addEventListener("click", function () {
-          setEditMode(true);
-        });
-
-        cancelBtn.addEventListener("click", function () {
-          fillProfile(originalProfile);
-          setEditMode(false);
-        });
-
-        profileForm.addEventListener("submit", function (event) {
-          event.preventDefault();
-
-          const submittedPhone = phoneInput.value.trim();
-          const submittedEmail = isGoogleAccount
-            ? originalProfile.email
-            : emailInput.value.trim();
-
-          const payload = {
-            customer_id: userId,
-            customer_name: nameInput.value.trim(),
-            customer_phone: submittedPhone || originalProfile.phone,
-            customer_email: submittedEmail || originalProfile.email,
-            auth_method: authMethod,
-          };
-
-          if (!payload.customer_name) {
-            alert("Vui lòng nhập họ và tên.");
-            return;
-          }
-
-          fetch("../../../backend/update_customer.php", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+        fetch(`../../../backend/api/get_profile.php?user_id=${userId}`)
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.status === "success") {
+              document.getElementById("profile-name").value =
+                res.data.full_name;
+              document.getElementById("profile-phone").value = res.data.phone;
+              document.getElementById("profile-email").value =
+                res.data.email || "Chưa cập nhật";
+              document.getElementById("profile-date").value =
+                res.data.created_at;
+            }
           })
-            .then((res) => res.json())
-            .then((res) => {
-              if (res.status === "success") {
-                localStorage.setItem(
-                  "full_name",
-                  res.data.full_name || payload.customer_name,
-                );
-                localStorage.setItem(
-                  "user_email",
-                  res.data.email || payload.customer_email || "",
-                );
-                setEditMode(false);
-                return loadProfile().then(() => {
-                  alert(res.message || "Cập nhật thành công!");
-                });
-              } else {
-                alert(res.message || "Cập nhật thất bại!");
-              }
-            })
-            .catch((err) => {
-              console.error("Lỗi cập nhật profile:", err);
-              alert("Không thể cập nhật thông tin lúc này.");
-            });
-        });
+          .catch((err) => console.error("Lỗi tải profile:", err));
       });
     </script>
   </body>

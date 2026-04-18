@@ -25,7 +25,6 @@
         <nav class="desktop-nav">
           <ul>
             <li><a href="admin-dashboard.html">Trang chủ</a></li>
-            <li><a href="statistics.html">Thống kê</a></li>
             <li><a href="customer-management.html">Khách hàng</a></li>
             <li><a href="salon-appointments.html">Lịch hẹn</a></li>
             <li><a href="branch-management.html">Chi nhánh</a></li>
@@ -88,32 +87,32 @@
             >
               <form id="add-stylist-form">
                 <input type="hidden" id="stylist-id" name="stylist_id" />
+
                 <div class="form-group">
-                  <label>Tên Thợ:</label
-                  ><input
-                    type="text"
-                    name="stylist_name"
-                    id="f-name"
-                    required
-                  />
+                  <label>Tên Thợ:</label>
+                  <input type="text" name="stylist_name" id="f-name" required />
                 </div>
+
                 <div class="form-group">
-                  <label>Số điện thoại:</label
-                  ><input
+                  <label>Số điện thoại:</label>
+                  <input
                     type="tel"
                     name="stylist_phone"
                     id="f-phone"
                     required
                   />
                 </div>
+
                 <div class="form-group">
-                  <label>Email:</label
-                  ><input type="email" name="stylist_email" id="f-email" />
+                  <label>Email:</label>
+                  <input type="email" name="stylist_email" id="f-email" />
                 </div>
+
                 <div class="form-group">
-                  <label>Chi nhánh:</label
-                  ><select name="branch_id" id="f-branch" required></select>
+                  <label>Chi nhánh:</label>
+                  <select name="branch_id" id="f-branch" required></select>
                 </div>
+
                 <div class="form-group">
                   <label>Trạng thái:</label>
                   <select name="stylist_status" id="f-status">
@@ -121,6 +120,7 @@
                     <option value="inactive">Tạm nghỉ/Nghỉ việc</option>
                   </select>
                 </div>
+
                 <div style="display: flex; gap: 10px">
                   <button type="submit" class="btn primary-btn" id="btn-submit">
                     Lưu Dữ Liệu
@@ -145,7 +145,6 @@
                   <tr>
                     <th>Mã</th>
                     <th>Tên Stylist</th>
-                    <th>Hạng VIP</th>
                     <th>Số điện thoại</th>
                     <th>Chi nhánh</th>
                     <th>Trạng thái</th>
@@ -154,7 +153,7 @@
                 </thead>
                 <tbody id="stylist-table-body">
                   <tr>
-                    <td colspan="7" style="text-align: center">Đang tải...</td>
+                    <td colspan="6" style="text-align: center">Đang tải...</td>
                   </tr>
                 </tbody>
               </table>
@@ -172,6 +171,7 @@
         loadLeaveRequests();
         loadBranches();
 
+        // Mở form Thêm mới
         document.getElementById("btn-show-form").onclick = () => {
           document.getElementById("add-stylist-form-container").style.display =
             "block";
@@ -181,6 +181,7 @@
           document.getElementById("btn-submit").innerText = "Lưu Dữ Liệu";
         };
 
+        // Submit form
         document.getElementById("add-stylist-form").onsubmit = function (e) {
           e.preventDefault();
           const id = document.getElementById("stylist-id").value;
@@ -199,6 +200,7 @@
         };
       });
 
+      // Load danh sách Stylist (đã tách SĐT)
       function loadStylists(page = 1) {
         fetch(`../../../backend/api/get_stylists_admin.php?page=${page}`)
           .then((res) => res.json())
@@ -213,19 +215,11 @@
                     : st.status === "Nghỉ phép"
                       ? "status-leave"
                       : "status-inactive";
-
-                // HIỂN THỊ HUY HIỆU VIP NẾU ĐƯỢC ĐÁNH DẤU
-                let vipBadge = st.is_vip
-                  ? '<span style="color:#b37400; font-weight:bold; background:#fff3cd; padding:4px 10px; border-radius:12px; border:1px solid #ffeeba;"> VIP</span>'
-                  : "";
-
                 tbody.innerHTML += `
                   <tr>
                     <td>ST${String(st.stylist_id).padStart(3, "0")}</td>
                     <td><strong>${st.full_name}</strong></td>
-                    <td>${vipBadge}</td>
-                    <td>${st.phone}</td>
-                    <td>${st.branch_name || "---"}</td>
+                    <td>${st.phone}</td> <td>${st.branch_name || "---"}</td>
                     <td><span class="status-badge ${badge}">${st.status}</span></td>
                     <td>
                       <button class="btn" style="background:#ffc107; color:#000; border:none; padding:5px 8px; border-radius:4px; cursor:pointer;" onclick='editSt(${JSON.stringify(st)})'><i class="fas fa-edit"></i></button>
@@ -236,12 +230,13 @@
               renderPagination(res.total_pages, res.current_page);
             } else {
               tbody.innerHTML =
-                "<tr><td colspan='7' style='text-align:center;'>Không có dữ liệu.</td></tr>";
+                "<tr><td colspan='6' style='text-align:center;'>Không có dữ liệu.</td></tr>";
               renderPagination(0, 1);
             }
           });
       }
 
+      // Render Phân trang
       function renderPagination(total, current) {
         const con = document.getElementById("pagination-container");
         con.innerHTML = "";
@@ -258,6 +253,7 @@
         }
       }
 
+      // Load Đơn xin nghỉ
       function loadLeaveRequests() {
         fetch("../../../backend/api/get_leave_requests.php")
           .then((res) => res.json())
@@ -291,6 +287,7 @@
           });
       }
 
+      // Đổ dữ liệu vào form để Sửa
       function editSt(st) {
         document.getElementById("add-stylist-form-container").style.display =
           "block";
