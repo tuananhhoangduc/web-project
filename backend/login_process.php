@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         // Tìm tài khoản theo Email hoặc SĐT 
-        $stmt = $conn->prepare("SELECT user_id, full_name, password, role FROM users WHERE email = ? OR phone = ?");
+        $stmt = $conn->prepare("SELECT user_id, full_name, email, password, role FROM users WHERE email = ? OR phone = ?");
         $stmt->execute([$username, $username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -35,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'data' => [
                         'user_id' => $user['user_id'],
                         'full_name' => $user['full_name'],
-                        'role' => $user['role']
+                        'email' => $user['email'],
+                        'role' => $user['role'],
+                        'auth_method' => 'password'
                     ]
                 ]);
             } else {
