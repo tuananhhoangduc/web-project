@@ -104,6 +104,14 @@
   justify-content: flex-end; /* Căn nút sang phải (trên desktop) */
 }
 
+.review-summary-card {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  background: #fafafa;
+}
+
 /* Style cho nút Hủy Lịch */
 .btn-cancel-appointment {
   background-color: #dc3545; /* Màu đỏ */
