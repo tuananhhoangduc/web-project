@@ -8,14 +8,13 @@ if (isset($_GET['branch_id'])) {
     try {
         $sqlVip = "SELECT stylist_id FROM appointments GROUP BY stylist_id ORDER BY COUNT(*) DESC LIMIT 3";
         $stmtVip = $conn->query($sqlVip);
-
         $vipIds = $stmtVip->fetchAll(PDO::FETCH_COLUMN); 
     
-        
-        $sql = "SELECT s.stylist_id, u.full_name 
-                FROM stylists s 
-                JOIN users u ON s.user_id = u.user_id 
-                WHERE s.branch_id = ? AND s.status = 'Đang làm việc'";
+        $sql = "SELECT st.stylist_id, u.full_name 
+                FROM stylists st 
+                JOIN users u ON st.user_id = u.user_id 
+                WHERE st.branch_id = ? AND st.status IN ('Đang làm việc', 'available')
+                ORDER BY u.full_name ASC";
         
         $stmt = $conn->prepare($sql);
         $stmt->execute([$branch_id]);

@@ -71,33 +71,43 @@
             </div>
 
             <div class="form-group">
-              <label for="barber"
-                >Chọn thợ cắt <span style="color: red">*</span>:</label
-              >
-
-              <div style="margin-bottom: 10px">
-                <label
-                  style="
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    cursor: pointer;
-                    color: #ff7f00;
-                    font-weight: bold;
-                  "
-                >
-                  <input
-                    type="checkbox"
-                    id="vip-only-checkbox"
-                    style="width: 18px; height: 18px; accent-color: #ff7f00"
-                  />
-                  Thợ VIP
-                </label>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                  <label for="barber">Chọn thợ cắt <span style="color: red">*</span>:</label>
+                  <div style="margin-bottom: 10px">
+                    <label
+                      style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        cursor: pointer;
+                        color: #ff7f00;
+                        font-weight: bold;
+                      "
+                    >
+                      <input
+                        type="checkbox"
+                        id="vip-only-checkbox"
+                        style="width: 18px; height: 18px; accent-color: #ff7f00"
+                      />
+                      Thợ VIP
+                    </label>
+                  </div>
+                  <select id="barber" required disabled>
+                    <option value="">-- Vui lòng chọn chi nhánh trước --</option>
+                  </select>
+                </div>
+                <div style="margin-top: 32px;">
+                  <button 
+                    type="button" 
+                    id="view-reviews-btn"
+                    style="background-color: #ff7f00; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; white-space: nowrap;"
+                    disabled
+                  >
+                    <i class="fas fa-star"></i> Xem đánh giá
+                  </button>
+                </div>
               </div>
-
-              <select id="barber" required disabled>
-                <option value="">-- Vui lòng chọn chi nhánh trước --</option>
-              </select>
             </div>
 
             <div class="form-group">
@@ -175,6 +185,7 @@
         const dateInput = document.getElementById("appointment-date");
         const timeSelect = document.getElementById("appointment_time");
         const vipCheckbox = document.getElementById("vip-only-checkbox");
+        const viewReviewsBtn = document.getElementById("view-reviews-btn");
 
         // Load Dịch vụ
         fetch("../../../backend/api/get_services_admin.php")
@@ -212,59 +223,40 @@
           });
         }
 
-        // Tải Thợ theo Chi nhánh và Gán vào Biến Toàn cục
+        // Tải Thợ theo Chi nhánh
         if (branchSelect) {
           branchSelect.addEventListener("change", function () {
             barberSelect.innerHTML =
               '<option value="">-- Đang tải thợ... --</option>';
             barberSelect.disabled = true;
+            viewReviewsBtn.disabled = true;
             if (this.value) {
               fetch(
                 `../../../backend/api/get_stylists.php?branch_id=${this.value}`,
               )
                 .then((res) => res.json())
                 .then((res) => {
+                  barberSelect.innerHTML =
+                    '<option value="">-- Chọn Thợ --</option>';
                   if (res.status === "success" && res.data.length > 0) {
-                    allStylists = res.data; // Lưu lại dữ liệu thợ
-                    renderStylistsDropdown();
+                    res.data.forEach(
+                      (s) =>
+                        (barberSelect.innerHTML += `<option value="${s.stylist_id}">Thợ ${s.full_name}</option>`),
+                    );
+                    barberSelect.disabled = false;
                   } else {
-                    allStylists = [];
                     barberSelect.innerHTML =
                       '<option value="">Chi nhánh này chưa có thợ</option>';
                   }
-                });
-            } else {
-              allStylists = [];
-              renderStylistsDropdown();
+                })
+                .catch(
+                  () =>
+                    (barberSelect.innerHTML =
+                      '<option value="">-- Lỗi tải dữ liệu --</option>'),
+                );
             }
           });
         }
-
-        // HÀM VẼ DANH SÁCH THỢ (CÓ LỌC VIP)
-        function renderStylistsDropdown() {
-          const isVipOnly = vipCheckbox.checked;
-          barberSelect.innerHTML = '<option value="">-- Chọn Thợ --</option>';
-
-          let filteredStylists = isVipOnly
-            ? allStylists.filter((st) => st.is_vip)
-            : allStylists;
-
-          if (filteredStylists.length > 0) {
-            filteredStylists.forEach((st) => {
-              let vipText = st.is_vip ? " (Thợ VIP)" : "";
-              barberSelect.innerHTML += `<option value="${st.stylist_id}">Thợ ${st.full_name}${vipText}</option>`;
-            });
-            barberSelect.disabled = false;
-          } else {
-            barberSelect.innerHTML =
-              '<option value="">Không có thợ phù hợp</option>';
-            barberSelect.disabled = true;
-          }
-          checkAvailableSlots(); // Reset lại khung giờ
-        }
-
-        // Bắt sự kiện khi tích/bỏ tích ô VIP
-        vipCheckbox.addEventListener("change", renderStylistsDropdown);
 
         // Tải Giờ trống
         const defaultHours = [
@@ -308,7 +300,12 @@
                   let isTaken = takenSlots.includes(hour);
                   timeSelect.innerHTML += `<option value="${hour}:00" ${isTaken ? 'disabled style="color:red;"' : ""}>${hour} ${isTaken ? "(Hết chỗ)" : ""}</option>`;
                 });
-              });
+              })
+              .catch(
+                () =>
+                  (timeSelect.innerHTML =
+                    '<option value="">-- Lỗi tải dữ liệu --</option>'),
+              );
           } else {
             timeSelect.disabled = true;
             timeSelect.innerHTML =
@@ -346,8 +343,26 @@
                 alert(result.message);
                 if (result.status === "success")
                   window.location.href = "history.html";
-              });
+              })
+              .catch(() => alert("Đã xảy ra lỗi kết nối Server!"));
           });
+
+        // === XỬ LÝ NÚT XEM ĐÁNH GIÁ ===
+        if (viewReviewsBtn) {
+          viewReviewsBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            const stylistId = barberSelect.value;
+            if (!stylistId) {
+              alert("Vui lòng chọn thợ cắt trước!");
+              return;
+            }
+            window.open(`stylist-reviews.html?stylist_id=${stylistId}`, '_blank');
+          });
+          
+          barberSelect.addEventListener("change", function() {
+            viewReviewsBtn.disabled = !this.value;
+          });
+        }
       });
     </script>
   </body>
