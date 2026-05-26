@@ -84,7 +84,8 @@ try {
 
     if (!$user) {
         $insertStmt = $conn->prepare("INSERT INTO users (full_name, phone, email, password, role) VALUES (?, ?, ?, ?, 'customer')");
-        $insertStmt->execute([$fullName, '', $email, $randomPassword]);
+        $phone = 'google_' . substr(md5($email), 0, 10);
+        $insertStmt->execute([$fullName, $phone, $email, $randomPassword]);
 
         $newUserId = $conn->lastInsertId();
 
@@ -113,6 +114,10 @@ try {
         ]
     ]);
 } catch (PDOException $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống cơ sở dữ liệu']);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Lỗi hệ thống cơ sở dữ liệu',
+        'debug' => $e->getMessage()
+    ]);
 }
 ?>

@@ -103,6 +103,20 @@
             </div>
           </div>
         </section>
+
+        <section class="vip-showcase-section">
+          <div class="section-heading">
+            <p class="eyebrow">Đội ngũ nổi bật</p>
+            <h2>Thợ VIP được khách hàng yêu thích</h2>
+            <p>
+              Chọn nhanh những thợ có lịch hẹn nhiều và được đánh giá cao nhất.
+            </p>
+          </div>
+
+          <div class="vip-stylist-grid" id="vip-stylist-grid">
+            <div class="vip-stylist-loading">Đang tải thợ VIP...</div>
+          </div>
+        </section>
       </div>
     </main>
 
@@ -118,5 +132,61 @@
     </footer>
     <script src="../../js/js-client/script.js"></script>
     <script src="../../js/js-client/auth-menu.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const grid = document.getElementById("vip-stylist-grid");
+
+        if (!grid) return;
+
+        fetch("../../../backend/api/get_vip_stylists.php")
+          .then((res) => res.json())
+          .then((res) => {
+            if (
+              res.status !== "success" ||
+              !Array.isArray(res.data) ||
+              res.data.length === 0
+            ) {
+              grid.innerHTML =
+                '<div class="vip-stylist-loading">Chưa có thợ VIP để hiển thị.</div>';
+              return;
+            }
+
+            grid.innerHTML = res.data
+              .map((stylist) => {
+                const rating = Number(stylist.average_rating || 0).toFixed(1);
+                const stars = "★★★★★"
+                  .split("")
+                  .map(
+                    (star, index) =>
+                      `<span class="vip-star ${index < Math.round(rating) ? "filled" : ""}">${star}</span>`,
+                  )
+                  .join("");
+
+                return `
+                  <article class="vip-stylist-card">
+                    <div class="vip-stylist-badge">VIP</div>
+                    <div class="vip-stylist-avatar">${(stylist.full_name || "?").charAt(0)}</div>
+                    <h3>${stylist.full_name || "Thợ cắt"}</h3>
+                    <p class="vip-stylist-branch">${stylist.branch_name || "Đang cập nhật chi nhánh"}</p>
+                    <div class="vip-stylist-rating">
+                      <div class="vip-stars">${stars}</div>
+                      <span>${rating}/5</span>
+                    </div>
+                    <div class="vip-stylist-actions">
+                      <a class="btn primary-btn" href="appointment.html">Đặt lịch ngay</a>
+                      <a class="vip-reviews-link" href="stylist-reviews.html?stylist_id=${stylist.stylist_id}">Xem đánh giá</a>
+                    </div>
+                  </article>
+                `;
+              })
+              .join("");
+          })
+          .catch(() => {
+            grid.innerHTML =
+              '<div class="vip-stylist-loading">Không tải được danh sách thợ VIP.</div>';
+          });
+      });
+    </script>
   </body>
 </html>

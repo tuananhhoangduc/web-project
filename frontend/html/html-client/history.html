@@ -258,9 +258,9 @@
 
         function renderStars(rating) {
           const value = Number(rating || 0);
-          let html = '<span style="color: #ddd;">';
+          let html = '<span style="color: #ff7f00; letter-spacing: 1px;">';
           for (let i = 1; i <= 5; i++) {
-            html += i <= value ? "★" : "☆";
+            html += i <= value ? "★" : '<span style="color: #ddd;">★</span>';
           }
           html += "</span>";
           return html;
@@ -277,9 +277,9 @@
 
           if (review && review.review_id) {
             reviewBox.innerHTML = `
-                      <div style="margin-top: 12px; padding: 12px; border: 1px solid #e5e5e5; border-radius: 6px; background: #fafafa;">
+                  <div class="review-summary-card">
                           <p style="margin: 0 0 6px;"><strong>Đánh giá của bạn:</strong></p>
-                          <p style="margin: 0 0 6px; font-size: 18px;">${renderStars(review.rating)} <span style="color:#ff7f00; font-weight:bold; margin-left: 6px;">${review.rating}/5</span></p>
+                    <p style="margin: 0 0 6px; font-size: 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">${renderStars(review.rating)} <span style="color:#ff7f00; font-weight:bold;">${review.rating}/5</span></p>
                           <p style="margin: 0; color: #555;">${review.comment ? review.comment : "Không có bình luận"}</p>
                       </div>
                   `;

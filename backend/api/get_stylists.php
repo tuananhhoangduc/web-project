@@ -6,7 +6,13 @@ if (isset($_GET['branch_id'])) {
     $branch_id = $_GET['branch_id'];
 
     try {
-        $sqlVip = "SELECT stylist_id FROM appointments GROUP BY stylist_id ORDER BY COUNT(*) DESC LIMIT 3";
+        $sqlVip = "
+            SELECT stylist_id
+            FROM appointments
+            GROUP BY stylist_id
+            ORDER BY COALESCE(SUM(total_price), 0) DESC, COUNT(*) DESC
+            LIMIT 3
+        ";
         $stmtVip = $conn->query($sqlVip);
         $vipIds = $stmtVip->fetchAll(PDO::FETCH_COLUMN); 
     
