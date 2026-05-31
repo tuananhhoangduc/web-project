@@ -1,0 +1,177 @@
+\chapter{CƠ SỞ LÝ THUYẾT}
+
+\section{Phương pháp nghiên cứu}
+Các phương pháp được sử dụng trong quá trình thực hiện đề tài bao gồm:
+
+\begin{itemize}
+\item
+	\textbf{Phân tích yêu cầu:} Thu thập và phân tích quy trình đặt lịch
+	thực tế tại các Barbershop.
+\item
+	\textbf{Mô hình hóa hệ thống:} Sử dụng sơ đồ Use Case, sơ đồ tuần tự
+	(Sequence Diagram) và sơ đồ thực thể liên kết (ERD) để thiết kế hệ
+	thống.
+\item
+	\textbf{Phát triển hệ thống:}
+
+	\begin{itemize}
+	\item
+		Frontend: HTML5, CSS3, Vanilla JavaScript (sử dụng Fetch API).
+	\item
+		Backend: PHP Native (kiến trúc RESTful API).
+	\end{itemize}
+\item
+	\textbf{Kiểm thử chức năng:} Thực hiện kiểm thử độc lập các API bằng
+	Postman trước khi tích hợp vào giao diện.
+\end{itemize}
+
+\section{Công nghệ được sử dụng}
+\subsection{Frontend}
+\textbf{HTML, CSS và JavaScript} là bộ ba ngôn ngữ nền tảng cốt lõi để
+xây dựng giao diện cho mọi trang web. Trong đó, HTML đóng vai trò xây
+dựng cấu trúc và bố cục trang; CSS đảm nhận việc định dạng, trang trí
+và làm đẹp giao diện; còn JavaScript chịu trách nhiệm xử lý các sự kiện,
+tạo hiệu ứng và tương tác với người dùng.
+
+\begin{itemize}
+\item
+	\textbf{Ưu điểm nổi bật:}
+
+	\begin{itemize}
+	\item
+		Khởi chạy trực tiếp trên mọi trình duyệt web mà không cần cài đặt
+		thêm môi trường phức tạp.
+	\item
+		Tốc độ tải trang nhanh, nhẹ do không bị phụ thuộc vào các thư viện
+		hay framework cồng kềnh của bên thứ ba.
+	\item
+		Dễ dàng gỡ lỗi (debug) và chỉnh sửa trực tiếp thông qua công cụ của
+		trình duyệt (Developer Tools).
+	\end{itemize}
+\item
+	\textbf{Lý do sử dụng trong đề tài:}
+
+	\begin{itemize}
+	\item
+		Phù hợp để xây dựng giao diện website Barbershop nhanh chóng, thân
+		thiện và đáp ứng tốt trên các thiết bị.
+	\item
+		Giúp người lập trình nắm vững bản chất cốt lõi của việc thao tác với
+		phần tử web (DOM) và các sự kiện của người dùng.
+	\end{itemize}
+\end{itemize}
+
+\textbf{Fetch API} là một giao diện lập trình ứng dụng (API) hiện đại
+được tích hợp sẵn trong JavaScript, cho phép trình duyệt gửi các yêu
+cầu mạng (HTTP Request) đến máy chủ để lấy hoặc gửi dữ liệu.
+
+\begin{itemize}
+\item
+	\textbf{Ưu điểm nổi bật:}
+
+	\begin{itemize}
+	\item
+		Xử lý dữ liệu theo cơ chế bất đồng bộ (Asynchronous), giúp trang web
+		không bị đơ hoặc gián đoạn khi đang chờ dữ liệu từ máy chủ.
+	\item
+		Cú pháp viết code ngắn gọn, rõ ràng và dễ đọc hơn rất nhiều so với
+		các công nghệ cũ (như XMLHttpRequest).
+	\end{itemize}
+\item
+	\textbf{Lý do sử dụng trong đề tài:}
+
+	\begin{itemize}
+	\item
+		Được sử dụng làm cầu nối để giao diện web (Frontend) gửi dữ liệu đặt
+		lịch hoặc từ khóa tìm kiếm lên máy chủ (Backend).
+	\item
+		Giúp trang web cập nhật dữ liệu mới (ví dụ: hiển thị danh sách giờ
+		trống, danh sách khách hàng) ngay lập tức mà không cần phải tải lại
+		(reload) toàn bộ trang web.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Backend}
+\textbf{PHP} là một ngôn ngữ lập trình kịch bản chạy ở phía máy chủ
+(Server-side), được thiết kế chuyên biệt để phát triển các ứng dụng web
+động.
+
+\begin{itemize}
+\item
+	\textbf{Ưu điểm nổi bật:}
+
+	\begin{itemize}
+	\item
+		Dễ học, dễ triển khai và có khả năng tích hợp cực kỳ tốt với cơ sở
+		dữ liệu MySQL.
+	\item
+		Xử lý linh hoạt các luồng dữ liệu do người dùng gửi lên từ các biểu
+		mẫu (Form).
+	\item
+		Cộng đồng hỗ trợ lớn, hoạt động cực kỳ ổn định trên các máy chủ ảo
+		cục bộ như XAMPP.
+	\end{itemize}
+\item
+	\textbf{Lý do sử dụng trong đề tài:}
+
+	\begin{itemize}
+	\item
+		Đóng vai trò là bộ não xử lý nghiệp vụ của hệ thống (ví dụ: tính
+		toán giờ trống, kiểm tra trùng lịch, xác thực thông tin đăng nhập).
+	\item
+		Tiếp nhận yêu cầu từ JavaScript, truy vấn cơ sở dữ liệu và trả về
+		kết quả dưới dạng chuỗi dữ liệu (JSON) để giao diện web hiển thị.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Cơ sở dữ liệu}
+\textbf{MySQL} là một trong những hệ quản trị cơ sở dữ liệu quan hệ
+(RDBMS) mã nguồn mở phổ biến nhất thế giới. Dữ liệu trong MySQL được
+lưu trữ dưới dạng các bảng (Table) có cấu trúc chặt chẽ và liên kết với
+nhau thông qua các khóa (Key).
+
+\begin{itemize}
+\item
+	\textbf{Ưu điểm nổi bật:}
+
+	\begin{itemize}
+	\item
+		Quản lý dữ liệu có cấu trúc một cách an toàn, chính xác và nhất
+		quán.
+	\item
+		Tốc độ truy vấn dữ liệu nhanh, hỗ trợ tốt các câu lệnh tìm kiếm, lọc
+		dữ liệu phức tạp thông qua ngôn ngữ SQL.
+	\item
+		Dễ dàng quản lý, sao lưu và phục hồi dữ liệu thông qua công cụ trực
+		quan phpMyAdmin.
+	\end{itemize}
+\item
+	\textbf{Lý do sử dụng trong đề tài:}
+
+	\begin{itemize}
+	\item
+		Rất phù hợp với đặc thù dữ liệu của hệ thống đặt lịch, nơi cần sự
+		liên kết chặt chẽ giữa bảng Khách hàng, bảng Dịch vụ, bảng Thợ cắt
+		tóc và bảng Lịch hẹn.
+	\item
+		Đảm bảo tính toàn vẹn của dữ liệu, không để xảy ra tình trạng mất
+		mát hoặc sai lệch thông tin lịch hẹn của khách hàng.
+	\end{itemize}
+\end{itemize}
+
+\section{Các công cụ hỗ trợ}
+\textbf{Visual Studio Code:} Phần mềm soạn thảo mã nguồn.
+
+\textbf{XAMPP:} Môi trường máy chủ ảo cục bộ (Localhost) để chạy mã
+nguồn PHP và lưu trữ cơ sở dữ liệu.
+
+\textbf{Postman:} Công cụ hỗ trợ kiểm thử luồng truyền nhận dữ liệu.
+
+\textbf{phpMyAdmin:} Công cụ quản trị cơ sở dữ liệu trực quan trên nền
+tảng web.
+
+\section{Tổng kết chương}
+Chương 2 đã trình bày phương pháp thực hiện, các công nghệ cốt lõi và
+công cụ hỗ trợ được sử dụng để xây dựng hệ thống đặt lịch. Đây là cơ sở
+để chuyển sang phần phân tích, thiết kế và triển khai kỹ thuật ở các
+chương tiếp theo.

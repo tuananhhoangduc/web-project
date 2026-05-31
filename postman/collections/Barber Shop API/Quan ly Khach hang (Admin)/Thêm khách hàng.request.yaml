@@ -1,23 +1,60 @@
 $kind: http-request
-name: Thêm khách hàng
-url: "{{base_url}}/add_customer.php"
+name: 'Thêm khách hàng'
+url: '{{base_url}}/add_customer.php'
 method: POST
+order: 3000
 body:
   type: formdata
   content:
-    - type: text
-      key: customer_name
-      value: Khách Test
-      description: ""
-      disabled: false
-    - type: text
-      key: customer_phone
-      value: "0999888777"
-      description: ""
-      disabled: false
-    - type: text
-      key: customer_email
-      value: khachtest@gmail.com
-      description: ""
-      disabled: false
-order: 2464299924587401
+    - key: customer_name
+      type: text
+      value: 'Khách Test'
+      description: 'Họ tên khách hàng'
+    - key: customer_phone
+      type: text
+      value: '0999888777'
+      description: 'Số điện thoại'
+    - key: customer_email
+      type: text
+      value: 'khachtest@gmail.com'
+      description: 'Email'
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
+      pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
+  });
+
+  // Test 3: Có trường 'status'
+  pm.test("Response has 'status' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('status');
+      pm.expect(json.status).to.be.a('string');
+  });
+
+  // Test 4: Có trường 'message'
+  pm.test("Response has 'message' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('message');
+      pm.expect(json.message).to.be.a('string');
+  });
+
+  // Test 5: Thêm thành công hoặc lỗi trùng SĐT/Email
+  pm.test("Add customer returns valid response", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.be.oneOf(['success', 'error']);
+      if (json.status === 'success') {
+          pm.expect(json.message).to.include('thành công');
+      }
+  });
+
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
+  });

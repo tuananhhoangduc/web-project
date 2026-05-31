@@ -19,26 +19,45 @@ tests: |-
       pm.response.to.have.status(200);
   });
 
-  // Test 2: Response phải là JSON
-  pm.test("Response is JSON", function () {
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
       pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
   });
 
   // Test 3: Có trường 'status'
   pm.test("Response has 'status' field", function () {
       const json = pm.response.json();
       pm.expect(json).to.have.property('status');
+      pm.expect(json.status).to.be.a('string');
   });
 
   // Test 4: Nếu thành công, data phải có user_id, full_name, role
   pm.test("Login success returns user data", function () {
       const json = pm.response.json();
       if (json.status === 'success') {
+          pm.expect(json).to.have.property('data');
           pm.expect(json.data).to.have.property('user_id');
           pm.expect(json.data).to.have.property('full_name');
           pm.expect(json.data).to.have.property('role');
+          pm.expect(json.data.role).to.be.oneOf(['admin', 'customer', 'stylist']);
           // Lưu user_id vào collection variable để dùng cho các request sau
           pm.collectionVariables.set('user_id', json.data.user_id);
           pm.collectionVariables.set('user_role', json.data.role);
       }
+  });
+
+  // Test 5: Nếu thất bại, có message lỗi
+  pm.test("Login failure returns error message", function () {
+      const json = pm.response.json();
+      if (json.status === 'error') {
+          pm.expect(json).to.have.property('message');
+          pm.expect(json.message).to.be.a('string');
+      }
+  });
+
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
   });

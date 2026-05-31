@@ -1,4 +1,4 @@
-$kind: http-request
+﻿$kind: http-request
 name: 'Thêm thợ'
 method: POST
 url: '{{base_url}}/add_stylist.php'
@@ -12,6 +12,9 @@ body:
     - key: stylist_phone
       type: text
       value: '0933333333'
+    - key: stylist_email
+      type: text
+      value: 'thotest@gmail.com'
     - key: branch_id
       type: text
       value: '1'
@@ -24,22 +27,37 @@ tests: |-
       pm.response.to.have.status(200);
   });
 
-  // Test 2: Response phải là JSON
-  pm.test("Response is JSON", function () {
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
       pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
   });
 
   // Test 3: Có trường 'status'
   pm.test("Response has 'status' field", function () {
       const json = pm.response.json();
       pm.expect(json).to.have.property('status');
+      pm.expect(json.status).to.be.a('string');
   });
 
-  // Test 4: Thêm thành công hoặc lỗi hợp lệ
+  // Test 4: Có trường 'message'
+  pm.test("Response has 'message' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('message');
+      pm.expect(json.message).to.be.a('string');
+  });
+
+  // Test 5: Thêm thành công hoặc lỗi hợp lệ
   pm.test("Add stylist returns valid response", function () {
       const json = pm.response.json();
       pm.expect(json.status).to.be.oneOf(['success', 'error']);
       if (json.status === 'success') {
           pm.expect(json.message).to.include('thành công');
       }
+  });
+
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
   });

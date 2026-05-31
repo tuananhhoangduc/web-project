@@ -1,0 +1,269 @@
+\documentclass[../BTL.tex]{subfiles}
+\begin{document}
+
+\chapter{CÀI ĐẶT VÀ KIỂM THỬ HỆ THỐNG}
+
+\section{Kiến trúc hệ thống}
+
+Hệ thống website được xây dựng theo mô hình Client -- Server. Client là các máy tính truy cập để sử dụng dịch vụ (còn gọi là Host) và có khả năng nhận thông tin cụ thể từ nhà cung cấp dịch vụ (Server).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image35.png}
+    \caption{Sơ đồ hoạt động của mô hình Client - Server}
+    \label{fig:client-server}
+\end{figure}
+
+\subsection{Cấu trúc thư mục}
+
+Dự án được tổ chức theo mô hình Client - Server cơ bản, tách biệt hoàn toàn giữa logic xử lý, thao tác cơ sở dữ liệu (Backend - PHP) và giao diện người dùng (Frontend - HTML/CSS/JS). Đặc biệt, phần Frontend được module hóa theo từng đối tượng sử dụng:
+
+\paragraph{Khối Backend (backend/)} Chứa toàn bộ source code PHP để xử lý logic nghiệp vụ và tương tác với MySQL.
+
+\begin{itemize}
+    \item \textbf{api/}: Chứa các file API trả về dữ liệu JSON (phục vụ lấy danh sách, phân trang, lọc dữ liệu) như \texttt{get\_customers\_admin.php}, \texttt{get\_appointments\_admin.php}, \texttt{get\_stylists\_admin.php}, v.v.
+    \item \textbf{db\_connect.php}: File cấu hình kết nối Cơ sở dữ liệu sử dụng thư viện PDO, đảm bảo an toàn bảo mật (chống SQL Injection).
+    \item \textbf{(Thư mục gốc backend)}: Chứa các file xử lý hành động thêm, sửa, xóa (ví dụ: \texttt{add\_customer.php}, \texttt{update\_appointment\_status.php}, \texttt{delete\_stylist.php}).
+\end{itemize}
+
+\paragraph{Khối Frontend (frontend/)} Quản lý tập trung giao diện tĩnh và tương tác phía người dùng, được phân chia cấu trúc rõ ràng:
+
+\begin{itemize}
+    \item \textbf{Các thư mục giao diện HTML}:
+    \begin{itemize}
+        \item \texttt{html-admin/}: Chứa các trang quản trị dành riêng cho Admin (Quản lý khách hàng, thợ cắt, dịch vụ, lịch hẹn...).
+        \item \texttt{html-barber/}: Chứa các trang giao diện dành riêng cho nghiệp vụ của Thợ cắt tóc (xem lịch, xin nghỉ phép...).
+        \item \texttt{html-client/}: Chứa các trang giao diện hiển thị cho Khách hàng (Trang chủ, đặt lịch, xem hồ sơ...).
+    \end{itemize}
+    \item \textbf{Thư mục css/}: Quản lý tập trung các định dạng giao diện, chia nhỏ thành:
+    \begin{itemize}
+        \item \texttt{css-admin/}: Chứa các file style chuyên biệt cho từng trang quản trị.
+        \item \texttt{css-barber/}: Chứa style cho giao diện của thợ cắt.
+        \item \texttt{css-client/}: Chứa style cho giao diện phía khách hàng.
+    \end{itemize}
+    \item \textbf{Thư mục js/}: Chứa các file JavaScript xử lý tương tác DOM và gọi API.
+    \begin{itemize}
+        \item \texttt{js-admin/}: Chứa các file phân quyền và xử lý luồng Admin (như \texttt{admin-auth.js}).
+        \item \texttt{js-client/}: Chứa các file logic dùng chung hoặc của phía khách hàng (như \texttt{script.js}).
+    \end{itemize}
+    \item \textbf{Thư mục image/}: Chứa các tài nguyên hình ảnh tĩnh (logo, banner, ảnh đại diện...).
+\end{itemize}
+
+\subsection{Luồng xử lý và gọi API (API Flow)}
+
+Mọi yêu cầu tương tác dữ liệu từ Frontend đều được xử lý thông qua hàm \texttt{fetch()} của JavaScript, gửi HTTP Request trực tiếp tới các file PHP. Luồng xử lý diễn ra theo trình tự sau:
+
+\begin{enumerate}
+    \item \textbf{Gửi Request (Frontend):} JavaScript bắt sự kiện (người dùng chuyển trang, gõ tìm kiếm, bấm Lưu/Xóa) và dùng \texttt{fetch()} gửi request (GET hoặc POST kèm FormData) lên file PHP tương ứng.
+    \item \textbf{Kiểm soát phiên làm việc (Session):} Với các chức năng của Admin, hệ thống kiểm tra \texttt{PHPSESSID} thông qua Cookie để xác thực quyền truy cập trước khi cho phép thao tác dữ liệu.
+    \item \textbf{Xử lý Logic \& Database (Backend):} File PHP nhận request, chuẩn bị dữ liệu (như tính toán Phân trang - Pagination), chạy câu lệnh SQL thông qua PDO Prepare Statement để truy vấn hoặc cập nhật bảng MySQL (\texttt{users}, \texttt{appointments}, \texttt{stylists}, \texttt{services}).
+    \item \textbf{Trả về Response (Backend):} Kết quả được chuẩn hóa và trả về Frontend dưới dạng chuỗi JSON với cấu trúc đồng nhất: \texttt{\{"status": "success" | "error", "message": "...", "data": [...], "total\_pages": ...\}}.
+    \item \textbf{Cập nhật Giao diện (Frontend):} JavaScript nhận object JSON, dùng DOM manipulation để vẽ lại bảng (\texttt{innerHTML}), cập nhật nút phân trang hoặc hiển thị \texttt{alert()} thông báo thành công/thất bại mà không cần tải lại toàn bộ trang (AJAX/Real-time).
+\end{enumerate}
+
+\subsection{Hệ thống API của dự án}
+
+{\small
+\setlength{\tabcolsep}{5pt} % Tăng khoảng cách từ chữ đến đường viền dọc lên 5pt cho thoáng
+\renewcommand{\arraystretch}{1.3} % Giãn khoảng cách giữa các dòng lên 1.3 để dễ đọc khi xuống dòng
+\begin{longtable}{|>{\raggedright\arraybackslash\hyphenpenalty=10000}p{3.0cm}|>{\centering\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{5.4cm}|>{\raggedright\arraybackslash\hyphenpenalty=10000}p{6.4cm}|}
+\caption{Hệ thống API của dự án}\label{tab:api-he-thong}\\
+\hline
+\textbf{Nhóm API} & \textbf{PT} & \textbf{Endpoint} & \textbf{Mô tả} \\ \hline
+\endfirsthead
+\hline
+\textbf{Nhóm API} & \textbf{PT} & \textbf{Endpoint} & \textbf{Mô tả} \\ \hline
+\endhead
+\hline
+\endfoot
+\hline
+\endlastfoot
+\textbf{Auth} & POST & \path{/backend/login.php} & Đăng nhập hệ thống, thiết lập Session/Cookie. \\ \cline{2-4}
+& POST & \path{/backend/register.php} & Khách hàng đăng ký tài khoản mới. \\ \cline{2-4}
+& POST & \path{/backend/logout.php} & Đăng xuất, hủy phiên làm việc hiện tại. \\ \cline{2-4}
+& POST & \path{/backend/api/google_login_process.php} & Đăng nhập bằng tài khoản Google (OAuth 2.0), tự động khởi tạo hồ sơ khách hàng mới nếu chưa tồn tại. \\ \hline
+\textbf{Profile \& Customers} & GET & \path{/backend/api/get_profile.php} & Lấy thông tin hồ sơ cá nhân của người dùng đang đăng nhập. \\ \cline{2-4}
+& GET & \path{/backend/api/get_customers_admin.php} & Lấy danh sách khách hàng (có phân trang và tìm kiếm) cho Admin. \\ \cline{2-4}
+& POST & \path{/backend/add_customer.php} & Admin thêm tài khoản khách hàng mới. \\ \cline{2-4}
+& POST & \path{/backend/update_customer.php} & Cập nhật thông tin khách hàng, tích hợp kiểm tra toàn vẹn dữ liệu chống trùng lặp Email/SĐT. \\ \cline{2-4}
+& GET & \path{/backend/delete_customer.php} & Xóa khách hàng khỏi hệ thống (truyền tham số id). \\ \hline
+\textbf{Dashboard} & GET & \path{/backend/api/get_statistics_admin.php} & Lấy số liệu thống kê tổng hợp, phân tích doanh thu và tỷ lệ tăng trưởng đối chiếu kỳ trước cho Admin. \\ \hline
+\textbf{Stylists} & GET & \path{/backend/api/get_stylists_admin.php} & Lấy danh sách toàn bộ thợ cắt (có phân trang) cho Admin. \\ \cline{2-4}
+& GET & \path{/backend/api/get_stylists.php} & Lấy danh sách thợ cắt đang rảnh việc theo chi nhánh (hiển thị cho Khách hàng). \\ \cline{2-4}
+& GET & \path{/backend/api/get_vip_stylists.php} & Thuật toán tính Top 3 thợ VIP xuất sắc nhất dựa trên doanh thu, số lượt khách và đánh giá sao. \\ \cline{2-4}
+& POST & \path{/backend/add_stylist.php} & Thêm thông tin thợ cắt tóc mới. \\ \cline{2-4}
+& POST & \path{/backend/update_stylist.php} & Cập nhật thông tin, điều chuyển chi nhánh hoặc đổi trạng thái thợ. \\ \cline{2-4}
+& GET & \path{/backend/delete_stylist.php} & Xóa thợ cắt khỏi hệ thống. \\ \hline
+\textbf{Leave Requests} & GET & \path{/backend/api/get_leave_requests.php} & Lấy danh sách đơn xin nghỉ phép đang chờ duyệt. \\ \cline{2-4}
+& GET & \path{/backend/update_leave_status.php} & Admin Duyệt (Approved) hoặc Từ chối (Rejected) đơn xin nghỉ của thợ. \\ \cline{2-4}
+& POST & \path{/backend/add_leave_request.php} & Thợ cắt tóc nộp đơn xin nghỉ phép (từ phân hệ Barber). \\ \hline
+\textbf{Services \& Branches} & GET & \path{/backend/api/get_services_admin.php} & Lấy danh sách dịch vụ (gồm Tên, Giá, Thời lượng, Mô tả). \\ \cline{2-4}
+& POST & \path{/backend/add_service.php} & Admin tạo dịch vụ mới. \\ \cline{2-4}
+& POST & \path{/backend/update_service.php} & Cập nhật thông tin (giá, thời gian, mô tả) của dịch vụ. \\ \cline{2-4}
+& GET & \path{/backend/delete_service.php} & Xóa dịch vụ khỏi hệ thống. \\ \cline{2-4}
+& GET & \path{/backend/api/get_branches_admin.php} & Lấy danh sách các chi nhánh cơ sở đang hoạt động. \\ \hline
+\textbf{Appointments} & GET & \path{/backend/api/get_appointments_admin.php} & Lấy danh sách lịch hẹn toàn hệ thống (có bộ lọc theo ngày, trạng thái). \\ \cline{2-4}
+& GET & \path{/backend/api/get_appointments.php} & Lấy danh sách lịch hẹn cá nhân của Khách hàng hoặc của Thợ cắt tóc. \\ \cline{2-4}
+& POST & \path{/backend/add_appointment.php} & Khách hàng đặt lịch hẹn mới. \\ \cline{2-4}
+& GET & \path{/backend/update_appointment_status.php} & Cập nhật trạng thái lịch hẹn (Chờ duyệt, Xác nhận, Hoàn thành, Đã hủy). \\ \cline{2-4}
+& GET & \path{/backend/api/check_slots.php} & Thuật toán kiểm tra các khung giờ đã được đặt của thợ theo ngày nhằm loại trừ giờ bận, tránh trùng lịch (Double-Booking). \\ \hline
+\textbf{Reviews} & GET & \path{/backend/api/get_stylist_reviews.php} & Lấy danh sách bình luận và tính toán phân bổ điểm đánh giá sao của một thợ cụ thể. \\ \cline{2-4}
+& GET, POST & \path{/backend/api/reviews.php} & Quản lý vòng đời đánh giá (CRUD): Thêm mới (chỉ áp dụng cho lịch hẹn đã hoàn thành), sửa, xóa và tổng hợp điểm. \\ \hline
+\end{longtable}
+}
+
+\section{Môi trường triển khai}
+
+\begin{itemize}
+    \item Ngôn ngữ lập trình: PHP (Native), JavaScript, HTML5, CSS3.
+    \item Công cụ hỗ trợ lập trình: Visual Studio Code.
+    \item Cơ sở dữ liệu: MySQL (XAMPP).
+\end{itemize}
+
+\section{Thử nghiệm và đánh giá}
+
+Trong phần Thử nghiệm và đánh giá sẽ giới thiệu một số giao diện tiêu biểu của hệ thống dành cho khách hàng, thợ cắt tóc (stylist) và quản trị viên (admin).
+
+\subsection{Giao diện cho khách hàng}
+
+Khi khách hàng truy cập vào trang web, màn hình trang chủ hiển thị thông tin giới thiệu về Barber Shop, danh sách các dịch vụ nổi bật (cắt, uốn, nhuộm), đội ngũ thợ cắt tóc và thông tin liên hệ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image36.png}
+    \caption{Giao diện Trang chủ}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image37.png}
+    \caption{Giao diện Về chúng tôi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image38.png}
+    \caption{Giao diện Dịch vụ của chúng tôi}
+\end{figure}
+
+Khách hàng có thể thực hiện đăng ký tài khoản mới hoặc đăng nhập vào hệ thống để sử dụng các chức năng cá nhân hóa như đặt lịch hoặc xem lịch sử.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image39.png}
+    \caption{Giao diện Đăng nhập dành cho khách hàng}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image40.png}
+    \caption{Giao diện Tạo tài khoản khách hàng}
+\end{figure}
+
+Giao diện quan trọng nhất dành cho khách hàng là trang Đặt lịch hẹn. Tại đây, người dùng có thể chọn dịch vụ mong muốn, thợ cắt tóc ưa thích và lựa chọn khung giờ còn trống trong ngày.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Hinhve/image41.png}
+    \caption{Giao diện Đặt lịch hẹn}
+\end{figure}
+
+Sau khi đăng nhập, khách hàng có thể quản lý thông tin cá nhân hoặc xem lại danh sách các lịch hẹn đã thực hiện để theo dõi trạng thái (Chờ xác nhận, Đã hoàn thành).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Hinhve/image42.png}
+    \caption{Giao diện Lịch sử đặt hẹn}
+\end{figure}
+
+Trong giao diện "Lịch sử đặt hẹn", hệ thống cung cấp chức năng đánh giá cho phép khách hàng gửi phản hồi sau khi lịch hẹn được đánh dấu là "Đã hoàn thành". Khách hàng có thể chấm điểm theo thang 1–5 sao và để lại bình luận mô tả trải nghiệm. Dữ liệu đánh giá được lưu vào bảng `reviews` và được dùng để hiển thị lại trong trang thông tin thợ cũng như làm nguồn dữ liệu cho các báo cáo, xếp hạng thợ (Top, VIP) trong phần quản trị.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Hinhve/image54.png}
+    \caption{Giao diện Đánh giá của khách hàng}
+\end{figure}
+
+\subsection{Giao diện cho quản trị viên}
+
+Đối với quyền quản trị viên, giao diện quản trị bao gồm các chức năng thống kê và quản lý toàn bộ dữ liệu hệ thống như: quản lý thợ cắt tóc, quản lý dịch vụ, quản lý chi nhánh và khách hàng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image43.png}
+    \caption{Giao diện Tổng quan Quản trị (Dashboard)}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image22.png}
+    \caption{Giao diện Quản lý Dịch vụ}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Hinhve/image44.png}
+    \caption{Giao diện Quản lý Khách hàng}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Hinhve/image45.png}
+    \caption{Giao diện Quản lý Lịch hẹn}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image46.png}
+    \caption{Giao diện Quản lý Chi nhánh}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image47.png}
+    \caption{Giao diện Quản lý Thợ cắt tóc và Đơn xin nghỉ phép}
+\end{figure}
+
+Quản trị viên có quyền thực hiện các thao tác thêm, sửa, xóa hồ sơ thợ cắt tóc, dịch vụ cũng như xét duyệt các đơn xin nghỉ phép của nhân viên.
+
+Phần quản trị còn tích hợp khu vực thống kê cho phép quản trị viên xem các chỉ số tổng quan (doanh thu, số lượng lịch hẹn, tỷ lệ hoàn thành, tỷ lệ hủy), phân tích top dịch vụ, top thợ cắt tóc, chi nhánh hiệu quả và khung giờ cao điểm. Phần thống kê cũng hiển thị các cảnh báo nghiệp vụ như tỷ lệ hủy cao hoặc doanh thu giảm so với kỳ trước, giúp quản trị viên đưa ra quyết định vận hành kịp thời.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image51.png}
+    \caption{Giao diện Thống kê tổng quan}
+\end{figure}
+
+\subsection{Giao diện cho thợ cắt tóc}
+
+Sau khi đăng nhập với quyền thợ cắt tóc, người dùng sẽ được chuyển tới trang Dashboard dành riêng cho thợ để xem danh sách khách hàng đã đặt lịch trong ngày.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image48.png}
+    \caption{Giao diện Lịch hẹn sắp tới của thợ cắt tóc}
+\end{figure}
+
+Thợ cắt tóc cũng có thể nộp đơn xin nghỉ phép lên hệ thống để quản trị viên xét duyệt.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image49.png}
+    \caption{Giao diện Đăng ký nghỉ phép của thợ cắt tóc}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Hinhve/image50.png}
+    \caption{Giao diện Lịch sử đơn xin nghỉ của thợ cắt tóc}
+\end{figure}
+
+\FloatBarrier
+
+\section{Tổng kết chương 4}
+
+Chương 4 đã trình bày quá trình cài đặt và kiểm thử website đặt lịch cắt tóc trực tuyến Barber Shop. Hệ thống đã triển khai các chức năng nghiệp vụ cốt lõi từ đặt lịch, quản lý thợ cắt tóc, xét duyệt nghỉ phép đến thống kê, quản lý đánh giá và phân quyền theo vai trò người dùng. Giao diện và API của từng phân hệ được tổ chức tương đối đồng bộ, đáp ứng đúng luồng xử lý của hệ thống thực tế.
+
+Hướng phát triển tiếp theo của hệ thống có thể tập trung vào việc bổ sung email nhắc lịch tự động, tích hợp thanh toán trực tuyến, tăng cường phân quyền chi tiết hơn cho từng vai trò và mở rộng các báo cáo phân tích nâng cao để hỗ trợ quản trị hiệu quả hơn.
+
+\end{document}

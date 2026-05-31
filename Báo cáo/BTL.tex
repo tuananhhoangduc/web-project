@@ -1,0 +1,281 @@
+\documentclass[a4paper,12pt,oneside]{report}
+%\usepackage{scrextend} % Không cần thiết, gây lỗi font trên Overleaf
+%\changefontsizes{13pt} % Không dùng lệnh này, chỉ dùng 12pt mặc định
+\usepackage[utf8]{vietnam}
+% Sửa lại lề cho đồng nhất, tránh bảng bị tràn lề
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.75cm, right=2.75cm]{geometry}
+
+\usepackage{graphicx} % Cho phép chèn hình ảnh
+\usepackage{adjustbox} % Giúp scale/fit hình và bảng khi cần
+\usepackage{fancybox} % Tạo khung box
+\usepackage{indentfirst} % Thụt đầu dòng ở dòng đầu tiên trong đoạn
+\usepackage{amsthm} % Cho phép thêm các môi trường định nghĩa
+\usepackage{latexsym} % Các kí hiệu toán học
+\usepackage{amsmath} % Hỗ trợ một số biểu thức toán học
+\usepackage{amssymb} % Bổ sung thêm kí hiệu về toán học
+\usepackage{amsbsy} % Hỗ trợ các kí hiệu in đậm
+\usepackage{times} % Chọn font Times New Roman
+\usepackage{array} % Tạo bảng array
+\usepackage{longtable} % Hỗ trợ bảng dài trong các subfile
+% Tự động căn giữa bảng và hình ảnh; scale hình ảnh vừa khổ chữ và giảm khoảng cách bảng
+\usepackage{etoolbox}
+\AtBeginEnvironment{figure}{\centering}
+\AtBeginEnvironment{table}{\centering}
+% Scale hình ảnh tự động tối đa bằng chiều rộng văn bản, giữ tỉ lệ
+\AtBeginEnvironment{figure}{\setkeys{Gin}{width=\linewidth,keepaspectratio}}
+% Đặt kích thước chữ trong bảng nhỏ hơn mặc định để tránh tràn
+\AtBeginEnvironment{table}{\centering\small}
+\AtBeginEnvironment{longtable}{\small}
+
+% Giảm khoảng cách giữa các cột trong bảng và tăng khả năng xuống dòng
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.08}
+\emergencystretch=3em
+\sloppy
+% Định nghĩa cột p có raggedright để tránh overflow do căn đều
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\usepackage{enumitem} % Cho phép thay đổi kí hiệu của list
+\usepackage{subfiles} % Chèn các file nhỏ, giúp chia các chapter ra nhiều file hơn
+\usepackage{titlesec} % Giúp chỉnh sửa các tiêu đề, đề mục như chương, phần,..
+\usepackage{titletoc}
+\usepackage{chngcntr} % Dùng để thiết lập lại cách đánh số caption,..
+\usepackage{pdflscape} % Đưa các bảng có kích thước đặt theo chiều ngang giấy
+\usepackage{afterpage}
+\usepackage{placeins}
+\usepackage[ruled,vlined]{algorithm2e}  % Hỗ trợ viết các giải thuật
+\usepackage{capt-of} % Cho phép sử dụng caption lớn đối với landscape page
+\usepackage{multirow} % Merge cells
+\usepackage{fancyhdr} % Cho phép tùy biến header và footer
+%\usepackage{appendix} % Không dùng phụ lục thì bỏ luôn package này
+
+\usepackage[font=small,labelfont=bf]{caption}
+\captionsetup[figure]{justification=centering,singlelinecheck=false}
+\captionsetup[table]{justification=centering,singlelinecheck=false}
+\renewcommand{\listfigurename}{\Large\textbf{DANH MỤC CÁC HÌNH VẼ}}
+\renewcommand{\listtablename}{\Large\textbf{DANH MỤC BẢNG BIỂU}}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+
+\titlecontents{chapter}
+  [0.0cm]
+  {\bfseries\vspace{0.3cm}}
+  {\bfseries CHƯƠNG \thecontentslabel.\ }
+  {}
+  {\titlerule*[0.3pc]{.}\contentspage}
+
+\titlecontents{section}
+  [0.0cm]
+  {\vspace{0.2cm}}
+  {\thecontentslabel\ }
+  {}
+  {\titlerule*[0.3pc]{.}\contentspage}
+
+\titlecontents{subsection}
+  [1.0cm]
+  {\vspace{0.15cm}}
+  {\thecontentslabel\ }
+  {}
+  {\titlerule*[0.3pc]{.}\contentspage}
+
+\titlecontents{figure}
+  [0.0cm]
+  {\vspace{0.15cm}}
+  {Hình~\thecontentslabel:\ }
+  {}
+  {\titlerule*[0.3pc]{.}\contentspage}
+
+\titlecontents{table}
+  [0.0cm]
+  {\vspace{0.15cm}}
+  {Bảng~\thecontentslabel:\ }
+  {}
+  {\titlerule*[0.3pc]{.}\contentspage}
+
+\newcommand{\placedfigure}[2]{%
+  \par\begingroup
+  \centering
+  \includegraphics[width=\linewidth]{#1}\par
+  \captionof{figure}{#2}\par
+  \endgroup
+}
+
+\usepackage{listings} % Đã khai báo gói hiển thị code ở đây
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{xurl}
+
+\usepackage[nonumberlist, nopostdot, nogroupskip, acronym]{glossaries}
+\usepackage{glossary-superragged}
+%\makenoidxglossaries
+%\setglossarystyle{superraggedheaderborder}
+\usepackage{setspace}
+\usepackage{parskip}
+
+% package content table
+\usepackage{tocbasic}
+\usepackage{blindtext}
+
+
+
+% FIX LỖI TẠI ĐÂY: Loại bỏ lệnh \input{lstlisting} gây crash hệ thống.
+% Nếu bạn muốn định dạng cấu hình cho gói listings (font, màu sắc code), 
+% hãy dùng lệnh \lstset dưới đây thay vì gọi file ngoài:
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    showstringspaces=false
+}
+
+% ===================================================
+\fancypagestyle{plain}{%
+\fancyhf{} % clear all header and footer fields
+\fancyfoot[RO,RE]{\thepage} %RO=right odd, RE=right even
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+\setlength{\headheight}{18pt} % Increased to 18pt for fancyhdr compliance
+
+\def \TITLE{ĐỒ ÁN TỐT NGHIỆP}
+\def \AUTHOR{NGUYỄN VĂN ABC}
+
+% ===================================================
+% Đã lược bỏ bớt 1 block \titleformat{\chapter} bị gõ trùng lặp dữ liệu phía dưới
+
+\titleformat{\chapter}[hang]{\centering\bfseries}{CHƯƠNG \thechapter.\ }{0pt}{}[]
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+\titleformat
+  {\section} % command
+  [hang] % shape
+  {\bfseries} % format
+  {\thechapter.\arabic{section}\ \ \ \ } % label
+  {0pt} %sep
+  {} % before
+  [] % after
+\titlespacing{\section}{0pt}{\parskip}{0.5\parskip}
+
+\titleformat
+  {\subsection} % command
+  [hang] % shape
+  {\bfseries} % format
+  {\thechapter.\arabic{section}.\arabic{subsection}\ \ \ \ } % label
+  {0pt} %sep
+  {} % before
+  [] % after
+\titlespacing{\subsection}{30pt}{\parskip}{0.5\parskip}
+
+\renewcommand\thesubsubsection{\alph{subsubsection}}
+\titleformat
+  {\subsubsection} % command
+  [hang] % shape
+  {\bfseries} % format
+  {\alph{subsubsection}, \ } % label
+  {0pt} %sep
+  {} % before
+  [] % after
+\titlespacing{\subsubsection}{50pt}{\parskip}{0.5\parskip}
+
+% ===================================================
+\usepackage{hyperref}
+\hypersetup{pdfborder = {0 0 0}} %
+\hypersetup{pdftitle={\TITLE},
+	pdfauthor={\AUTHOR}}
+	
+\usepackage[all]{hypcap} % Cho phép tham chiếu chính xác đến hình ảnh và bảng biểu
+
+\graphicspath{{Hinhve/}{figures/}{../figures/}} % Thư mục chứa các hình ảnh
+
+\counterwithin{figure}{chapter} % Đánh số hình ảnh kèm theo chapter. Ví dụ: Hình 1.1, 1.2,..
+\counterwithin{table}{chapter}  % Đánh số bảng biểu kèm theo chapter.
+
+\title{\bf \TITLE}
+\author{\AUTHOR}
+
+\setcounter{secnumdepth}{3} % Cho phép đếm mục subsubsection trong report
+
+\theoremstyle{definition}
+\newtheorem{example}{Ví dụ}[chapter] % Định nghĩa môi trường ví dụ
+
+\onehalfspacing
+%Khoảng cách xuống dòng
+\setlength{\parskip}{6pt}
+%Lùi đầu dòng
+\setlength{\parindent}{15pt}
+\raggedbottom
+
+% Đảm bảo bảng không bị tràn lề
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+
+% =========================== BODY ===============
+\begin{document}
+
+\subfile{Bia} % Phần bìa
+
+% ===================================================
+\pagenumbering{roman}
+
+\newpage
+\pagenumbering{gobble}
+\subfile{Chuong/0_2_Loi_cam_on.tex}
+
+% ===================================================
+\newpage
+\pagenumbering{roman} 
+\renewcommand*\contentsname{\Large\textbf{MỤC LỤC}}
+
+% Giới hạn mục lục: chỉ hiển thị CHƯƠNG và MỤC (x.x)
+\setcounter{tocdepth}{1}
+% Tạo mục lục tự động
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\tableofcontents 
+\thispagestyle{empty}
+
+\clearpage
+% Force uppercase titles for lists (ensure these are used when lists are typeset)
+\renewcommand{\listfigurename}{\Large\textbf{DANH MỤC CÁC HÌNH VẼ}}
+\renewcommand{\listtablename}{\Large\textbf{DANH MỤC BẢNG BIỂU}}
+\listoffigures
+\thispagestyle{empty}
+\clearpage
+\listoftables
+\thispagestyle{empty}
+
+\subfile{Chuong/0_5_Danh_muc_viet_tat.tex}
+
+% ===================================================
+\newpage
+\pagenumbering{arabic}
+
+% Fix page style: Use right-aligned chapter headers and page numbers consistently
+\pagestyle{fancy}
+\fancyhf{} % Clear all header/footer
+\fancyhead[RE,RO]{\nouppercase{\leftmark}} % Chapter title on the right for both even and odd pages
+\fancyhead[LE,LO]{} % No chapter title on the left
+\fancyfoot[RE,RO]{\thepage} % Right page numbers for both odd and even pages
+
+\subfile{Chuong/1_Tong_quan_de_tai.tex}
+
+\newpage
+\subfile{Chuong/2_Co_so_ly_thuyet.tex}
+
+\newpage
+\subfile{Chuong/3_Phan_tich_thiet_ke_he_thong.tex}
+
+\newpage
+\subfile{Chuong/4_Cai_dat_va_kiem_thu.tex}
+
+\newpage
+\subfile{Chuong/5_Ket_luan.tex}
+
+\clearpage
+\renewcommand{\bibname}{TÀI LIỆU THAM KHẢO}
+\addcontentsline{toc}{chapter}{TÀI LIỆU THAM KHẢO}
+\nocite{*}
+\bibliographystyle{ieeetr}
+\bibliography{Danh_sach_tai_lieu_tham_khao}
+
+
+
+\end{document}

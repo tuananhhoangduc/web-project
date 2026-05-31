@@ -1,0 +1,75 @@
+$kind: http-request
+name: 'Lấy đánh giá thợ'
+method: GET
+url: '{{base_url}}/api/get_stylist_reviews.php'
+order: 11000
+queryParams:
+  - key: stylist_id
+    value: '1'
+  - key: page
+    value: '1'
+    disabled: true
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON
+  pm.test("Response is JSON", function () {
+      pm.response.to.be.json;
+  });
+
+  // Test 3: status = 'success'
+  pm.test("Response status is success", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.eql('success');
+  });
+
+  // Test 4: Có trường 'stats' với average_rating, total_reviews, star_distribution
+  pm.test("Response has 'stats' with required fields", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('stats');
+      pm.expect(json.stats).to.have.property('average_rating');
+      pm.expect(json.stats).to.have.property('total_reviews');
+      pm.expect(json.stats).to.have.property('star_distribution');
+      pm.expect(json.stats.average_rating).to.be.a('number');
+      pm.expect(json.stats.total_reviews).to.be.a('number');
+  });
+
+  // Test 5: Có trường 'reviews' là mảng
+  pm.test("Response has 'reviews' array", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('reviews');
+      pm.expect(json.reviews).to.be.an('array');
+  });
+
+  // Test 6: Mỗi review có các trường cơ bản
+  pm.test("Each review has required fields", function () {
+      const json = pm.response.json();
+      if (json.reviews.length > 0) {
+          json.reviews.forEach(function(review) {
+              pm.expect(review).to.have.property('review_id');
+              pm.expect(review).to.have.property('rating');
+              pm.expect(review).to.have.property('comment');
+              pm.expect(review).to.have.property('created_at');
+              pm.expect(review).to.have.property('customer_name');
+          });
+      }
+  });
+
+  // Test 7: Có trường 'pagination'
+  pm.test("Response has 'pagination' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('pagination');
+      pm.expect(json.pagination).to.have.property('current_page');
+      pm.expect(json.pagination).to.have.property('total_pages');
+      pm.expect(json.pagination).to.have.property('total_reviews');
+  });
+
+  // Test 8: average_rating trong khoảng 0-5
+  pm.test("average_rating is between 0 and 5", function () {
+      const json = pm.response.json();
+      pm.expect(json.stats.average_rating).to.be.at.least(0);
+      pm.expect(json.stats.average_rating).to.be.at.most(5);
+  });

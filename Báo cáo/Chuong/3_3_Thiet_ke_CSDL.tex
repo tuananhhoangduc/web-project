@@ -1,0 +1,210 @@
+\documentclass[../BTL.tex]{subfiles}
+\begin{document}
+
+\section{Thiết kế cơ sở dữ liệu}
+Hệ thống sử dụng cơ sở dữ liệu quan hệ với 8 bảng chính được thiết kế
+chặt chẽ. Sơ đồ thực thể liên kết (ERD) và đặc tả cấu trúc các bảng được
+mô tả chi tiết như sau:
+
+\textbf{1. Bảng users (Tài khoản người dùng)} Lưu trữ thông tin của
+khách hàng, quản trị viên và dữ liệu gốc của thợ.
+
+\begin{itemize}
+\item
+  user\_id (INT, Primary Key): Mã người dùng.
+\item
+  full\_name (VARCHAR): Họ và tên đầy đủ.
+\item
+  email (VARCHAR): Địa chỉ email.
+\item
+  phone (VARCHAR): Số điện thoại đăng nhập.
+\item
+  password (VARCHAR): Mật khẩu.
+\item
+  role \textbf{(ENUM(\textquotesingle customer\textquotesingle,
+  \textquotesingle stylist\textquotesingle,
+  \textquotesingle admin\textquotesingle))}: Vai trò phân quyền tài
+  khoản (Khách hàng, Thợ cắt tóc, hoặc Quản trị viên).
+\item
+  created\_at (TIMESTAMP): Thời gian tạo tài khoản.
+\end{itemize}
+
+\textbf{2. Bảng branches (Chi nhánh)} Lưu trữ thông tin các cơ sở của
+Barbershop.
+
+\begin{itemize}
+\item
+  branch\_id (INT, Primary Key): Mã chi nhánh.
+\item
+  branch\_name (VARCHAR): Tên chi nhánh.
+\item
+  address (VARCHAR): Địa chỉ chi nhánh.
+\item
+  phone (VARCHAR): Số điện thoại cơ sở.
+\item
+  email (VARCHAR): Email liên hệ cơ sở.
+\end{itemize}
+
+\textbf{3. Bảng stylists (Đội ngũ thợ cắt tóc)} Lưu trữ hồ sơ làm việc
+của thợ, được liên kết từ bảng người dùng.
+
+\begin{itemize}
+\item
+  stylist\_id (INT, Primary Key): Mã hồ sơ thợ.
+\item
+  user\_id (INT, Foreign Key): Liên kết với bảng users.
+\item
+  branch\_id (INT, Foreign Key): Trực thuộc chi nhánh nào (Liên kết bảng
+  branches).
+\item
+  status \textbf{(ENUM(\textquotesingle active\textquotesingle,
+  \textquotesingle inactive\textquotesingle))}: Trạng thái làm việc
+  (Đang hoạt động hoặc Đã khóa/Nghỉ việc).
+\end{itemize}
+
+\textbf{4. Bảng services (Dịch vụ)} Lưu trữ danh sách các dịch vụ cắt
+tóc.
+
+\begin{itemize}
+\item
+  service\_id (INT, Primary Key): Mã dịch vụ.
+\item
+  service\_name (VARCHAR): Tên dịch vụ.
+\item
+  price (INT): Giá tiền dịch vụ.
+\item
+  duration (INT): Thời gian thực hiện (phút).
+\item
+  description (TEXT): Mô tả chi tiết dịch vụ.
+\end{itemize}
+
+\textbf{5. Bảng appointments (Lịch hẹn)} Lưu trữ chi tiết các đơn đặt
+lịch của khách hàng.
+
+\begin{itemize}
+\item
+  appointment\_id (INT, Primary Key): Mã lịch hẹn.
+\item
+  customer\_id (INT, Foreign Key): Mã khách đặt (Liên kết bảng users).
+\item
+  branch\_id (INT, Foreign Key): Mã chi nhánh (Liên kết bảng branches).
+\item
+  service\_id (INT, Foreign Key): Mã dịch vụ (Liên kết bảng services).
+\item
+  stylist\_id (INT, Foreign Key): Mã thợ thực hiện (Liên kết bảng
+  stylists).
+\item
+  appointment\_date (DATE): Ngày đặt lịch.
+\item
+  appointment\_time (TIME): Giờ đặt lịch.
+\item
+  notes (TEXT): Ghi chú của khách hàng.
+\item
+  total\_price (INT): Tổng tiền hóa đơn.
+\item
+  status \textbf{(ENUM(\textquotesingle pending\textquotesingle,
+  \textquotesingle confirmed\textquotesingle,
+  \textquotesingle completed\textquotesingle,
+  \textquotesingle cancelled\textquotesingle))}: Trạng thái lịch hẹn
+  (Chờ duyệt, Đã xác nhận, Hoàn thành, hoặc Đã hủy).
+\item
+  created\_at (TIMESTAMP): Thời gian tạo đơn.
+\end{itemize}
+
+Trong nghiệp vụ đặt lịch, hệ thống còn hỗ trợ lọc danh sách thợ VIP theo
+lựa chọn của khách hàng và kiểm tra khung giờ trống trước khi xác nhận
+lịch hẹn. Cách xử lý này giúp hạn chế trùng lịch, đồng thời đảm bảo
+người dùng chỉ có thể chọn các khung giờ thực sự còn khả dụng.
+
+\textbf{6. Bảng stylist\_schedules (Lịch làm việc của thợ)} Kiểm soát
+khung thời gian thực tế của thợ để tránh trùng lịch.
+
+\begin{itemize}
+\item
+  schedule\_id (INT, Primary Key): Mã lịch trình.
+\item
+  stylist\_id (INT, Foreign Key): Mã thợ (Liên kết bảng stylists).
+\item
+  appointment\_id (INT, Foreign Key, Nullable): Mã lịch hẹn tương ứng
+  (Liên kết bảng appointments).
+\item
+  work\_date (DATE): Ngày làm việc.
+\item
+  start\_time (TIME): Giờ bắt đầu.
+\item
+  end\_time (TIME): Giờ kết thúc.
+\item
+  status \textbf{(ENUM(\textquotesingle available\textquotesingle,
+  \textquotesingle booked\textquotesingle))}: Trạng thái của khung giờ
+  (Còn trống hoặc Đã được đặt).
+\end{itemize}
+
+\textbf{7. Bảng leave\_requests (Đơn xin nghỉ phép)} Lưu trữ yêu cầu xin
+nghỉ của thợ để Admin phê duyệt.
+
+\begin{itemize}
+\item
+  request\_id (INT, Primary Key): Mã đơn xin nghỉ.
+\item
+  stylist\_id (INT, Foreign Key): Mã thợ (Liên kết bảng stylists).
+\item
+  start\_date (DATE): Ngày bắt đầu nghỉ.
+\item
+  end\_date (DATE): Ngày kết thúc nghỉ.
+\item
+  leave\_type (VARCHAR): Loại nghỉ phép.
+\item
+  reason (TEXT): Lý do xin nghỉ.
+\item
+  status \textbf{(ENUM(\textquotesingle pending\textquotesingle,
+  \textquotesingle approved\textquotesingle,
+  \textquotesingle rejected\textquotesingle))}: Trạng thái đơn (Chờ
+  duyệt, Đã duyệt, hoặc Bị từ chối).
+\item
+  created\_at (TIMESTAMP): Thời gian tạo đơn.
+\end{itemize}
+
+\textbf{8. Bảng reviews (Đánh giá dịch vụ)} Lưu trữ thông tin phản hồi,
+điểm số đánh giá và bình luận của khách hàng sau khi hoàn thành lịch hẹn
+cắt tóc.
+
+\begin{itemize}
+\item
+  review\_id (INT, Primary Key): Mã định danh độc nhất cho mỗi lượt đánh
+  giá (Tự động tăng).
+\item
+  appointment\_id (INT, Foreign Key, Unique): Liên kết với bảng
+  appointments. Đảm bảo ràng buộc mỗi lịch hẹn chỉ được đánh giá duy
+  nhất một lần để tránh spam dữ liệu.
+\item
+  customer\_id (INT, Foreign Key): Mã khách hàng thực hiện đánh giá
+  (Liên kết với bảng users).
+\item
+  stylist\_id (INT, Foreign Key): Mã thợ cắt tóc nhận đánh giá (Liên
+  kết với bảng users).
+\item
+  rating (INT): Số sao đánh giá từ khách hàng. Ràng buộc điều kiện
+  (CHECK) giá trị nghiêm ngặt trong khoảng từ 1 đến 5 sao.
+\item
+  comment (TEXT): Nội dung bình luận chi tiết từ khách hàng (Có thể để
+  trống).
+\item
+  created\_at (TIMESTAMP): Thời gian hệ thống ghi nhận lượt đánh giá
+  ban đầu.
+\item
+  updated\_at (TIMESTAMP): Thời gian cập nhật nếu khách hàng có sự sửa
+  đổi nội dung đánh giá.
+\end{itemize}
+
+\placedfigure{Hinhve/image34.png}{Sơ đồ thực thể liên kết (ERD)}
+
+\section{Tổng kết chương}
+Chương 3 đã trình bày tổng quan về usecase tổng quan hệ thống, usecase
+chi tiết cùng với kịch bản usecase, các chức năng chi tiết trong hệ
+thống với từng vai trò, bên canh đó còn thể hiện biểu đồ tuần tự, cơ sở
+dữ liệu.
+
+\protect\hypertarget{_Toc225990067}{}{}\textbf{\hfill\break
+}
+
+\end{document}

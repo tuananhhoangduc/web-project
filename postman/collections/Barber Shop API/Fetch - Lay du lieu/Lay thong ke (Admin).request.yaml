@@ -1,0 +1,92 @@
+$kind: http-request
+name: 'Lấy thống kê (Admin)'
+method: GET
+url: '{{base_url}}/api/get_statistics_admin.php'
+order: 10000
+queryParams:
+  - key: start_date
+    value: '2026-01-01'
+    disabled: true
+  - key: end_date
+    value: '2026-12-31'
+    disabled: true
+  - key: branch_id
+    value: '1'
+    disabled: true
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON
+  pm.test("Response is JSON", function () {
+      pm.response.to.be.json;
+  });
+
+  // Test 3: status = 'success'
+  pm.test("Response status is success", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.eql('success');
+  });
+
+  // Test 4: Có trường 'filters'
+  pm.test("Response has 'filters' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('filters');
+      pm.expect(json.filters).to.have.property('start_date');
+      pm.expect(json.filters).to.have.property('end_date');
+      pm.expect(json.filters).to.have.property('branch_id');
+  });
+
+  // Test 5: Có trường 'summary' với các chỉ số
+  pm.test("Response has 'summary' with required fields", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('summary');
+      pm.expect(json.summary).to.have.property('total_appointments');
+      pm.expect(json.summary).to.have.property('completed_appointments');
+      pm.expect(json.summary).to.have.property('revenue');
+      pm.expect(json.summary).to.have.property('completion_rate');
+      pm.expect(json.summary).to.have.property('cancellation_rate');
+      pm.expect(json.summary).to.have.property('unique_customers');
+      pm.expect(json.summary).to.have.property('new_customers');
+      pm.expect(json.summary).to.have.property('pending_leave_requests');
+  });
+
+  // Test 6: Có trường 'comparison' với previous_period và deltas
+  pm.test("Response has 'comparison' with deltas", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('comparison');
+      pm.expect(json.comparison).to.have.property('previous_period');
+      pm.expect(json.comparison).to.have.property('deltas');
+      pm.expect(json.comparison.deltas).to.have.property('revenue_pct');
+      pm.expect(json.comparison.deltas).to.have.property('total_appointments_pct');
+  });
+
+  // Test 7: Có trường 'charts' với các biểu đồ
+  pm.test("Response has 'charts' with all chart data", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('charts');
+      pm.expect(json.charts).to.have.property('daily_trend');
+      pm.expect(json.charts).to.have.property('status_distribution');
+      pm.expect(json.charts).to.have.property('top_services');
+      pm.expect(json.charts).to.have.property('top_stylists');
+      pm.expect(json.charts).to.have.property('branch_performance');
+      pm.expect(json.charts).to.have.property('peak_hours');
+      pm.expect(json.charts.daily_trend).to.be.an('array');
+      pm.expect(json.charts.top_services).to.be.an('array');
+  });
+
+  // Test 8: Có trường 'alerts' là mảng
+  pm.test("Response has 'alerts' array", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('alerts');
+      pm.expect(json.alerts).to.be.an('array');
+  });
+
+  // Test 9: summary.total_appointments >= 0
+  pm.test("total_appointments is a non-negative number", function () {
+      const json = pm.response.json();
+      pm.expect(json.summary.total_appointments).to.be.a('number');
+      pm.expect(json.summary.total_appointments).to.be.at.least(0);
+  });

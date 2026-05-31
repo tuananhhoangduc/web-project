@@ -1,0 +1,57 @@
+$kind: http-request
+name: 'Lấy thợ VIP'
+method: GET
+url: '{{base_url}}/api/get_vip_stylists.php'
+order: 12000
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON
+  pm.test("Response is JSON", function () {
+      pm.response.to.be.json;
+  });
+
+  // Test 3: status = 'success'
+  pm.test("Response status is success", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.eql('success');
+  });
+
+  // Test 4: data là một mảng
+  pm.test("Data is an array", function () {
+      const json = pm.response.json();
+      pm.expect(json.data).to.be.an('array');
+  });
+
+  // Test 5: Mỗi thợ VIP có đủ các trường
+  pm.test("Each VIP stylist has required fields", function () {
+      const json = pm.response.json();
+      if (json.data.length > 0) {
+          json.data.forEach(function(stylist) {
+              pm.expect(stylist).to.have.property('stylist_id');
+              pm.expect(stylist).to.have.property('full_name');
+              pm.expect(stylist).to.have.property('branch_name');
+              pm.expect(stylist).to.have.property('total_revenue');
+              pm.expect(stylist).to.have.property('total_appointments');
+              pm.expect(stylist).to.have.property('average_rating');
+          });
+      }
+  });
+
+  // Test 6: Tối đa 3 thợ VIP (LIMIT 3 trong PHP)
+  pm.test("Returns at most 3 VIP stylists", function () {
+      const json = pm.response.json();
+      pm.expect(json.data.length).to.be.at.most(3);
+  });
+
+  // Test 7: average_rating trong khoảng 0-5
+  pm.test("average_rating is between 0 and 5", function () {
+      const json = pm.response.json();
+      json.data.forEach(function(stylist) {
+          pm.expect(parseFloat(stylist.average_rating)).to.be.at.least(0);
+          pm.expect(parseFloat(stylist.average_rating)).to.be.at.most(5);
+      });
+  });

@@ -1,0 +1,514 @@
+% !TeX root = ../BTL.tex
+\documentclass[../BTL.tex]{subfiles}
+\begin{document}
+
+\section{Phân tích yêu cầu hệ thống}
+\subsection{Các tác nhân chính}
+Hệ thống được thiết kế để phục vụ 3 nhóm tác nhân (Actor) chính, mỗi
+nhóm có vai trò và quyền hạn riêng biệt:
+
+Khách hàng (Customer): Người sử dụng dịch vụ, có nhu cầu tra cứu thông
+tin và đặt lịch cắt tóc.
+
+Thợ cắt tóc (Stylist): Nhân viên của cửa hàng, cần theo dõi lịch làm
+việc cá nhân và quản lý ngày nghỉ.
+
+Quản trị viên (Admin): Người quản lý hoặc chủ cửa hàng, có toàn quyền
+kiểm soát dữ liệu của hệ thống bao gồm nhân sự, khách hàng, dịch vụ và
+lịch hẹn.
+
+\subsection{Yêu cầu chức năng}
+Để đáp ứng nhu cầu của các tác nhân trên, hệ thống cần có các chức năng
+cốt lõi sau:
+
+Nhóm chức năng tài khoản: Đăng ký, đăng nhập, đăng xuất cho người dùng.
+
+Nhóm chức năng của Khách hàng: Xem danh sách dịch vụ, xem thông tin
+Stylist, đặt lịch hẹn (tự động lọc giờ trống), xem và hủy lịch sử đặt
+hẹn.
+
+Nhóm chức năng của Stylist: Xem danh sách lịch hẹn khách đặt với mình,
+gửi đơn xin nghỉ phép.
+
+Nhóm chức năng của Admin: Quản lý lịch hẹn (duyệt, hủy, hoàn thành),
+quản lý khách hàng, quản lý Stylist (thêm mới, khóa tài khoản), quản lý
+dịch vụ và chi nhánh.
+
+\subsection{Yêu cầu phi chức năng}
+Giao diện (UI/UX): Bố cục rõ ràng, dễ thao tác trên cả máy tính và thiết
+bị di động. Tone màu tối, nam tính phù hợp với phong cách Barbershop.
+
+Hiệu năng: Tốc độ phản hồi nhanh, cập nhật dữ liệu mượt mà thông qua
+Fetch API không cần tải lại trang.
+
+Tính bảo mật: Mật khẩu người dùng cần được mã hóa. Sử dụng PDO trong PHP
+để chống tấn công SQL Injection. Hệ thống cần có cơ chế kiểm tra (Check
+slots) theo thời gian thực để tránh tình trạng 2 khách đặt trùng 1 giờ
+của 1 thợ.
+
+\section{Sơ đồ Use Case tổng quát}
+\placedfigure{Hinhve/image3.png}{Sơ đồ Use Case tổng quát}
+
+\section{Thiết kế chức năng Đăng nhập, Đăng ký}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase đăng ký}\label{tab:usecase-dang-ky}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Đăng ký \\
+\hline
+Mô tả & Khách hàng đăng ký làm thành viên của hệ thống \\
+\hline
+Đối tượng & Khách hàng mới \\
+\hline
+Điều kiện & Khách hàng chọn mục đăng ký từ form đăng nhập \\
+\hline
+Tiền điều kiện & Người dùng đang ở giao diện trang chủ hoặc trang đăng nhập; người dùng chưa đăng nhập vào hệ thống \\
+\hline
+Hậu điều kiện & Thành công: tạo bản ghi mới trong bảng Users và chuyển sang trang Đăng nhập. Thất bại: không lưu dữ liệu và giữ nguyên màn hình đăng ký \\
+\hline
+Luồng sự kiện chính & 1) Chọn mục đăng ký thành viên. 2) Form đăng ký hiển thị. 3) Nhập thông tin cá nhân. 4) Nhấn Đăng ký. 5) Hệ thống kiểm tra tính hợp lệ. 6) Hệ thống kiểm tra tồn tại tài khoản. 7) Cập nhật thông tin khách hàng. 8) Thông báo đăng ký thành công và chuyển về trang Đăng nhập. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Thông tin không chính xác, hệ thống báo lỗi và yêu cầu nhập lại. E2: Tài khoản đã tồn tại, hệ thống thông báo số điện thoại đã được đăng ký. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase đăng nhập}\label{tab:usecase-dang-nhap}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Đăng nhập \\
+\hline
+Mô tả & Cho phép khách hàng, quản lý đăng nhập hệ thống \\
+\hline
+Đối tượng & Khách hàng, quản trị viên \\
+\hline
+Điều kiện & Khi thành viên chọn chức năng đăng nhập hệ thống \\
+\hline
+Tiền điều kiện & Phải có tài khoản và chưa đăng nhập vào hệ thống \\
+\hline
+Hậu điều kiện & Thành công: hệ thống tạo phiên làm việc và chuyển đến trang tương ứng với quyền hạn. Thất bại: giữ ở trang đăng nhập và hiển thị lỗi \\
+\hline
+Luồng sự kiện chính & 1) Người dùng chọn chức năng đăng nhập. 2) Form đăng nhập hiển thị. 3) Nhập thông tin vào form đăng nhập. 4) Kiểm tra định dạng. 5) Xác thực tên đăng nhập và mật khẩu. 6) Chuyển hướng người dùng vào giao diện chính. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Thông tin bị trống, hệ thống yêu cầu nhập đầy đủ tên đăng nhập và mật khẩu. E2: Sai tên đăng nhập hoặc mật khẩu, hệ thống thông báo lỗi. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase đăng nhập bằng Google (OAuth 2.0)}\label{tab:usecase-dang-nhap-google}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Đăng nhập bằng Google (OAuth 2.0) \\
+\hline
+Mô tả & Cho phép khách hàng đăng nhập nhanh vào hệ thống bằng tài khoản Google. Hệ thống sẽ tự động khởi tạo hồ sơ nếu khách hàng lần đầu sử dụng. \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Điều kiện & Khách hàng nhấn vào nút "Đăng nhập bằng Google" trên form đăng nhập. \\
+\hline
+Tiền điều kiện & Người dùng chưa đăng nhập vào hệ thống. \\
+\hline
+Hậu điều kiện & Thành công: Hệ thống xác thực danh tính, tạo phiên làm việc và chuyển hướng đến trang chủ. Thất bại: Giữ ở trang đăng nhập và hiển thị thông báo lỗi xác thực. \\
+\hline
+Luồng sự kiện chính & 1) Khách hàng chọn "Đăng nhập bằng Google". 2) Cửa sổ xác thực OAuth 2.0 của Google hiển thị. 3) Khách hàng chọn tài khoản Gmail và cấp quyền truy cập. 4) Hệ thống nhận mã thông báo (Credential Token) từ Google. 5) Hệ thống gọi API của Google để kiểm tra tính hợp lệ của Token. 6) Hệ thống trích xuất Email và Tên từ Token. 7) Hệ thống kiểm tra Email trong cơ sở dữ liệu. Nếu Email đã tồn tại, tiến hành cấp quyền đăng nhập. Nếu chưa tồn tại, hệ thống tự động tạo tài khoản mới với mật khẩu ngẫu nhiên và tiền tố điện thoại ảo. 8) Chuyển hướng người dùng vào giao diện chính. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Token không hợp lệ hoặc mã ứng dụng (Client ID) không khớp, hệ thống báo lỗi không thể xác thực. E2: Tài khoản Google chưa được xác minh Email, hệ thống từ chối truy cập và báo lỗi "Email Google chưa được xác minh". \\\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image4.png}{Biểu đồ tuần tự chức năng Đăng ký}
+
+Mô tả :
+
+Phần 1: Khởi tạo và Nhập liệu (Tương tác trên Giao diện)
+
+\begin{itemize}
+\item
+  Bước 1: Khách hàng tác động vào Giao diện: Chọn chức năng "Đăng ký"
+  trên màn hình.
+\item
+  Bước 2: Giao diện phản hồi bằng cách hiển thị Form đăng ký với các ô
+  nhập liệu trống.
+\item
+  Bước 3: Khách hàng điền các thông tin cá nhân cần thiết (Họ tên, Số
+  điện thoại, Mật khẩu).
+\item
+  Bước 4: Khách hàng nhấn nút "Đăng ký" để xác nhận thao tác.
+\end{itemize}
+
+Phần 2: Kiểm tra tính hợp lệ của dữ liệu (Validation)
+
+\begin{itemize}
+\item
+  Bước 5: Giao diện đóng gói toàn bộ thông tin vừa nhập và gửi thông
+  điệp lên Hệ thống (Backend).
+\item
+  Bước 6: Hệ thống tự thực hiện (Self-call) thuật toán kiểm tra định
+  dạng dữ liệu đầu vào (Ví dụ: độ dài mật khẩu, định dạng số điện
+  thoại).
+\item
+  \emph{(Luồng ngoại lệ E1 - Thông tin không hợp lệ):}
+
+  \begin{itemize}
+  \item
+    Bước 7: Hệ thống phát hiện lỗi định dạng, lập tức trả về mã lỗi cho
+    Giao diện.
+  \item
+    Bước 8: Giao diện hiển thị cảnh báo tương ứng và yêu cầu Khách hàng
+    kiểm tra, nhập lại thông tin.
+  \end{itemize}
+\end{itemize}
+
+Phần 3: Kiểm tra tài khoản tồn tại (Truy vấn CSDL)
+
+\begin{itemize}
+\item
+  Bước 9: Nếu dữ liệu hợp lệ, Hệ thống tiếp tục gửi yêu cầu đến Cơ sở dữ
+  liệu (CSDL) để kiểm tra xem Số điện thoại này đã được ai đăng ký trước
+  đó chưa.
+\item
+  Bước 10: CSDL thực thi câu lệnh truy vấn và trả kết quả (Có tồn tại /
+  Không tồn tại) về cho Hệ thống.
+\item
+  \emph{(Luồng ngoại lệ E2 - Tài khoản đã tồn tại):}
+
+  \begin{itemize}
+  \item
+    Bước 11: Hệ thống nhận thấy Số điện thoại đã bị trùng, tiến hành trả
+    về thông báo lỗi cho Giao diện.
+  \item
+    Bước 12: Giao diện hiển thị cảnh báo: \emph{"Số điện thoại đã được
+    đăng ký"} và yêu cầu Khách hàng sử dụng số điện thoại khác.
+  \end{itemize}
+\end{itemize}
+
+Phần 4: Lưu tài khoản và Hoàn tất (Luồng chính)
+
+\begin{itemize}
+\item
+  Bước 13: Nếu Số điện thoại chưa từng tồn tại, Hệ thống gửi lệnh INSERT
+  để lưu thông tin Khách hàng mới vào CSDL (bảng users).
+\item
+  Bước 14: CSDL thực thi lệnh và phản hồi xác nhận đã lưu bản ghi thành
+  công.
+\item
+  Bước 15: Hệ thống gửi thông điệp "Đăng ký thành công" về cho Giao
+  diện.
+\item
+  Bước 16: Giao diện tự động thực hiện lệnh chuyển hướng (Redirect) đưa
+  Khách hàng sang trang Đăng nhập để bắt đầu sử dụng dịch vụ. Chức năng
+  kết thúc.
+\end{itemize}
+
+\placedfigure{Hinhve/image5.png}{Biểu đồ tuần tự chức năng Đăng nhập}
+
+Mô tả :
+
+Phần 1: Khởi tạo và Nhập liệu (Tương tác trên Giao diện)
+
+\begin{itemize}
+\item
+  Bước 1: Người dùng tác động vào Giao diện: Chọn chức năng "Đăng nhập".
+\item
+  Bước 2: Giao diện phản hồi bằng cách hiển thị Form đăng nhập.
+\item
+  Bước 3: Người dùng điền thông tin tài khoản (Số điện thoại, Mật khẩu)
+  và nhấn nút "Đăng nhập".
+\end{itemize}
+
+Phần 2: Kiểm tra tính hợp lệ của dữ liệu (Validation)
+
+\begin{itemize}
+\item
+  Bước 4: Giao diện đóng gói dữ liệu và gửi thông điệp yêu cầu đăng nhập
+  lên Hệ thống (Backend).
+\item
+  Bước 5: Hệ thống tự thực hiện (Self-call) kiểm tra xem các trường dữ
+  liệu bắt buộc có bị bỏ trống hay không.
+\item
+  \emph{(Luồng ngoại lệ E1 - Thông tin bị trống):}
+
+  \begin{itemize}
+  \item
+    Bước 6: Hệ thống phát hiện thiếu dữ liệu, trả về mã lỗi cho Giao
+    diện.
+  \item
+    Bước 7: Giao diện hiển thị cảnh báo yêu cầu nhập đầy đủ Tên đăng
+    nhập và Mật khẩu. Dừng tiến trình.
+  \end{itemize}
+\end{itemize}
+
+Phần 3: Xác thực tài khoản (Truy vấn CSDL)
+
+\begin{itemize}
+\item
+  Bước 8: Nếu dữ liệu đã điền đủ, Hệ thống gửi yêu cầu xác thực đến Cơ
+  sở dữ liệu (CSDL) để kiểm tra sự khớp nhau giữa Số điện thoại và Mật
+  khẩu (đã mã hóa) trong bảng users.
+\item
+  Bước 9: CSDL thực thi câu lệnh truy vấn và trả kết quả (Đúng / Sai) về
+  cho Hệ thống.
+\item
+  \emph{(Luồng ngoại lệ E2 - Sai thông tin xác thực):}
+
+  \begin{itemize}
+  \item
+    Bước 10: Hệ thống nhận thấy thông tin không khớp, trả về thông báo
+    lỗi.
+  \item
+    Bước 11: Giao diện hiển thị cảnh báo: \emph{"Tài khoản hoặc mật khẩu
+    không đúng"} và yêu cầu Người dùng thử lại.
+  \end{itemize}
+\end{itemize}
+
+Phần 4: Cấp quyền và Chuyển hướng (Luồng chính)
+
+\begin{itemize}
+\item
+  Bước 12: Nếu xác thực thành công, Hệ thống sinh ra dữ liệu phiên làm
+  việc và trả kết quả về cho Giao diện kèm theo thông tin Vai trò (Role)
+  của người dùng.
+\item
+  Bước 13: Giao diện tự thực hiện lệnh lưu trữ thông tin (user\_id,
+  role...) vào bộ nhớ trình duyệt (Local Storage) để duy trì trạng thái
+  đăng nhập.
+\item
+  Bước 14: Giao diện kiểm tra Vai trò (Role) để xác định luồng đi.
+\item
+  Bước 15: Giao diện tự động chuyển hướng Người dùng đến trang làm việc
+  tương ứng. Cụ thể: Khách hàng (Customer) vào Trang chủ; Quản trị viên
+  (Admin) vào trang Admin Dashboard; Thợ cắt tóc (Stylist) vào trang
+  Barber Dashboard. Chức năng kết thúc.
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image6.png}{Giao diện chức năng Đăng nhập}
+
+\placedfigure{Hinhve/image7.png}{Giao diện chức năng Đăng ký}
+
+\section{Thiết kế chức năng Quản lý khách hàng}
+
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase quản lý khách hàng}\label{tab:usecase-quan-ly-khach-hang}\\
+\hline
+\textbf{Use case} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use case} & \textbf{Nội dung} \\
+\hline
+\endhead
+Tên use case & Quản lý thông tin Khách hàng \\
+\hline
+Mô tả & Cho phép quản trị viên xem, thêm, sửa, xóa, cập nhật thông tin khách hàng trong danh sách \\
+\hline
+Đối tượng & Quản trị viên \\
+\hline
+Điều kiện & Quản trị viên nhấn vào mục danh sách khách hàng \\
+\hline
+Tiền điều kiện & Người dùng đã đăng nhập với quyền Admin và đang ở giao diện Dashboard \\
+\hline
+Hậu điều kiện & Thành công: thông tin khách hàng được cập nhật vào CSDL. Thất bại: dữ liệu cũ được giữ nguyên và hiển thị lỗi \\
+\hline
+Luồng sự kiện chính & 1) Admin chọn mục Quản lý Khách hàng. 2) Hệ thống hiển thị danh sách khách hàng. 3) Admin tìm kiếm hoặc lọc. 4) Admin chọn hành động: thêm mới, sửa, hoặc xóa/khóa. 5) Hệ thống cập nhật và hiển thị lại danh sách. 6) Kết thúc Use Case. \\
+\hline
+Các luồng phụ & S1: Thêm khách hàng - hiển thị form, nhập thông tin, lưu, kiểm tra hợp lệ, thông báo thành công. S2: Cập nhật thông tin - hiển thị form, sửa dữ liệu, lưu, kiểm tra hợp lệ, cập nhật CSDL. S3: Xoá khách hàng - chọn khách hàng, xác nhận xóa, thực hiện xóa và thông báo thành công. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Dữ liệu không hợp lệ ở S1/S2, hiển thị thông báo lỗi. E2: Dữ liệu trùng lặp ở S1/S2, báo đã tồn tại. E3: Hủy thao tác ở S3, đóng hộp thoại và không xóa dữ liệu. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image8.jpeg}{Biểu đồ tuần tự chức năng Quản lý khách hàng}
+
+\textbf{Phần 1:} Xem Danh sách Khách hàng
+
+Đây là quy trình diễn ra ngay khi Admin truy cập vào trang này.
+
+Bước 1: Quản trị viên (Admin) tác động vào Giao diện: Nhấn chọn mục
+"Quản lý khách hàng" trên thanh menu bên trái.
+
+Bước 2: Giao diện gửi yêu cầu đến Hệ thống: Yêu cầu lấy toàn bộ dữ liệu
+danh sách khách hàng hiện có.
+
+Bước 3: Hệ thống gửi yêu cầu đến Cơ sở dữ liệu (CSDL): Tìm kiếm và lấy
+tất cả hồ sơ người dùng có vai trò là Khách hàng.
+
+Bước 4: CSDL phản hồi lại Hệ thống: Trả về danh sách các bản ghi thông
+tin khách hàng (gồm Mã, Họ tên, SĐT...).
+
+Bước 5: Hệ thống phản hồi lại Giao diện: Chuyển dữ liệu danh sách khách
+hàng về cho giao diện hiển thị.
+
+Bước 6: Giao diện hiển thị cho Quản trị viên: Hiển thị bảng danh sách
+khách hàng lên màn hình.
+
+\textbf{Phần 2:} Thêm mới Khách hàng
+
+Quy trình này tiếp nối khi Admin muốn tạo hồ sơ cho khách thủ công.
+
+Bước 7: Quản trị viên tác động vào Giao diện: Nhấn nút "Thêm mới" nằm ở
+góc trên danh sách.
+
+Bước 8: Giao diện phản hồi lại Quản trị viên: Hiển thị biểu mẫu
+(Popup/Form) để nhập thông tin.
+
+Bước 9: Quản trị viên nhập liệu trên Giao diện: Điền các thông tin như
+Họ và tên, Số điện thoại, Mật khẩu (nếu có).
+
+Bước 10: Quản trị viên nhấn nút trên Giao diện: Nhấn nút "Lưu" để xác
+nhận.
+
+(Lưu ý: Từ bước 7 đến bước 10 là tương tác trên màn hình, chưa gửi dữ
+liệu đi).
+
+Bước 11: Giao diện gửi dữ liệu đến Hệ thống: Gửi toàn bộ thông tin khách
+hàng mới vừa nhập.
+
+Bước 12: Hệ thống gửi yêu cầu đến CSDL: Kiểm tra xem Số điện thoại này
+đã tồn tại trong hệ thống chưa.
+
+Bước 13: CSDL trả kết quả về Hệ thống:
+
+Trường hợp A: Đã tồn tại.
+
+Trường hợp B: Chưa tồn tại (Hợp lệ).
+
+{[}Ngoại lệ: Nếu Số điện thoại đã tồn tại{]}
+
+Bước 13a: Hệ thống báo lỗi về Giao diện: Thông báo "Số điện thoại này đã
+được sử dụng".
+
+Bước 13b: Giao diện hiển thị lỗi và yêu cầu Admin kiểm tra lại.
+
+{[}Trường hợp Thành công: Chưa tồn tại{]}
+
+Bước 14: Hệ thống gửi lệnh đến CSDL: Lưu hồ sơ khách hàng mới vào cơ sở
+dữ liệu.
+
+Bước 15: CSDL xác nhận với Hệ thống: Lưu dữ liệu thành công.
+
+Bước 16: Hệ thống gửi thông báo về Giao diện: Thông báo "Thêm khách hàng
+thành công".
+
+Bước 17: Giao diện tự động thực hiện:
+
+Đóng biểu mẫu nhập liệu.
+
+Tự động thực hiện lại Bước 2 (Tải lại danh sách) để cập nhật tên khách
+hàng vừa thêm vào bảng hiển thị.
+
+\textbf{Phần 3:} Sửa thông tin Khách hàng (Update)
+
+Mục đích: Admin cập nhật lại thông tin sai lệch hoặc thay đổi của khách
+hàng.
+
+Bước 1: Quản trị viên (Admin) tác động vào Giao diện: Nhấn nút "Sửa"
+(biểu tượng bút chì) trên dòng chứa tên khách hàng cần sửa.
+
+Bước 2: Giao diện phản hồi lại Quản trị viên: Hiển thị biểu mẫu nhập
+liệu với các thông tin cũ (Họ tên, SĐT...) đã được điền sẵn.
+
+Bước 3: Quản trị viên thực hiện thay đổi trên Giao diện: Sửa lại các
+thông tin mong muốn (ví dụ: đổi số điện thoại mới).
+
+Bước 4: Quản trị viên nhấn nút trên Giao diện: Nhấn nút "Lưu thay đổi"
+(Cập nhật).
+
+(Lưu ý: Từ bước 1 đến 4 là thao tác trên màn hình).
+
+Bước 5: Giao diện gửi dữ liệu đến Hệ thống: Gửi thông tin khách hàng đã
+được chỉnh sửa (kèm theo Mã khách hàng - ID).
+
+Bước 6: Hệ thống kiểm tra logic: Nếu Admin có sửa Số điện thoại, Hệ
+thống gửi yêu cầu đến CSDL để kiểm tra xem SĐT mới này có trùng với
+khách hàng khác không.
+
+{[}Ngoại lệ: Trùng số điện thoại với người khác{]}
+
+Bước 6a: Hệ thống báo lỗi về Giao diện: "Số điện thoại này đã thuộc về
+tài khoản khác".
+
+Bước 6b: Giao diện hiển thị lỗi và yêu cầu nhập lại.
+
+{[}Trường hợp Hợp lệ{]}
+
+Bước 7: Hệ thống gửi lệnh đến CSDL: Cập nhật thông tin mới vào bản ghi
+của khách hàng đó.
+
+Bước 8: CSDL xác nhận với Hệ thống: Cập nhật thành công.
+
+Bước 9: Hệ thống gửi thông báo về Giao diện: Thông báo "Cập nhật thành
+công".
+
+Bước 10: Giao diện tự động thực hiện:
+
+Đóng biểu mẫu sửa.
+
+Tự động tải lại danh sách (giống chức năng Xem) để hiển thị thông tin
+mới nhất.
+
+\placedfigure{Hinhve/image9.png}{Biểu đồ tuần tự chức năng Xóa khách hàng}
+
+\textbf{Phần 4:} Xóa Khách hàng (Delete)
+
+Mục đích: Admin xóa bỏ một tài khoản khách hàng khỏi hệ thống (thường
+dùng khi tài khoản ảo hoặc khách yêu cầu xóa).
+
+Bước 1: Quản trị viên tác động vào Giao diện: Nhấn nút "Xóa" (biểu tượng
+thùng rác/màu đỏ) trên dòng chứa tên khách hàng.
+
+Bước 2: Giao diện phản hồi lại Quản trị viên: Hiển thị hộp thoại cảnh
+báo (Popup): "Bạn có chắc chắn muốn xóa khách hàng này không?".
+
+Bước 3: Quản trị viên xác nhận trên Giao diện: Nhấn nút "Đồng ý" (hoặc
+Xác nhận).
+
+(Bước này rất quan trọng để tránh xóa nhầm).
+
+Bước 4: Giao diện gửi yêu cầu đến Hệ thống: Gửi yêu cầu xóa kèm theo Mã
+khách hàng (ID).
+
+Bước 5: Hệ thống (Tuỳ chọn logic nghiệp vụ): Có thể kiểm tra xem khách
+hàng này có lịch hẹn nào chưa hoàn thành không.
+
+(Giả sử hệ thống cho phép xóa luôn hoặc chỉ khóa tài khoản).
+
+Bước 6: Hệ thống gửi lệnh đến CSDL: Xóa bản ghi khách hàng tương ứng
+(hoặc chuyển trạng thái sang "Đã khóa").
+
+Bước 7: CSDL xác nhận với Hệ thống: Đã xóa thành công.
+
+Bước 8: Hệ thống gửi thông báo về Giao diện: Thông báo "Xóa thành công".
+
+Bước 9: Giao diện tự động thực hiện:
+
+Ẩn/Xóa dòng chứa khách hàng đó khỏi bảng danh sách ngay lập tức mà không
+cần tải lại toàn bộ trang (hoặc tải lại danh sách tùy thiết kế).
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image10.png}{Giao diện Thêm mới và Tìm kiếm khách hàng}
+
+\placedfigure{Hinhve/image11.png}{Giao diện Danh sách khách hàng}
+
+\end{document}

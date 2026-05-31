@@ -1,0 +1,49 @@
+$kind: http-request
+name: 'Lấy điểm trung bình đánh giá thợ'
+method: GET
+url: '{{base_url}}/api/reviews.php'
+order: 16000
+queryParams:
+  - key: action
+    value: 'get_average_rating'
+  - key: stylist_id
+    value: '1'
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON
+  pm.test("Response is JSON", function () {
+      pm.response.to.be.json;
+  });
+
+  // Test 3: status = 'success'
+  pm.test("Response status is success", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.eql('success');
+  });
+
+  // Test 4: Có trường 'data'
+  pm.test("Response has 'data' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('data');
+  });
+
+  // Test 5: data có average_rating, total_reviews, distribution
+  pm.test("Data has average_rating, total_reviews, distribution", function () {
+      const json = pm.response.json();
+      pm.expect(json.data).to.have.property('average_rating');
+      pm.expect(json.data).to.have.property('total_reviews');
+      pm.expect(json.data).to.have.property('distribution');
+      pm.expect(json.data.average_rating).to.be.a('number');
+      pm.expect(json.data.total_reviews).to.be.a('number');
+  });
+
+  // Test 6: average_rating trong khoảng 0-5
+  pm.test("average_rating is between 0 and 5", function () {
+      const json = pm.response.json();
+      pm.expect(json.data.average_rating).to.be.at.least(0);
+      pm.expect(json.data.average_rating).to.be.at.most(5);
+  });

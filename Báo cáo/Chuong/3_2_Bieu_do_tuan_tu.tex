@@ -1,0 +1,1055 @@
+\documentclass[../BTL.tex]{subfiles}
+\begin{document}
+
+\section{Thiết kế chức năng Đặt lịch hẹn cắt tóc}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase đặt lịch hẹn cắt tóc}\label{tab:usecase-dat-lich-hen}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+Tên Use case & Đặt lịch hẹn \\
+\hline
+Mô tả & Cho phép khách hàng đặt lịch hẹn cắt tóc \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Điều kiện & Khi thành viên chọn chức năng đặt lịch hẹn \\
+\hline
+Tiền điều kiện & Khách hàng đã đăng nhập thành công vào hệ thống. \\
+\hline
+Hậu điều kiện & Thành công: Lịch hẹn mới được tạo. Thất bại: Không tạo lịch hẹn. \\
+\hline
+Luồng sự kiện chính & 1) Chọn chức năng Đặt lịch. 2) Chọn dịch vụ. 3) Chọn Thợ. 4) Chọn Giờ trống. 5) Xác nhận đặt. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase xem lịch sử đặt hẹn}\label{tab:usecase-xem-lich-su-dat-hen}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+Tên Use case & Xem lịch sử đặt hẹn \\
+\hline
+Mô tả & Cho phép khách hàng xem danh sách các lịch hẹn đã đặt \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Điều kiện & Khi thành viên chọn chức năng Quản lý lịch hẹn \\
+\hline
+Tiền điều kiện & Khách hàng đã đăng nhập vào hệ thống \\
+\hline
+Hậu điều kiện & Danh sách lịch hẹn được hiển thị đầy đủ thông tin \\
+\hline
+Luồng sự kiện chính & 1) Thành viên chọn Lịch sử đặt hẹn. 2) Hệ thống truy vấn CSDL và hiển thị danh sách. 3) Khách hàng xem thông tin đặt lịch. 4) UC kết thúc. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Khách hàng chưa đặt lịch hẹn, hệ thống thông báo và hiển thị nút Đặt lịch ngay. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase hủy lịch hẹn}\label{tab:usecase-huy-lich-hen}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+Tên Use case & Hủy lịch hẹn \\
+\hline
+Mô tả & Cho phép khách hàng hủy lịch hẹn \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Điều kiện & Khi thành viên chọn chức năng Quản lý lịch hẹn \\
+\hline
+Tiền điều kiện & Khách hàng đã đăng nhập và có ít nhất một lịch hẹn ở trạng thái Chờ duyệt hoặc Đã xác nhận \\
+\hline
+Hậu điều kiện & Trạng thái lịch hẹn chuyển thành Đã hủy và slot thời gian được mở lại \\
+\hline
+Luồng sự kiện chính & 1) Khách hàng chọn lịch cần hủy. 2) Nhấn Hủy lịch. 3) Hệ thống hiển thị xác nhận. 4) Chọn Đồng ý. 5) Hệ thống cập nhật trạng thái. 6) Thông báo hủy thành công. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Khách hàng chọn Không, đóng thông báo và không thực hiện hủy. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase cập nhật trạng thái lịch hẹn}\label{tab:usecase-cap-nhat-trang-thai-lich-hen}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+Tên Use case & Cập nhật trạng thái lịch hẹn \\
+\hline
+Mô tả & Cho phép quản lý cập nhật lịch hẹn \\
+\hline
+Đối tượng & Quản trị viên \\
+\hline
+Điều kiện & Khi quản lý chọn chức năng Quản lý lịch hẹn \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập \\
+\hline
+Hậu điều kiện & Trạng thái của lịch hẹn được cập nhật mới \\
+\hline
+Luồng sự kiện chính & 1) Quản lý xem danh sách lịch hẹn. 2) Chọn lịch hẹn cần xử lý. 3) Chọn hành động cập nhật trạng thái. 4) Hệ thống kiểm tra tính hợp lệ. 5) Lưu trạng thái mới vào CSDL. 6) Hiển thị thông báo thành công. \\
+\hline
+Lỗi sự kiện ngoại lề & E1: Lỗi hệ thống, báo cập nhật thất bại. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image14.png}{Biểu đồ tuần tự chức năng Xem lịch sử đặt hẹn}
+
+Bước 1: Khách hàng tác động vào Giao diện: Nhấn chọn mục "Lịch sử đặt
+hẹn" (hoặc "Lịch hẹn của tôi") trên thanh menu hoặc trang cá nhân.
+
+Bước 2: Giao diện gửi yêu cầu đến Hệ thống: Yêu cầu lấy danh sách toàn
+bộ lịch hẹn của tài khoản đang đăng nhập.
+
+Bước 3: Hệ thống xác thực: Lấy Mã khách hàng (User ID) từ phiên đăng
+nhập hiện tại.
+
+Bước 4: Hệ thống truy vấn Cơ sở dữ liệu (CSDL): Tìm kiếm tất cả các đơn
+đặt lịch gắn với Mã khách hàng này (sắp xếp từ mới nhất đến cũ nhất).
+
+Bước 5: CSDL trả dữ liệu về Hệ thống: Trả về danh sách các bản ghi lịch
+hẹn (gồm: Ngày giờ, Tên thợ, Trạng thái, Tổng tiền).
+
+Trạng thái có thể là: Chờ duyệt, Đã xác nhận, Hoàn thành, Đã hủy.
+
+Bước 6: Hệ thống xử lý dữ liệu (tùy chọn): Định dạng lại ngày tháng (ví
+dụ: từ 2023-11-20 14:00:00 thành 14:00 - 20/11/2023) cho dễ đọc.
+
+Bước 7: Hệ thống trả dữ liệu về Giao diện: Danh sách lịch hẹn đã được
+định dạng.
+
+Bước 8: Giao diện hiển thị cho Khách hàng: Hiển thị bảng hoặc danh sách
+thẻ (Card) các lịch hẹn.
+
+Trên mỗi lịch hẹn sẽ có các nút hành động tương ứng (ví dụ: nút "Hủy"
+nếu lịch chưa qua, nút "Đánh giá" nếu lịch đã hoàn thành).
+
+\placedfigure{Hinhve/image15.png}{Biểu đồ tuần tự chức năng Hủy lịch hẹn}
+
+Bước 1: Quản trị viên tác động vào Giao diện: Nhấn nút "Hủy" trên dòng
+lịch hẹn.
+
+Bước 2: Giao diện hiển thị cho Quản trị viên: Yêu cầu nhập/chọn lý do
+hủy (ví dụ: Khách bận, Cửa hàng đóng cửa...).
+
+Bước 3: Quản trị viên nhập lý do và nhấn "Xác nhận hủy".
+
+Bước 4: Giao diện gửi yêu cầu đến Hệ thống: Gửi yêu cầu hủy kèm lý do.
+
+Bước 5: Hệ thống gửi lệnh đến CSDL: Cập nhật trạng thái lịch hẹn thành
+"Đã hủy" và lưu lý do hủy.
+
+Bước 6: CSDL xác nhận với Hệ thống: Cập nhật thành công.
+
+Bước 7: Hệ thống (Tác vụ tự động): Giải phóng khung giờ đó để người khác
+có thể đặt lại.
+
+Bước 8: Hệ thống gửi thông báo về Giao diện: Thông báo "Đã hủy lịch
+hẹn".
+
+Bước 9: Giao diện cập nhật trạng thái hiển thị của lịch đó sang màu
+đỏ/xám (Đã hủy).
+
+\placedfigure{Hinhve/image16.png}{Biểu đồ tuần tự chức năng Cập nhật trạng thái lịch hẹn}
+
+Bước 1: Quản trị viên (Admin) tác động vào Giao diện: Chọn menu "Quản lý
+Lịch hẹn" trên Dashboard.
+
+Bước 2: Giao diện gửi yêu cầu đến Hệ thống: Yêu cầu lấy danh sách các
+lịch hẹn.
+
+Bước 3: Hệ thống truy vấn Cơ sở dữ liệu (CSDL): Lấy danh sách lịch hẹn
+(sắp xếp theo thời gian gần nhất).
+
+Bước 4: CSDL trả dữ liệu về Hệ thống: Danh sách lịch hẹn.
+
+Bước 5: Hệ thống trả dữ liệu về Giao diện: Hiển thị bảng danh sách lịch
+hẹn (gồm trạng thái "Chờ duyệt", "Đã xác nhận", v.v.).
+
+Bước 6: Quản trị viên tác động vào Giao diện: Nhấn nút "Duyệt" (hoặc Xác
+nhận) trên dòng lịch hẹn đang ở trạng thái "Chờ duyệt".
+
+Bước 7: Giao diện gửi yêu cầu đến Hệ thống: Gửi yêu cầu cập nhật trạng
+thái lịch hẹn sang "Đã xác nhận".
+
+Bước 8: Hệ thống kiểm tra logic (tùy chọn): Kiểm tra lại xem thợ có bị
+trùng lịch đột xuất không.
+
+Bước 9: Hệ thống gửi lệnh đến CSDL: Cập nhật trạng thái bản ghi lịch hẹn
+thành "Đã xác nhận".
+
+Bước 10: CSDL xác nhận với Hệ thống: Cập nhật thành công.
+
+Bước 11: Hệ thống (Tác vụ tự động): Gửi thông báo (SMS/Email/App
+Notification) đến Khách hàng báo rằng "Lịch của bạn đã được xác nhận".
+
+Bước 12: Hệ thống gửi thông báo về Giao diện: Thông báo "Duyệt lịch
+thành công".
+
+Bước 13: Giao diện tự động thực hiện: Cập nhật lại trạng thái hiển thị
+của lịch đó sang màu xanh (Đã xác nhận) ngay trên bảng.
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image17.png}{Giao diện Lịch sử đặt hẹn}
+
+\placedfigure{Hinhve/image18.png}{Giao diện Quản lý lịch hẹn Salon}
+
+\section{Thiết kế chức năng quản lý Stylist}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase quản lý Stylist}\label{tab:usecase-quan-ly-stylist}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+Tên Use case & Quản lý Stylist \\
+\hline
+Mô tả & Cho phép Admin xem danh sách, thêm mới, cập nhật hoặc xóa hồ sơ thợ cắt tóc. \\
+\hline
+Đối tượng & Admin \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập thành công vào hệ thống quản trị (Dashboard). \\
+\hline
+Hậu điều kiện & Dữ liệu thợ cắt tóc được cập nhật thành công vào CSDL và danh sách thợ được làm mới. \\
+\hline
+Luồng sự kiện chính & 1) Admin chọn Quản lý Stylist. 2) Hệ thống hiển thị danh sách thợ hiện có. 3) Admin chọn Thêm mới, Sửa hoặc Xóa. 4) Hệ thống hiển thị form hoặc xử lý yêu cầu. 5) Hệ thống kiểm tra tính hợp lệ và lưu dữ liệu. 6) Thông báo thành công và làm mới danh sách. \\
+\hline
+Luồng sự kiện thay thế & A1: Sửa Stylist từ danh sách. A2: Xóa Stylist khi không có dữ liệu liên kết. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Không thể xóa vì thợ đang có lịch hẹn. E2: Dữ liệu nhập không hợp lệ hoặc bị trùng, hệ thống báo lỗi và yêu cầu nhập lại. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image19.png}{Biểu đồ tuần tự chức năng Quản lý Stylist}
+
+Mô tả:
+
+Phần 1: Xem danh sách thợ cắt tóc
+
+\begin{itemize}
+\item
+  Bước 1: Admin tác động vào Giao diện: Chọn mục "Quản lý Stylist" trên
+  thanh menu.
+\item
+  Bước 2 - 4: Giao diện gửi yêu cầu lấy danh sách. Hệ thống truy vấn Cơ
+  sở dữ liệu (SELECT từ bảng stylists) và nhận lại toàn bộ bản ghi danh
+  sách thợ.
+\item
+  Bước 5 - 6: Hệ thống chuyển dữ liệu về để Giao diện render và hiển thị
+  danh sách thợ cắt tóc lên màn hình.
+\end{itemize}
+
+Phần 2: Thêm mới Stylist (Luồng chính)
+
+\begin{itemize}
+\item
+  Bước 7: Admin điền các thông tin của thợ mới (Tên thợ, Số điện thoại,
+  Chi nhánh, Trạng thái) vào Form và bấm "Lưu".
+\item
+  Bước 8: Giao diện gửi dữ liệu tạo mới lên Hệ thống.
+\item
+  Bước 9: Hệ thống tự thực hiện kiểm tra (Validate) dữ liệu đầu vào.
+\item
+  \emph{(Luồng ngoại lệ E2 - Dữ liệu không hợp lệ):}
+
+  \begin{itemize}
+  \item
+    Bước 10 - 11: Nếu phát hiện trường thông tin bắt buộc bị bỏ trống
+    hoặc Số điện thoại bị trùng lặp với thợ khác, Hệ thống trả về mã
+    lỗi. Giao diện hiển thị cảnh báo và yêu cầu Admin sửa lại thông tin
+    trên Form.
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ):}
+
+  \begin{itemize}
+  \item
+    Bước 12 - 15: Hệ thống gửi lệnh INSERT để lưu hồ sơ thợ mới vào
+    CSDL. Sau khi CSDL xác nhận thành công, Hệ thống báo về Giao diện để
+    hiển thị thông báo "Thêm thành công" và tự động làm mới danh sách.
+  \end{itemize}
+\end{itemize}
+
+Phần 3: Cập nhật thông tin (Luồng thay thế A1)
+
+\begin{itemize}
+\item
+  Bước 16 - 17: Admin chọn nút "Sửa" tại một thợ cụ thể, thay đổi các dữ
+  liệu mong muốn và bấm "Lưu". Giao diện gửi dữ liệu cập nhật lên Hệ
+  thống.
+\item
+  Bước 18 - 21: Hệ thống gửi lệnh UPDATE tới CSDL để ghi đè thông tin.
+  Khi CSDL lưu thành công, Hệ thống trả tín hiệu về để Giao diện hiển
+  thị thông báo "Cập nhật thành công" và làm mới dữ liệu trên bảng.
+\end{itemize}
+
+Phần 4: Xóa Stylist (Luồng thay thế A2 và Ngoại lệ E1)
+
+\begin{itemize}
+\item
+  Bước 22 - 23: Admin chọn nút "Xóa" tại một Stylist cụ thể. Giao diện
+  gửi yêu cầu xóa kèm ID của thợ đến Hệ thống.
+\item
+  Bước 24 - 25: Hệ thống truy vấn CSDL, kiểm tra ràng buộc ở bảng
+  appointments xem thợ này có đang được liên kết với bất kỳ lịch hẹn nào
+  không.
+\item
+  \emph{(Luồng ngoại lệ E1 - Vướng lịch hẹn):}
+
+  \begin{itemize}
+  \item
+    Bước 26 - 27: Nếu phát hiện thợ đang có dữ liệu liên kết (lịch hẹn),
+    Hệ thống từ chối lệnh xóa. Giao diện hiển thị lỗi: \emph{"Không thể
+    xóa do thợ đang có lịch hẹn"} và hủy thao tác.
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ - Không vướng lịch):}
+
+  \begin{itemize}
+  \item
+    Bước 28 - 31: Nếu thợ trống lịch, Hệ thống thực thi lệnh DELETE để
+    loại bỏ hồ sơ thợ khỏi CSDL. Sau khi CSDL xác nhận xóa, Giao diện
+    hiển thị thông báo "Xóa thành công" và loại bỏ thợ khỏi danh sách
+    hiển thị.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Giao diện}
+\placedfigure{Hinhve/image20.png}{Giao diện chức năng Quản lý Stylist}
+
+\section{Thiết kế chức năng quản lý Dịch vụ}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase quản lý Dịch vụ}\label{tab:usecase-quan-ly-dich-vu}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Quản lý Dịch vụ (Services) \\
+\hline
+Mô tả & Admin thêm, sửa, xóa thông tin dịch vụ cắt tóc. \\
+\hline
+Đối tượng & Admin \\
+\hline
+Điều kiện & Admin đang đăng nhập vào hệ thống \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập vào hệ thống \\
+\hline
+Hậu điều kiện & Thông tin dịch vụ được cập nhật vào CSDL và danh sách dịch vụ được làm mới \\
+\hline
+Luồng sự kiện chính & 1) Admin chọn Quản lý Dịch vụ. 2) Hệ thống hiển thị danh sách services. 3) Admin bấm Thêm mới. 4) Nhập thông tin dịch vụ. 5) Bấm Lưu. 6) Hệ thống lưu và thông báo thành công. \\
+\hline
+Luồng sự kiện thay thế & A1: Sửa dịch vụ từ danh sách, cập nhật và quay lại luồng chính. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Xóa dịch vụ đã có lịch đặt, hệ thống báo không thể xóa và hủy thao tác. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image21.png}{Biểu đồ tuần tự chức năng Quản lý Dịch vụ}
+
+Mô tả :
+
+Phần 1: Xem danh sách dịch vụ
+
+\begin{itemize}
+\item
+  Bước 1: Admin chọn mục "Quản lý Dịch vụ" trên giao diện.
+\item
+  Bước 2: Giao diện gửi yêu cầu lấy danh sách dịch vụ đến Hệ thống.
+\item
+  Bước 3: Hệ thống gửi truy vấn lấy dữ liệu đến CSDL.
+\item
+  Bước 4: CSDL trả về danh sách bản ghi dịch vụ.
+\item
+  Bước 5: Hệ thống gửi dữ liệu đã xử lý cho Giao diện.
+\item
+  Bước 6: Giao diện hiển thị danh sách dịch vụ cho Admin.
+\end{itemize}
+
+Phần 2: Thêm mới dịch vụ
+
+\begin{itemize}
+\item
+  Bước 7: Admin nhập thông tin dịch vụ (Tên, Giá, Thời gian...) và bấm
+  "Lưu".
+\item
+  Bước 8: Giao diện gửi dữ liệu tạo mới lên Hệ thống.
+\item
+  Bước 9: Hệ thống gửi lệnh INSERT để lưu vào CSDL.
+\item
+  Bước 10: CSDL xác nhận lưu thành công.
+\item
+  Bước 11: Hệ thống trả kết quả thành công về Giao diện.
+\item
+  Bước 12: Giao diện hiển thị thông báo "Thêm thành công" và làm mới
+  bảng danh sách.
+\end{itemize}
+
+Phần 3: Sửa thông tin dịch vụ
+
+\begin{itemize}
+\item
+  Bước 13: Admin chọn "Sửa", thay đổi thông tin cần thiết và bấm "Lưu".
+\item
+  Bước 14: Giao diện gửi dữ liệu cần cập nhật lên Hệ thống.
+\item
+  Bước 15: Hệ thống gửi lệnh UPDATE đến CSDL.
+\item
+  Bước 16: CSDL xác nhận cập nhật bản ghi thành công.
+\item
+  Bước 17: Hệ thống trả kết quả thành công về Giao diện.
+\item
+  Bước 18: Giao diện hiển thị thông báo "Cập nhật thành công".
+\end{itemize}
+
+Phần 4: Xóa dịch vụ
+
+\begin{itemize}
+\item
+  Bước 19: Admin chọn "Xóa" tại một dịch vụ.
+\item
+  Bước 20: Giao diện gửi yêu cầu xóa đến Hệ thống.
+\item
+  Bước 21: Hệ thống truy vấn CSDL để kiểm tra xem dịch vụ có đang nằm
+  trong lịch hẹn (bảng appointments) nào không.
+\item
+  Bước 22: CSDL trả về kết quả kiểm tra ràng buộc.
+\item
+  \emph{(Luồng ngoại lệ - Đã có khách đặt):}
+
+  \begin{itemize}
+  \item
+    Bước 23: Hệ thống trả về lỗi ràng buộc cho Giao diện.
+  \item
+    Bước 24: Giao diện hiển thị thông báo "Dịch vụ đã được khách đặt,
+    không thể xóa".
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ - Không vướng lịch):}
+
+  \begin{itemize}
+  \item
+    Bước 25: Hệ thống gửi lệnh DELETE để xóa dịch vụ khỏi CSDL.
+  \item
+    Bước 26: CSDL xác nhận xóa thành công.
+  \item
+    Bước 27: Hệ thống trả kết quả thành công về Giao diện.
+  \item
+    Bước 28: Giao diện hiển thị thông báo "Xóa thành công" và loại bỏ
+    dịch vụ khỏi màn hình.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image22.png}{Giao diện chức năng Quản lý Dịch vụ}
+
+\section{Thiết kế chức năng Xem lịch làm việc (Stylist)}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase xem lịch làm việc của Stylist}\label{tab:usecase-xem-lich-lam-viec}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Quản lý Lịch làm việc \\
+\hline
+Mô tả & Thợ cắt tóc xem danh sách ca làm và thông tin khách đặt. \\
+\hline
+Đối tượng & Thợ cắt tóc (Stylist) \\
+\hline
+Tiền điều kiện & Thợ cắt tóc đã đăng nhập thành công. \\
+\hline
+Hậu điều kiện & Thợ nắm bắt được chính xác danh sách khách hàng và thời gian các ca làm việc trong ngày. \\
+\hline
+Luồng sự kiện chính & 1) Thợ truy cập Dashboard. 2) Hệ thống truy vấn CSDL lấy lịch hẹn được giao. 3) Hiển thị danh sách ca làm việc. 4) Thợ xem chi tiết để chuẩn bị phục vụ khách. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Không có lịch hẹn, hệ thống hiển thị thông báo và kết thúc luồng. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image23.png}{Biểu đồ tuần tự chức năng Xem lịch làm việc của Stylist}
+
+Mô tả :
+
+Phần 1: Gửi yêu cầu truy xuất dữ liệu
+
+\begin{itemize}
+\item
+  Bước 1: Thợ cắt tóc tác động vào Giao diện: Truy cập vào trang quản
+  trị cá nhân (Barber Dashboard).
+\item
+  Bước 2: Giao diện tự động thu thập ID tài khoản của thợ hiện tại và
+  gửi yêu cầu lấy danh sách lịch hẹn lên Hệ thống.
+\item
+  Bước 3: Hệ thống gửi câu lệnh truy vấn (SELECT) đến Cơ sở dữ liệu
+  (CSDL), tìm kiếm trong bảng appointments các lịch hẹn có mã thợ
+  (stylist\_id) khớp với ID vừa nhận.
+\item
+  Bước 4: CSDL thực thi truy vấn và trả kết quả về cho Hệ thống.
+\end{itemize}
+
+Phần 2: Xử lý và hiển thị (Luồng chính - Có lịch hẹn)
+
+\begin{itemize}
+\item
+  Bước 5a: Hệ thống nhận thấy có dữ liệu, tiến hành đóng gói thông tin
+  (tên khách, dịch vụ, giờ cắt, ghi chú) và trả về cho Giao diện.
+\item
+  Bước 6a: Giao diện render dữ liệu, hiển thị danh sách chi tiết các ca
+  làm việc trong ngày để Thợ cắt tóc xem và chuẩn bị phục vụ.
+\end{itemize}
+
+Phần 3: Xử lý ngoại lệ (Luồng E1 - Không có lịch hẹn)
+
+\begin{itemize}
+\item
+  Bước 5b: Hệ thống nhận thấy kết quả truy vấn rỗng (thợ không có khách
+  đặt), trả về mảng dữ liệu trống cho Giao diện.
+\item
+  Bước 6b: Giao diện hiển thị thông báo \emph{"Bạn chưa có lịch hẹn
+  nào"} thay vì hiển thị bảng danh sách, kết thúc luồng nghiệp vụ.
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image24.png}{Giao diện chức năng Xem lịch làm việc}
+
+\section{Thiết kế chức năng Thợ xin nghỉ phép}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase nộp đơn xin nghỉ phép}\label{tab:usecase-xin-nghi-phep}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Nộp đơn xin nghỉ phép \\
+\hline
+Mô tả & Thợ cắt tóc tạo yêu cầu xin nghỉ làm gửi lên Admin. \\
+\hline
+Đối tượng & Thợ cắt tóc (Stylist) \\
+\hline
+Điều kiện & Thợ đã đăng nhập \\
+\hline
+Tiền điều kiện & Thợ đã đăng nhập \\
+\hline
+Hậu điều kiện & Đơn xin nghỉ phép được lưu với trạng thái Chờ duyệt và khung giờ được đánh dấu để Admin xem xét. \\
+\hline
+Luồng sự kiện chính & 1) Thợ chọn Xin nghỉ phép. 2) Giao diện hiển thị form. 3) Nhập ngày bắt đầu, ngày kết thúc, loại nghỉ, lý do. 4) Nhấn Gửi yêu cầu. 5) Kiểm tra lịch khách đặt. 6) Lưu đơn vào leave\_requests. 7) Thông báo gửi đơn thành công. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Vướng lịch hẹn của khách, hệ thống chặn thao tác và yêu cầu đổi ngày khác. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image25.png}{Biểu đồ tuần tự chức năng Nộp đơn xin nghỉ phép}
+
+Mô tả:
+
+Phần 1: Mở Form và Gửi yêu cầu
+
+\begin{itemize}
+\item
+  Bước 1: Thợ cắt tóc tác động vào Giao diện: Chọn chức năng "Xin nghỉ
+  phép" trên trang quản trị cá nhân.
+\item
+  Bước 2: Giao diện phản hồi bằng cách hiển thị Form tạo đơn xin nghỉ.
+\item
+  Bước 3: Thợ cắt tóc điền các thông tin cần thiết (Ngày bắt đầu, Ngày
+  kết thúc, Loại nghỉ, Lý do) và nhấn nút "Gửi yêu cầu".
+\item
+  Bước 4: Giao diện đóng gói dữ liệu và gửi yêu cầu tạo đơn xin nghỉ lên
+  Hệ thống.
+\end{itemize}
+
+Phần 2: Kiểm tra điều kiện nghiệp vụ
+
+\begin{itemize}
+\item
+  Bước 5: Hệ thống nhận yêu cầu và gửi truy vấn đến Cơ sở dữ liệu (CSDL)
+  để kiểm tra xem trong khoảng thời gian thợ xin nghỉ, có lịch hẹn nào
+  của khách (trạng thái confirmed hoặc pending) đang gắn với thợ này
+  không.
+\item
+  Bước 6: CSDL thực thi kiểm tra và trả về kết quả (Có vướng lịch hay
+  Không vướng lịch) cho Hệ thống.
+\end{itemize}
+
+Phần 3: Lưu đơn thành công (Luồng chính)
+
+\begin{itemize}
+\item
+  Bước 7: Hệ thống nhận thấy thợ trống lịch (Hợp lệ), tiến hành gửi lệnh
+  INSERT để lưu thông tin đơn vào bảng leave\_requests với trạng thái
+  mặc định là "Chờ duyệt" (pending).
+\item
+  Bước 8: CSDL xác nhận đã lưu bản ghi thành công.
+\item
+  Bước 9: Hệ thống gửi tín hiệu báo cáo thành công về cho Giao diện.
+\item
+  Bước 10: Giao diện hiển thị thông báo "Gửi đơn thành công" cho thợ cắt
+  tóc.
+\end{itemize}
+
+Phần 4: Xử lý lỗi trùng lịch (Luồng ngoại lệ E1)
+
+\begin{itemize}
+\item
+  Bước 11: Hệ thống phát hiện thợ đang có lịch khách đặt trong ngày xin
+  nghỉ, lập tức từ chối yêu cầu và trả mã lỗi về Giao diện.
+\item
+  Bước 12: Giao diện hiển thị thông báo lỗi: \emph{"Bạn đang có lịch
+  khách đặt trong thời gian này, vui lòng xử lý trước khi xin nghỉ"}.
+  Đồng thời, hệ thống giữ nguyên Form nhập liệu để thợ có thể chọn lại
+  ngày khác mà không phải nhập lại từ đầu.
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image26.png}{Giao diện chức năng Đăng ký nghỉ phép}
+
+\placedfigure{Hinhve/image27.png}{Giao diện Lịch sử đơn xin nghỉ phép}
+
+\section{Thiết kế chức năng quản lý chi nhánh}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase quản lý chi nhánh}\label{tab:usecase-quan-ly-chi-nhanh}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Quản lý Chi nhánh (Branches) \\
+\hline
+Mô tả & Admin thực hiện xem, thêm mới, cập nhật thông tin hoặc xóa các cơ sở chi nhánh của Barbershop. \\
+\hline
+Đối tượng & Quản trị viên (Admin) \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập thành công vào hệ thống quản trị (Dashboard). \\
+\hline
+Hậu điều kiện & Dữ liệu chi nhánh được cập nhật vào bảng \texttt{branches} trong CSDL. \\
+\hline
+Luồng sự kiện chính & 
+1. Admin chọn mục "Quản lý Chi nhánh". \newline
+2. Hệ thống hiển thị danh sách chi nhánh hiện có. \newline
+3. Admin bấm nút "Thêm mới". \newline
+4. Hệ thống hiển thị Form nhập liệu. \newline
+5. Admin nhập thông tin: Tên chi nhánh, Địa chỉ, SĐT, Email. \newline
+6. Admin bấm nút "Lưu". \newline
+7. Hệ thống kiểm tra dữ liệu và lưu vào CSDL. \\
+\hline
+Luồng sự kiện thay thế & 
+\textbf{A1. Cập nhật thông tin chi nhánh:} \newline
+- Admin chọn nút "Sửa", hệ thống hiển thị Form với dữ liệu cũ. Admin chỉnh sửa thông tin và bấm "Lưu". \\
+\hline
+Luồng sự kiện ngoại lệ & 
+\textbf{E1. Xóa chi nhánh đang hoạt động:} \newline
+- Hệ thống kiểm tra trong bảng \texttt{stylists} và \texttt{appointments}. Nếu có dữ liệu liên kết, hệ thống chặn xóa và hiển thị: "Không thể xóa chi nhánh đang có dữ liệu hoạt động". \newline
+\textbf{E2. Thiếu thông tin bắt buộc:} \newline
+- Hệ thống phát hiện trường thông tin bị để trống, hiển thị cảnh báo: "Vui lòng nhập đầy đủ thông tin" và yêu cầu nhập lại. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image28.png}{Biểu đồ tuần tự chức năng Quản lý Chi nhánh}
+
+Mô tả:
+
+Phần 1: Xem danh sách chi nhánh
+
+\begin{itemize}
+\item
+  Bước 1: Admin chọn mục "Quản lý Chi nhánh" trên giao diện quản trị.
+\item
+  Bước 2 - 4: Giao diện gửi yêu cầu. Hệ thống truy vấn CSDL (SELECT từ
+  bảng branches) và nhận lại toàn bộ danh sách cơ sở.
+\item
+  Bước 5 - 6: Hệ thống chuyển dữ liệu về để Giao diện hiển thị danh sách
+  chi nhánh lên màn hình.
+\end{itemize}
+
+Phần 2: Thêm mới chi nhánh
+
+\begin{itemize}
+\item
+  Bước 7 - 8: Admin điền thông tin (Tên, Địa chỉ, SĐT, Email) vào form
+  và bấm "Lưu". Giao diện gửi dữ liệu lên Hệ thống.
+\item
+  Bước 9: Hệ thống tiến hành kiểm tra (Validate) dữ liệu đầu vào.
+\item
+  \emph{(Luồng ngoại lệ E2 - Thiếu thông tin):}
+
+  \begin{itemize}
+  \item
+    Bước 10 - 11: Nếu phát hiện các trường bắt buộc bị bỏ trống, Hệ
+    thống trả mã lỗi. Giao diện hiển thị cảnh báo: "Vui lòng nhập đầy đủ
+    thông tin" và yêu cầu Admin nhập lại.
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ):}
+
+  \begin{itemize}
+  \item
+    Bước 12 - 15: Hệ thống gửi lệnh INSERT để lưu vào CSDL. Sau khi CSDL
+    xác nhận thành công, Hệ thống báo về Giao diện để hiển thị thông báo
+    thành công và tải lại danh sách.
+  \end{itemize}
+\end{itemize}
+
+Phần 3: Cập nhật thông tin chi nhánh
+
+\begin{itemize}
+\item
+  Bước 16 - 17: Admin chọn "Sửa", thay đổi các thông tin cần thiết và
+  bấm "Lưu". Giao diện gửi dữ liệu cập nhật lên Hệ thống.
+\item
+  Bước 18 - 21: Hệ thống gửi lệnh UPDATE tới CSDL. Khi CSDL lưu thành
+  công, Hệ thống trả tín hiệu về để Giao diện hiển thị thông báo "Cập
+  nhật thành công" và làm mới dữ liệu trên bảng.
+\end{itemize}
+
+Phần 4: Xóa chi nhánh
+
+\begin{itemize}
+\item
+  Bước 22 - 23: Admin chọn "Xóa" một chi nhánh. Giao diện gửi yêu cầu
+  xóa kèm ID chi nhánh đến Hệ thống.
+\item
+  Bước 24 - 25: Hệ thống truy vấn CSDL, kiểm tra bảng stylists (đội ngũ
+  thợ) và appointments (lịch hẹn) xem có dữ liệu nào đang tham chiếu đến
+  ID chi nhánh này không.
+\item
+  \emph{(Luồng ngoại lệ E1 - Chi nhánh đang hoạt động):}
+
+  \begin{itemize}
+  \item
+    Bước 26 - 27: Nếu chi nhánh đang có thợ làm việc hoặc có lịch khách
+    đặt, Hệ thống trả về lỗi ràng buộc. Giao diện hiển thị cảnh báo:
+    \emph{"Không thể xóa chi nhánh đang có dữ liệu hoạt động"} và hủy
+    thao tác.
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ - Chi nhánh trống):}
+
+  \begin{itemize}
+  \item
+    Bước 28 - 31: Nếu không có dữ liệu liên kết, Hệ thống thực thi lệnh
+    DELETE. Sau khi CSDL xác nhận, Giao diện hiển thị "Xóa thành công"
+    và loại bỏ chi nhánh đó khỏi màn hình.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image29.png}{Giao diện chức năng Quản lý Chi nhánh}
+
+\section{Thiết kế chức năng Quản lý hồ sơ cá nhân}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase xem thông tin hồ sơ cá nhân}\label{tab:usecase-ho-so-ca-nhan}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Xem thông tin hồ sơ cá nhân \\
+\hline
+Mô tả & Cho phép khách hàng xem các thông tin chi tiết của tài khoản cá nhân đã đăng ký trên hệ thống. \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Tiền điều kiện & Khách hàng đã đăng nhập thành công vào hệ thống. \\
+\hline
+Hậu điều kiện & Khách hàng xem được chính xác thông tin tài khoản của mình truy xuất từ CSDL. \\
+\hline
+Luồng sự kiện chính & 
+1. Khách hàng chọn chức năng "Tài khoản của tôi" (My Profile). \newline
+2. Hệ thống lấy \texttt{user\_id} từ trình duyệt và gửi yêu cầu truy vấn đến CSDL. \newline
+3. Hệ thống trả về dữ liệu: Họ tên, Số điện thoại, Email, Ngày đăng ký. \newline
+4. Hệ thống hiển thị thông tin ở chế độ chỉ đọc (readonly). \newline
+5. Khách hàng xem thông tin. Use case kết thúc. \\
+\hline
+Luồng sự kiện ngoại lệ & 
+\textbf{E1. Lỗi tải dữ liệu:} \newline
+- Nếu lỗi kết nối hoặc không tìm thấy dữ liệu, hệ thống log lỗi và hiển thị thông báo "Không thể tải thông tin" hoặc "Đang tải...". \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image30.png}{Biểu đồ tuần tự chức năng Xem thông tin hồ sơ cá nhân}
+
+Mô tả:
+
+Phần 1: Yêu cầu truy xuất dữ liệu
+
+\begin{itemize}
+\item
+  Bước 1: Khách hàng tác động vào Giao diện: Chọn chức năng "Tài khoản
+  của tôi" từ thanh menu.
+\item
+  Bước 2: Giao diện tự động trích xuất user\_id của khách hàng đang đăng
+  nhập từ trình duyệt (Local Storage) và gửi yêu cầu lấy dữ liệu cá nhân
+  lên Hệ thống.
+\item
+  Bước 3: Hệ thống tiếp nhận yêu cầu và gửi lệnh truy vấn (SELECT) đến
+  Cơ sở dữ liệu (CSDL) để tìm kiếm bản ghi khớp với user\_id trong bảng
+  users.
+\item
+  Bước 4: CSDL thực thi truy vấn và trả kết quả về cho Hệ thống.
+\end{itemize}
+
+Phần 2: Hiển thị thông tin (Luồng chính)
+
+\begin{itemize}
+\item
+  Bước 5a: Hệ thống nhận thấy dữ liệu hợp lệ, tiến hành định dạng thông
+  tin và trả về cho Giao diện.
+\item
+  Bước 6a: Giao diện hiển thị các trường thông tin chi tiết (Họ tên, Số
+  điện thoại, Email, Ngày đăng ký) vào các ô nhập liệu được thiết lập ở
+  trạng thái chỉ đọc (readonly). Khách hàng xem thông tin và Use case
+  kết thúc.
+\end{itemize}
+
+Phần 3: Xử lý sự cố (Luồng ngoại lệ E1)
+
+\begin{itemize}
+\item
+  Bước 5b: Nếu CSDL không tìm thấy bản ghi tương ứng hoặc xảy ra lỗi kết
+  nối, Hệ thống trả về mã lỗi cho Giao diện.
+\item
+  Bước 6b: Giao diện tiến hành ghi log lỗi, các ô thông tin không được
+  hiển thị dữ liệu thật mà giữ nguyên trạng thái mặc định (ví dụ: "Đang
+  tải...").
+\end{itemize}
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image31.png}{Giao diện chức năng Xem thông tin cá nhân}
+
+\section{Thiết kế chức năng Xét duyệt đơn xin nghỉ phép}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase xét duyệt đơn xin nghỉ phép}\label{tab:usecase-xet-duyet-nghi-phep}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Xét duyệt đơn xin nghỉ phép \\
+\hline
+Mô tả & Cho phép Quản trị viên (Admin) xem danh sách các đơn xin nghỉ phép do thợ gửi lên và thực hiện phê duyệt hoặc từ chối. \\
+\hline
+Đối tượng & Quản trị viên (Admin) \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập thành công vào hệ thống quản trị (Dashboard). \\
+\hline
+Hậu điều kiện & Trạng thái đơn trong bảng \texttt{leave\_requests} được cập nhật thành "Đã duyệt" hoặc "Từ chối". \\
+\hline
+Luồng sự kiện chính & 
+1. Admin chọn chức năng "Quản lý Nghỉ phép" trên menu. \newline
+2. Hệ thống hiển thị danh sách các đơn đang ở trạng thái "Chờ duyệt" (Pending). \newline
+3. Admin xem chi tiết đơn: Tên thợ, Thời gian, Loại nghỉ và Lý do. \newline
+4. Admin chọn nút "Phê duyệt" hoặc "Từ chối". \newline
+5. Hệ thống gửi yêu cầu cập nhật xuống CSDL. \newline
+6. Hệ thống hiển thị thông báo "Cập nhật thành công" và làm mới danh sách. \\
+\hline
+Luồng sự kiện ngoại lệ & 
+\textbf{E1. Thợ có lịch hẹn phát sinh:} \newline
+- Nếu phát hiện lịch khách đặt trùng vào thời gian xin nghỉ, khi Admin nhấn "Phê duyệt", hệ thống cảnh báo: "Thợ đang có lịch khách đặt trong khoảng thời gian này. Vui lòng điều chuyển lịch hẹn cho thợ khác trước khi phê duyệt". Hệ thống hủy thao tác và giữ nguyên trạng thái đơn. \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image32.png}{Biểu đồ tuần tự chức năng Xét duyệt đơn xin nghỉ phép}
+
+Mô tả:
+
+Phần 1: Khởi tạo và Xem danh sách đơn
+
+\begin{itemize}
+\item
+  Bước 1: Admin tác động vào Giao diện: Chọn chức năng "Quản lý Thợ cắt"
+  trên thanh menu.
+\item
+  Bước 2 - 4: Giao diện gửi yêu cầu lấy danh sách. Hệ thống truy vấn Cơ
+  sở dữ liệu (CSDL) để lấy các bản ghi trong bảng leave\_requests đang
+  có trạng thái là "Chờ duyệt" (pending).
+\item
+  Bước 5 - 6: CSDL trả kết quả, Hệ thống xử lý dữ liệu và gửi cho Giao
+  diện hiển thị danh sách chi tiết các đơn xin nghỉ lên màn hình.
+\end{itemize}
+
+Phần 2: Xử lý đơn (Phê duyệt / Từ chối)
+
+\begin{itemize}
+\item
+  Bước 7: Admin xem chi tiết đơn (Tên thợ, lý do, thời gian) và nhấn nút
+  "Phê duyệt" hoặc "Từ chối".
+\item
+  Bước 8: Giao diện đóng gói yêu cầu và gửi trạng thái mới lên Hệ thống.
+\item
+  Bước 9 - 10: Hệ thống tiến hành kiểm tra điều kiện nghiệp vụ: Truy vấn
+  bảng appointments trong CSDL để xem thợ có bị vướng lịch hẹn nào của
+  khách trong khoảng thời gian xin nghỉ hay không. CSDL trả về kết quả.
+\item
+  \emph{(Luồng ngoại lệ E1 - Vướng lịch hẹn khi Phê duyệt):}
+
+  \begin{itemize}
+  \item
+    Bước 11 - 12: Nếu phát hiện có khách vừa đặt lịch trùng vào khung
+    giờ đó, Hệ thống từ chối yêu cầu và trả về lỗi. Giao diện hiển thị
+    cảnh báo: \emph{"Thợ đang có lịch khách đặt trong khoảng thời gian
+    này. Vui lòng điều chuyển lịch hẹn cho thợ khác trước khi phê
+    duyệt"} và hủy thao tác.
+  \end{itemize}
+\item
+  \emph{(Luồng hợp lệ - Không trùng lịch hoặc thao tác Từ chối):}
+
+  \begin{itemize}
+  \item
+    Bước 13 - 14: Hệ thống gửi lệnh UPDATE tới CSDL để đổi trạng thái
+    của đơn thành "Đã duyệt" (approved) hoặc "Từ chối" (rejected).
+  \item
+    Bước 15 - 16: Sau khi CSDL xác nhận thành công, Hệ thống báo về để
+    Giao diện hiển thị thông báo "Cập nhật thành công" và tự động làm
+    mới lại danh sách (đơn vừa xử lý sẽ biến mất khỏi danh sách chờ
+    duyệt).
+  \end{itemize}
+\end{itemize}
+
+\subsection{Giao diện}
+\placedfigure{Hinhve/image33.png}{Giao diện chức năng Xét duyệt đơn xin nghỉ phép}
+
+\section{Thiết kế chức năng Thống kê}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase xem thống kê tổng quan}\label{tab:usecase-thong-ke}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Xem thống kê tổng quan \\
+\hline
+Mô tả & Cho phép Quản trị viên (Admin) xem các báo cáo thống kê về doanh thu, số lượng lịch hẹn, hiệu suất thợ cắt và tỷ lệ tăng trưởng. \\
+\hline
+Đối tượng & Quản trị viên (Admin) \\
+\hline
+Điều kiện & Admin truy cập vào trang Dashboard hoặc thay đổi bộ lọc thời gian. \\
+\hline
+Tiền điều kiện & Admin đã đăng nhập thành công vào hệ thống quản trị. \\
+\hline
+Hậu điều kiện & Hệ thống hiển thị chính xác các chỉ số tổng quan, biểu đồ và các cảnh báo thông minh (nếu có). \\
+\hline
+Luồng sự kiện chính & 1) Admin chọn chức năng Tổng quan/Dashboard. 2) Chọn khoảng thời gian cần thống kê. 3) Hệ thống gọi API \path{get_statistics_admin.php} để tính toán dữ liệu. 4) Hệ thống đối chiếu dữ liệu với kỳ trước để đưa ra tỷ lệ tăng/giảm. 5) Giao diện hiển thị các chỉ số và biểu đồ phân tích. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Không có lịch hẹn nào phát sinh trong thời gian đã chọn, hệ thống hiển thị cảnh báo thông tin. E2: Tỷ lệ hủy lịch cao hoặc doanh thu giảm mạnh, hệ thống tự động phát ra các cảnh báo mức độ nghiêm trọng (Warning). \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image52.png}{Biểu đồ tuần tự chức năng Thống kê}
+
+Bước 1: Quản trị viên tác động vào Giao diện: Truy cập vào trang Dashboard hoặc chọn lại khoảng thời gian cần lọc.
+
+Bước 2: Giao diện gửi yêu cầu đến Hệ thống: Gọi API thống kê kèm theo các tham số ngày bắt đầu và ngày kết thúc.
+
+Bước 3: Hệ thống truy vấn Cơ sở dữ liệu (CSDL): Lấy toàn bộ dữ liệu lịch hẹn, hóa đơn và khách hàng trong khoảng thời gian đã chọn.
+
+Bước 4: Hệ thống tiếp tục truy vấn CSDL: Lấy dữ liệu của một khoảng thời gian tương đương ở kỳ trước đó để làm cơ sở so sánh.
+
+Bước 5: CSDL trả các tập dữ liệu về cho Hệ thống.
+
+Bước 6: Hệ thống xử lý logic: Tính toán tổng doanh thu, tỷ lệ hoàn thành, tìm ra các dịch vụ và thợ cắt có doanh thu cao nhất. 
+
+Bước 7: Hệ thống tính toán chỉ số phần trăm thay đổi (Delta percent) giữa kỳ hiện tại và kỳ trước.
+
+Bước 8: Hệ thống trả dữ liệu JSON đã được tổng hợp về cho Giao diện.
+
+Bước 9: Giao diện sử dụng các thư viện biểu đồ để render và hiển thị hình ảnh đồ thị trực quan cho Quản trị viên.
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image51.png}{Giao diện Thống kê tổng quan (Admin Dashboard)}
+
+
+\section{Thiết kế chức năng Đánh giá chất lượng (Review)}
+\subsection{Đặc tả Usecase}
+\begin{longtable}{|p{0.3\textwidth}|p{0.65\textwidth}|}
+\caption{Đặc tả Usecase đánh giá lịch hẹn}\label{tab:usecase-danh-gia}\\
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Use Case} & \textbf{Nội Dung} \\
+\hline
+\endhead
+Tên Use case & Đánh giá lịch hẹn \\
+\hline
+Mô tả & Cho phép khách hàng chấm điểm sao và viết bình luận cho thợ cắt tóc sau khi hoàn thành dịch vụ. \\
+\hline
+Đối tượng & Khách hàng \\
+\hline
+Điều kiện & Khách hàng nhấn nút "Đánh giá" tại một lịch hẹn trong phần Lịch sử đặt hẹn. \\
+\hline
+Tiền điều kiện & Khách hàng đã đăng nhập. Lịch hẹn phải ở trạng thái "Hoàn thành" (completed) và chưa từng được đánh giá trước đó. \\
+\hline
+Hậu điều kiện & Đánh giá được lưu vào hệ thống và sẽ ảnh hưởng trực tiếp đến điểm trung bình của thợ cắt tóc. \\
+\hline
+Luồng sự kiện chính & 1) Khách hàng chọn lịch hẹn đã hoàn thành. 2) Form đánh giá hiển thị. 3) Khách hàng chọn số sao (từ 1 đến 5) và nhập bình luận. 4) Nhấn nút Gửi đánh giá. 5) Hệ thống kiểm tra điều kiện hợp lệ. 6) Lưu bản ghi vào CSDL. 7) Thông báo thành công và ẩn form. \\
+\hline
+Luồng sự kiện ngoại lệ & E1: Lịch hẹn chưa hoàn thành, hệ thống chặn thao tác và báo lỗi. E2: Khách hàng đã đánh giá lịch hẹn này rồi, hệ thống từ chối và thông báo "Bạn đã đánh giá lịch hẹn này rồi". \\
+\hline
+\end{longtable}
+
+\subsection{Biểu đồ tuần tự (Sequence Diagram).}
+\placedfigure{Hinhve/image53.png}{Biểu đồ tuần tự chức năng Đánh giá chất lượng}
+
+Bước 1: Khách hàng tác động vào Giao diện: Nhấn nút "Đánh giá" trên dòng lịch hẹn có trạng thái "Đã hoàn thành".
+
+Bước 2: Giao diện phản hồi: Hiển thị Form nhập liệu đánh giá.
+
+Bước 3: Khách hàng tương tác trên Giao diện: Chọn mức điểm đánh giá (từ 1 đến 5 sao) và gõ nội dung bình luận.
+
+Bước 4: Khách hàng nhấn nút "Gửi đánh giá".
+
+Bước 5: Giao diện đóng gói dữ liệu (Mã lịch hẹn, Mã khách hàng, Số sao, Bình luận) và gửi yêu cầu (HTTP POST) đến Hệ thống.
+
+Bước 6: Hệ thống xác thực quyền và trạng thái: Truy vấn CSDL để đảm bảo lịch hẹn này thuộc về khách hàng yêu cầu và đang ở trạng thái đã hoàn thành.
+
+Bước 7: Hệ thống kiểm tra tính duy nhất (Spam-proof): Kiểm tra xem mã lịch hẹn này đã tồn tại bản ghi nào trong bảng \texttt{reviews} chưa.
+
+Bước 8: Hệ thống gửi lệnh tới CSDL: Thêm mới bản ghi vào bảng \texttt{reviews}.
+
+Bước 9: CSDL thực thi và xác nhận lưu thành công.
+
+Bước 10: Hệ thống trả mã kết quả và thông báo "Đánh giá thành công!" về cho Giao diện.
+
+Bước 11: Giao diện thông báo cho người dùng, đóng Form đánh giá và cập nhật lại giao diện (ẩn nút Đánh giá hoặc đổi thành trạng thái "Đã đánh giá").
+
+\subsection{Giao diện.}
+\placedfigure{Hinhve/image54.png}{Giao diện Đánh giá chất lượng (Review Form)}
+\end{document}

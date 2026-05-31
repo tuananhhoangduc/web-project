@@ -1,0 +1,114 @@
+\documentclass[../BTL.tex]{subfiles}
+\begin{document}
+
+\chapter{TỔNG QUAN VỀ ĐỀ TÀI}
+
+\section{Bối cảnh lý do chọn đề tài}
+Trong bối cảnh xã hội hiện đại, nhu cầu chăm sóc ngoại hình (Grooming)
+của nam giới đang gia tăng mạnh mẽ, đặc biệt là tại các đô thị lớn. Khái
+niệm "làm đẹp" giờ đây không chỉ dành cho phái nữ, mà phái mạnh cũng
+ngày càng chú trọng đến phong cách tóc và râu. Tuy nhiên, với nhịp sống
+bận rộn, quỹ thời gian của khách hàng ngày càng eo hẹp. Phương thức vận
+hành truyền thống tại các \textbf{Barbershop} -- nơi khách hàng phải đến
+trực tiếp ngồi chờ đến lượt ("first come, first served") -- đã bộc lộ
+nhiều hạn chế, gây lãng phí thời gian và giảm trải nghiệm của những quý
+ông bận rộn.
+
+Mặt khác, đối với các chủ Barbershop, việc quản lý lịch hẹn thủ công
+hoặc qua tin nhắn rời rạc thường dẫn đến tình trạng dồn khách vào giờ
+cao điểm, trong khi giờ thấp điểm lại vắng khách, gây khó khăn trong
+việc tối ưu hóa năng suất của các thợ cạo (Barber).
+
+Đề tài \textbf{``Xây dựng Website đặt lịch cắt tóc cho Barbershop''}
+được thực hiện nhằm giải quyết bài toán trên: giúp khách hàng chủ động
+thời gian thông qua việc đặt chỗ trực tuyến (Booking), đồng thời cung
+cấp cho Barbershop công cụ quản lý chuyên nghiệp. Đây là bước tiến cần
+thiết để nâng cao chất lượng dịch vụ và định hình phong cách phục vụ
+hiện đại cho phái mạnh.
+
+\section{Mục đích của website cần thiết kế}
+Đề tài "Xây dựng website đặt lịch cắt tóc" được thực hiện nhằm các mục
+tiêu sau:
+
+\begin{itemize}
+\item
+  Xây dựng hệ thống trực tuyến hỗ trợ khách hàng tự do chọn dịch vụ,
+  chọn thợ và khung giờ phù hợp.
+\item
+  Đảm bảo trải nghiệm người dùng thân thiện, giao diện mượt mà không cần
+  tải lại trang (mô hình SPA).
+\item
+  Tạo giao diện quản trị dành cho Admin để quản lý toàn diện lịch hẹn,
+  khách hàng và đội ngũ thợ cắt tóc (Stylist).
+\item
+  Cung cấp giao diện riêng biệt cho thợ cắt tóc để theo dõi lịch làm
+  việc cá nhân.
+\item
+  Ứng dụng kiến trúc RESTful API, chia tách rõ ràng Frontend (HTML/JS)
+  và Backend (PHP) để dễ dàng bảo trì và mở rộng.
+\end{itemize}
+
+\section{Phạm vi nghiên cứu}
+Đề tài tập trung phát triển hệ thống đặt lịch và quản lý dành cho ba đối
+tượng chính: Khách hàng (Customer), Thợ cắt tóc (Stylist) và Quản trị
+viên (Admin). Các chức năng chính bao gồm:
+
+\begin{itemize}
+\item
+  \textbf{Cho Khách hàng:}
+
+  \begin{itemize}
+  \item
+    Đăng ký, đăng nhập, đăng xuất tài khoản.
+  \item
+    Xem thông tin hồ sơ cá nhân.
+  \item
+    Xem danh sách chi nhánh, dịch vụ và thợ cắt tóc.
+  \item
+    Đặt lịch hẹn (hệ thống tự động tính toán và hiển thị giờ trống của
+    thợ).
+  \item
+    Xem lịch sử đặt hẹn.
+  \item
+    Hủy lịch hẹn (khi lịch chưa được quản trị viên xác nhận).
+  \end{itemize}
+\item
+  \textbf{Cho Thợ cắt tóc (Stylist):}
+
+  \begin{itemize}
+  \item
+    Đăng nhập tài khoản nhân viên.
+  \item
+    Xem lịch làm việc (danh sách khách hàng đã đặt với mình theo
+    ngày/giờ).
+  \item
+    Nộp đơn xin nghỉ phép.
+  \end{itemize}
+\item
+  \textbf{Cho Quản trị viên (Admin):}
+
+  \begin{itemize}
+  \item
+    Quản lý Chi nhánh: Thêm, sửa, xóa, xem danh sách các chi nhánh.
+  \item
+    Quản lý Dịch vụ: Thêm, sửa, xóa, xem danh sách dịch vụ cắt tóc.
+  \item
+    Quản lý Khách hàng: Thêm, sửa, xóa, tìm kiếm thông tin khách hàng.
+  \item
+    Quản lý Thợ cắt tóc: Thêm thợ mới, sửa thông tin, xóa/ngưng hoạt
+    động tài khoản thợ.
+  \item
+    Quản lý Lịch hẹn: Xem danh sách toàn bộ lịch hẹn, cập nhật trạng
+    thái (Chờ duyệt, Đã xác nhận, Đã hoàn thành, Đã hủy).
+  \item
+    Quản lý Nghỉ phép: Xem danh sách và xét duyệt đơn xin nghỉ phép của
+    thợ.
+  \end{itemize}
+\end{itemize}
+
+\section{Tổng kết chương}
+Chương 1 đã trình bày bối cảnh, mục tiêu và phạm vi của đề tài, đồng
+thời xác định rõ các đối tượng sử dụng và chức năng trọng tâm của hệ
+thống. Đây là nền tảng để chuyển sang chương sau, nơi mô tả phương pháp
+thực hiện, công nghệ sử dụng và công cụ hỗ trợ triển khai.
+\end{document}

@@ -9,9 +9,11 @@ tests: |-
       pm.response.to.have.status(200);
   });
 
-  // Test 2: Response phải là JSON
-  pm.test("Response is JSON", function () {
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
       pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
   });
 
   // Test 3: status = 'success'
@@ -26,13 +28,19 @@ tests: |-
       pm.expect(json.data).to.be.an('array');
   });
 
-  // Test 5: Mỗi đơn nghỉ phép có các trường cơ bản
+  // Test 5: Mỗi đơn nghỉ phép có các trường cơ bản (request_id, status, full_name)
   pm.test("Each leave request has basic fields", function () {
       const json = pm.response.json();
       if (json.data.length > 0) {
           json.data.forEach(function(leave) {
-              pm.expect(leave).to.have.property('leave_id');
+              pm.expect(leave).to.have.property('request_id');
               pm.expect(leave).to.have.property('status');
+              pm.expect(leave).to.have.property('full_name');
           });
       }
+  });
+
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
   });

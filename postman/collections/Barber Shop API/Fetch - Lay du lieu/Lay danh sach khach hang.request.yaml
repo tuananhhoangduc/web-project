@@ -13,9 +13,11 @@ tests: |-
       pm.response.to.have.status(200);
   });
 
-  // Test 2: Response phải là JSON
-  pm.test("Response is JSON", function () {
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
       pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
   });
 
   // Test 3: status = 'success'
@@ -39,4 +41,9 @@ tests: |-
               pm.expect(customer).to.have.property('full_name');
           });
       }
+  });
+
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
   });

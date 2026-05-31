@@ -1,0 +1,67 @@
+$kind: http-request
+name: 'Thêm đánh giá'
+method: POST
+url: '{{base_url}}/api/reviews.php?action=add'
+order: 13000
+body:
+  type: formdata
+  content:
+    - key: appointment_id
+      type: text
+      value: '1'
+      description: 'ID lịch hẹn đã hoàn thành'
+    - key: customer_id
+      type: text
+      value: '1'
+      description: 'ID khách hàng'
+    - key: stylist_id
+      type: text
+      value: '1'
+      description: 'ID thợ được đánh giá'
+    - key: rating
+      type: text
+      value: '5'
+      description: 'Điểm đánh giá (1-5)'
+    - key: comment
+      type: text
+      value: 'Thợ làm tốt, rất hài lòng!'
+      description: 'Nhận xét'
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
+
+  // Test 2: Response phải là JSON
+  pm.test("Response is JSON", function () {
+      pm.response.to.be.json;
+  });
+
+  // Test 3: Có trường 'status'
+  pm.test("Response has 'status' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('status');
+  });
+
+  // Test 4: Có trường 'message'
+  pm.test("Response has 'message' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('message');
+      pm.expect(json.message).to.be.a('string');
+  });
+
+  // Test 5: Thêm thành công → có review_id
+  pm.test("Successful add returns review_id", function () {
+      const json = pm.response.json();
+      if (json.status === 'success') {
+          pm.expect(json).to.have.property('review_id');
+          pm.expect(json.review_id).to.be.a('number');
+          pm.environment.set('review_id', json.review_id);
+      }
+  });
+
+  // Test 6: status là 'success' hoặc 'error'
+  pm.test("Status is success or error", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.be.oneOf(['success', 'error']);
+  });

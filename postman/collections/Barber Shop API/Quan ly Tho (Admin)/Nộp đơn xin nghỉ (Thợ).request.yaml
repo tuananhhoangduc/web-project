@@ -1,20 +1,64 @@
-$kind: http-request
-name: Nộp đơn xin nghỉ (Thợ)
-url: "{{base_url}}/api/submit_leave.php"
+﻿$kind: http-request
+name: 'Nộp đơn xin nghỉ (Thợ)'
+url: '{{base_url}}/api/submit_leave.php'
 method: POST
+order: 4000
 body:
-  type: json
-  content: "{\r
+  type: formdata
+  content:
+    - key: user_id
+      type: text
+      value: '2'
+      description: 'ID tài khoản thợ (user_id trong bảng users)'
+    - key: start_date
+      type: text
+      value: '2026-04-10'
+    - key: end_date
+      type: text
+      value: '2026-04-11'
+    - key: leave_type
+      type: text
+      value: 'Ốm đau'
+    - key: leave_reason
+      type: text
+      value: 'Test xin nghỉ phép'
+tests: |-
+  // Test 1: Status HTTP phải là 200
+  pm.test("Status code is 200", function () {
+      pm.response.to.have.status(200);
+  });
 
-    \  \"user_id\": 2,\r
+  // Test 2: Response phải là JSON hợp lệ
+  pm.test("Response is valid JSON", function () {
+      pm.response.to.be.json;
+      const json = pm.response.json();
+      pm.expect(json).to.be.an('object');
+  });
 
-    \  \"start_date\": \"2026-04-10\",\r
+  // Test 3: Có trường 'status'
+  pm.test("Response has 'status' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('status');
+      pm.expect(json.status).to.be.a('string');
+  });
 
-    \  \"end_date\": \"2026-04-11\",\r
+  // Test 4: Có trường 'message'
+  pm.test("Response has 'message' field", function () {
+      const json = pm.response.json();
+      pm.expect(json).to.have.property('message');
+      pm.expect(json.message).to.be.a('string');
+  });
 
-    \  \"leave_type\": \"Ốm đau\",\r
+  // Test 5: Nộp đơn thành công hoặc lỗi hợp lệ
+  pm.test("Submit leave returns valid response", function () {
+      const json = pm.response.json();
+      pm.expect(json.status).to.be.oneOf(['success', 'error']);
+      if (json.status === 'success') {
+          pm.expect(json.message).to.include('thành công');
+      }
+  });
 
-    \  \"leave_reason\": \"Test thử chức năng xin nghỉ bằng Raw JSON\"\r
-
-    }"
-order: 4164422548324577
+  // Test 6: Response time dưới 3000ms
+  pm.test("Response time is less than 3000ms", function () {
+      pm.expect(pm.response.responseTime).to.be.below(3000);
+  });
