@@ -13,7 +13,7 @@ if (!$stylist_id) {
 }
 
 try {
-    // ✅ Lấy total từ appointments
+    // Lấy total từ appointments
     $stmt = $conn->prepare("
         SELECT COUNT(r.review_id) as total 
         FROM reviews r
@@ -23,7 +23,7 @@ try {
     $stmt->execute([$stylist_id]);
     $total = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-    // ✅ Lấy reviews
+    // Lấy reviews
     $query = "
         SELECT r.review_id, r.rating, r.comment, r.created_at, u.full_name as customer_name
         FROM reviews r
@@ -37,7 +37,7 @@ try {
     $stmt->execute([$stylist_id]);
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // ✅ Lấy stats
+    // Lấy stats
     $stmt = $conn->prepare("
         SELECT AVG(r.rating) as avg_r, COUNT(r.review_id) as total,
         SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) as r5,
