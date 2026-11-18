@@ -1,8 +1,8 @@
 <?php
-$host = "sql311.infinityfree.com";
-$db_name = "if0_42084511_barber_shop_db";
-$username = "if0_42084511";
-$password = "pxT20eyrNwqPn";
+$host = "sql312.infinityfree.com";
+$db_name = "if0_43473955_barber_shop_db";
+$username = "if0_43473955";
+$password = "thhosting2004";
 
 try {
     $conn = new PDO(

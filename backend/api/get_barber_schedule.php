@@ -17,7 +17,6 @@ try {
     $stmt_app->execute([$stylist['stylist_id']]);
     $response_data['appointments'] = $stmt_app->fetchAll(PDO::FETCH_ASSOC);
 
-    // Lấy ngày start và end
     $sql_leave = "SELECT * FROM leave_requests WHERE stylist_id = ? ORDER BY created_at DESC LIMIT 10";
     $stmt_leave = $conn->prepare($sql_leave);
     $stmt_leave->execute([$stylist['stylist_id']]);

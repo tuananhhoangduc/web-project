@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($user) {
             $isValid = false;
             
-            // KIỂM TRA MẬT KHẨU (PHÂN BIỆT HOA THƯỜNG TUYỆT ĐỐI)
             if (password_verify($password, $user['password'])) {
                 $isValid = true; 
             } elseif ($user['password'] === $password) {

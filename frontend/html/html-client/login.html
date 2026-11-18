@@ -94,16 +94,11 @@
         }
       }
 
-      // HÀM XỬ LÝ ĐĂNG NHẬP API
       function processLoginAPI(event) {
-        // 1. CHẶN ĐỨNG TRÌNH DUYỆT KHÔNG CHO NHẢY SANG TRANG PHP
         event.preventDefault();
-
-        // 2. Lấy dữ liệu từ Form
         const formElement = document.getElementById("login-form");
         const formData = new FormData(formElement);
 
-        // 3. Gửi Fetch API ngầm
         fetch("../../../backend/login_process.php", {
           method: "POST",
           body: formData,
@@ -115,7 +110,7 @@
             alert("Lỗi kết nối đến Server Backend!");
           });
 
-        return false; // Đảm bảo form bị khóa 2 lớp
+        return false;
       }
 
       function handleGoogleCredentialResponse(response) {

@@ -37,7 +37,7 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống: ' . $e->getMessage()]);
 }
 
-// ===== FUNCTION: Thêm Review Mới =====
+// ===== Thêm Review Mới =====
 function addReview() {
     global $conn;
 
@@ -95,7 +95,6 @@ function addReview() {
         return;
     }
 
-    // ✅ Lưu vào bảng reviews (không lưu stylist_id nếu DB không có cột này)
     $stmt = $conn->prepare("
         INSERT INTO reviews (appointment_id, customer_id, stylist_id, rating, comment) 
         VALUES (?, ?, ?, ?, ?)
@@ -105,7 +104,7 @@ function addReview() {
     echo json_encode(['status' => 'success', 'message' => 'Đánh giá thành công!', 'review_id' => $conn->lastInsertId()]);
 }
 
-// ===== FUNCTION: Lấy Reviews theo Stylist =====
+// ===== Lấy Reviews theo Stylist =====
 function getReviewsByStylist() {
     global $conn;
 
@@ -119,7 +118,6 @@ function getReviewsByStylist() {
         return;
     }
 
-    // ✅ SỬA: Count từ appointments
     $stmt = $conn->prepare("
         SELECT COUNT(r.review_id) as total 
         FROM reviews r
@@ -129,7 +127,6 @@ function getReviewsByStylist() {
     $stmt->execute([$stylist_id]);
     $total = $stmt->fetch()['total'];
 
-    // ✅ SỬA: SELECT từ appointments + stylists + users để lấy stylist_name
     $stmt = $conn->prepare("
         SELECT r.review_id, r.rating, r.comment, r.created_at, 
                u.full_name as customer_name,
@@ -154,7 +151,7 @@ function getReviewsByStylist() {
     ]);
 }
 
-// ===== FUNCTION: Lấy Review theo Appointment =====
+// ===== Lấy Review theo Appointment =====
 function getReviewByAppointment() {
     global $conn;
     $appointment_id = isset($_GET['appointment_id']) ? intval($_GET['appointment_id']) : 0;
@@ -171,12 +168,11 @@ function getReviewByAppointment() {
     echo json_encode(['status' => 'success', 'data' => $review, 'has_review' => !!$review]);
 }
 
-// ===== FUNCTION: Lấy Rating Trung Bình =====
+// ===== Lấy Rating Trung Bình =====
 function getAverageRating() {
     global $conn;
     $stylist_id = isset($_GET['stylist_id']) ? intval($_GET['stylist_id']) : 0;
 
-    // ✅ JOIN appointments để lấy reviews theo stylist_id
     $stmt = $conn->prepare("
         SELECT AVG(r.rating) as avg_r, COUNT(r.review_id) as total,
         SUM(CASE WHEN r.rating = 5 THEN 1 ELSE 0 END) as r5,
@@ -201,7 +197,7 @@ function getAverageRating() {
     ]);
 }
 
-// ===== FUNCTION: Xóa Review =====
+// ===== Xóa Review =====
 function deleteReview() {
     global $conn;
     $review_id = isset($_GET['review_id']) ? intval($_GET['review_id']) : 0;
@@ -221,7 +217,7 @@ function deleteReview() {
     echo json_encode(['status' => 'success', 'message' => 'Xóa thành công']);
 }
 
-// ===== FUNCTION: Cập Nhật Review =====
+// ===== Cập Nhật Review =====
 function updateReview() {
     global $conn;
     $review_id = isset($_POST['review_id']) ? intval($_POST['review_id']) : 0;
@@ -243,7 +239,7 @@ function updateReview() {
     echo json_encode(['status' => 'success', 'message' => 'Cập nhật thành công']);
 }
 
-// ===== FUNCTION: Lấy tất cả Reviews =====
+// =====    Lấy tất cả Reviews =====
 function getAllReviews() {
     global $conn;
     $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -254,7 +250,6 @@ function getAllReviews() {
     $stmt->execute();
     $total = $stmt->fetch()['total'];
 
-    // ✅ JOIN appointments để lấy stylist_id + JOIN users 2 lần cho customer và stylist
     $stmt = $conn->prepare("
         SELECT r.review_id, r.rating, r.comment, r.created_at, 
                c.full_name as customer_name, 
